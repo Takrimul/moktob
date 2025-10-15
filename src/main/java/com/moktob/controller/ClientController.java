@@ -8,6 +8,7 @@ import com.moktob.core.UserAccount;
 import com.moktob.core.UserAccountService;
 import com.moktob.dto.ClientRegistrationRequest;
 import com.moktob.dto.ClientRegistrationResponse;
+import com.moktob.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +25,7 @@ public class ClientController {
     private final ClientService clientService;
     private final RoleService roleService;
     private final UserAccountService userAccountService;
+    private final AuthenticationService authenticationService;
     
     @GetMapping
     public ResponseEntity<List<Client>> getAllClients() {
@@ -67,7 +69,7 @@ public class ClientController {
         return ResponseEntity.ok(new ClientRegistrationResponse(
                 savedClient,
                 adminUser.getUsername(),
-                "Default password: admin"
+                "Temporary password: " + tempPasswordForResponse
         ));
     }
     
@@ -130,19 +132,29 @@ public class ClientController {
             // Get the ADMIN role
             Role adminRole = roleService.getRoleByName("ADMIN").orElse(null);
             
+            // Generate temporary password
+            String tempPassword = authenticationService.generateTemporaryPassword();
+            
             UserAccount adminUser = new UserAccount();
             adminUser.setUsername(request.getAdminUsername());
-            adminUser.setPasswordHash("$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVEFDi"); // "admin"
+            adminUser.setPasswordHash(authenticationService.passwordEncoder.encode(tempPassword));
             adminUser.setFullName(request.getAdminFullName());
             adminUser.setEmail(request.getAdminEmail());
             adminUser.setPhone(request.getAdminPhone());
             adminUser.setRoleId(adminRole != null ? adminRole.getId() : null);
             adminUser.setIsActive(true);
             
-            return userAccountService.saveUser(adminUser);
+            UserAccount savedUser = userAccountService.saveUser(adminUser);
+            
+            // Store temp password in response
+            tempPasswordForResponse = tempPassword;
+            
+            return savedUser;
             
         } finally {
             com.moktob.common.TenantContextHolder.clear();
         }
     }
+    
+    private String tempPasswordForResponse;
 }

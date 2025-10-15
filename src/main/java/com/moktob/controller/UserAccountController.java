@@ -4,15 +4,16 @@ import com.moktob.core.Role;
 import com.moktob.core.RoleService;
 import com.moktob.core.UserAccount;
 import com.moktob.core.UserAccountService;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import com.moktob.dto.ChangePasswordRequest;
+import com.moktob.dto.CreateUserRequest;
+import com.moktob.dto.ResetPasswordRequest;
+import com.moktob.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +24,7 @@ public class UserAccountController {
     
     private final UserAccountService userAccountService;
     private final RoleService roleService;
+    private final AuthenticationService authenticationService;
     
     @GetMapping
     public ResponseEntity<List<UserAccount>> getAllUsers() {
@@ -37,23 +39,32 @@ public class UserAccountController {
     
     @PostMapping
     public ResponseEntity<UserAccount> createUser(@Valid @RequestBody CreateUserRequest request) {
-        UserAccount user = new UserAccount();
-        user.setUsername(request.getUsername());
-        user.setPasswordHash(request.getPassword());
-        user.setFullName(request.getFullName());
-        user.setEmail(request.getEmail());
-        user.setPhone(request.getPhone());
-        user.setIsActive(true);
-        
-        // Set role if provided
-        if (request.getRoleName() != null) {
-            Optional<Role> role = roleService.getRoleByName(request.getRoleName());
-            role.ifPresent(r -> user.setRoleId(r.getId()));
-        }
-        
-        UserAccount savedUser = userAccountService.saveUser(user);
+        UserAccount savedUser = authenticationService.createUser(request);
         savedUser.setPasswordHash(null); // Don't return password hash
-        
+        return ResponseEntity.ok(savedUser);
+    }
+    
+    @PostMapping("/create-teacher")
+    public ResponseEntity<UserAccount> createTeacher(@Valid @RequestBody CreateUserRequest request) {
+        request.setRoleName("TEACHER");
+        UserAccount savedUser = authenticationService.createUser(request);
+        savedUser.setPasswordHash(null);
+        return ResponseEntity.ok(savedUser);
+    }
+    
+    @PostMapping("/create-student")
+    public ResponseEntity<UserAccount> createStudent(@Valid @RequestBody CreateUserRequest request) {
+        request.setRoleName("STUDENT");
+        UserAccount savedUser = authenticationService.createUser(request);
+        savedUser.setPasswordHash(null);
+        return ResponseEntity.ok(savedUser);
+    }
+    
+    @PostMapping("/create-parent")
+    public ResponseEntity<UserAccount> createParent(@Valid @RequestBody CreateUserRequest request) {
+        request.setRoleName("PARENT");
+        UserAccount savedUser = authenticationService.createUser(request);
+        savedUser.setPasswordHash(null);
         return ResponseEntity.ok(savedUser);
     }
     
@@ -78,55 +89,57 @@ public class UserAccountController {
     
     @GetMapping("/by-role/{roleName}")
     public ResponseEntity<List<UserAccount>> getUsersByRole(@PathVariable String roleName) {
-        Optional<Role> role = roleService.getRoleByName(roleName);
-        if (role.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        
-        List<UserAccount> users = userAccountService.getAllUsers().stream()
-                .filter(user -> user.getRoleId() != null && user.getRoleId().equals(role.get().getId()))
-                .toList();
-        
+        List<UserAccount> users = authenticationService.getUsersByRole(roleName);
         return ResponseEntity.ok(users);
     }
     
-    @PostMapping("/change-password/{id}")
-    public ResponseEntity<String> changePassword(@PathVariable Long id, @RequestBody ChangePasswordRequest request) {
-        Optional<UserAccount> userOpt = userAccountService.getUserById(id);
-        if (userOpt.isEmpty()) {
-            return ResponseEntity.notFound().build();
+    @PostMapping("/change-password")
+    public ResponseEntity<String> changePassword(Authentication authentication, @Valid @RequestBody ChangePasswordRequest request) {
+        if (authentication == null) {
+            return ResponseEntity.badRequest().body("Authentication required");
         }
         
-        UserAccount user = userOpt.get();
-        user.setPasswordHash(request.getNewPassword());
-        userAccountService.saveUser(user);
-        
-        return ResponseEntity.ok("Password changed successfully");
+        try {
+            UserAccount user = authenticationService.getUserByUsername(authentication.getName());
+            authenticationService.changePassword(user.getId(), request);
+            return ResponseEntity.ok("Password changed successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
     
-    @Data
-    @AllArgsConstructor
-    public static class CreateUserRequest {
-        @NotBlank
-        private String username;
-        
-        @NotBlank
-        private String password;
-        
-        @NotBlank
-        private String fullName;
-        
-        @Email
-        private String email;
-        
-        private String phone;
-        private String roleName; // ADMIN, TEACHER, STUDENT, PARENT
+    @PostMapping("/{id}/reset-password")
+    public ResponseEntity<String> resetPassword(@PathVariable Long id, @Valid @RequestBody ResetPasswordRequest request) {
+        try {
+            authenticationService.resetPassword(id, request);
+            return ResponseEntity.ok("Password reset successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
     
-    @Data
-    @AllArgsConstructor
-    public static class ChangePasswordRequest {
-        @NotBlank
-        private String newPassword;
+    @GetMapping("/profile")
+    public ResponseEntity<UserAccount> getUserProfile(Authentication authentication) {
+        if (authentication != null) {
+            UserAccount user = authenticationService.getUserByUsername(authentication.getName());
+            user.setPasswordHash(null);
+            return ResponseEntity.ok(user);
+        }
+        return ResponseEntity.notFound().build();
+    }
+    
+    @GetMapping("/teachers")
+    public ResponseEntity<List<UserAccount>> getTeachers() {
+        return ResponseEntity.ok(authenticationService.getUsersByRole("TEACHER"));
+    }
+    
+    @GetMapping("/students")
+    public ResponseEntity<List<UserAccount>> getStudents() {
+        return ResponseEntity.ok(authenticationService.getUsersByRole("STUDENT"));
+    }
+    
+    @GetMapping("/parents")
+    public ResponseEntity<List<UserAccount>> getParents() {
+        return ResponseEntity.ok(authenticationService.getUsersByRole("PARENT"));
     }
 }
