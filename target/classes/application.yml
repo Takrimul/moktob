@@ -2,7 +2,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/moktob_saas
     username: postgres
-    password: root
+    password: T@krim1234
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:

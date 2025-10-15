@@ -17,7 +17,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,7 +29,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class AuthenticationService implements UserDetailsService {
+public class AuthenticationService {
 
     private final UserAccountRepository userAccountRepository;
     private final AuthenticationManager authenticationManager;
@@ -38,22 +37,6 @@ public class AuthenticationService implements UserDetailsService {
     public final PasswordEncoder passwordEncoder;
     private final RoleService roleService;
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<UserAccount> userAccount = userAccountRepository.findByUsername(username);
-        
-        if (userAccount.isEmpty()) {
-            throw new UsernameNotFoundException("User not found with username: " + username);
-        }
-
-        UserAccount user = userAccount.get();
-        
-        return org.springframework.security.core.userdetails.User.builder()
-                .username(user.getUsername())
-                .password(user.getPasswordHash())
-                .authorities(user.getRole() != null ? user.getRole().getRoleName() : "USER")
-                .build();
-    }
 
     public JwtAuthenticationResponse authenticate(LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
