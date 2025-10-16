@@ -13,6 +13,7 @@ import com.moktob.service.AuthenticationService;
 import com.moktob.service.ClientRegistrationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +29,7 @@ public class ClientRegistrationServiceImpl implements ClientRegistrationService 
     private final RoleService roleService;
     private final UserAccountService userAccountService;
     private final AuthenticationService authenticationService;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
@@ -39,7 +41,7 @@ public class ClientRegistrationServiceImpl implements ClientRegistrationService 
         // Create default roles for the client
         createDefaultRoles(savedClient.getClientId());
         
-        // Create admin user for the client
+        // Create an admin user for the client
         UserAccount adminUser = createAdminUser(savedClient.getClientId(), request);
         
         log.debug("Creating response with tempPasswordForResponse: {}", tempPasswordForResponse);
@@ -75,13 +77,13 @@ public class ClientRegistrationServiceImpl implements ClientRegistrationService 
             adminRole.setDescription("System Administrator");
             roleService.saveRole(adminRole);
             
-            // Create TEACHER role
+            // Create a TEACHER role
             Role teacherRole = new Role();
             teacherRole.setRoleName("TEACHER");
             teacherRole.setDescription("Teacher Role");
             roleService.saveRole(teacherRole);
             
-            // Create STUDENT role
+            // Create a STUDENT role
             Role studentRole = new Role();
             studentRole.setRoleName("STUDENT");
             studentRole.setDescription("Student Role");
@@ -109,7 +111,7 @@ public class ClientRegistrationServiceImpl implements ClientRegistrationService 
             String tempPassword = authenticationService.generateTemporaryPassword();
             log.debug("Generated temp password: {}", tempPassword);
             
-            String encodedPassword = authenticationService.encodePassword(tempPassword);
+            String encodedPassword = passwordEncoder.encode(tempPassword);
             log.debug("Encoded password hash: {}", encodedPassword);
             
             UserAccount adminUser = new UserAccount();
