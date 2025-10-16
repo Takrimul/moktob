@@ -1,0 +1,94 @@
+# application-prod.yml
+# ============================================================
+# PRODUCTION PROFILE CONFIGURATION
+# ============================================================
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: jdbc:postgresql://${MOKTOB_DB_HOST:prod-db.moktob.com}:${MOKTOB_DB_PORT:5432}/${MOKTOB_DB_NAME:moktob_saas_prod}
+    username: ${MOKTOB_DB_USER}
+    password: ${MOKTOB_DB_PASSWORD}
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        show_sql: false
+  cache:
+    type: redis
+    redis:
+      time-to-live: 3600000
+  session:
+    store-type: redis
+
+server:
+  port: ${PORT:8080}
+  tomcat:
+    max-threads: 200
+    min-spare-threads: 20
+  compression:
+    enabled: true
+
+logging:
+  level:
+    root: WARN
+    com.moktob: INFO
+    org.springframework.web: INFO
+  file:
+    name: /var/log/moktob/application-prod.log
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      max-history: 30
+      total-size-cap: 1GB
+
+jwt:
+  secret: ${MOKTOB_JWT_SECRET}
+  expiration: 86400000 # 24 hours
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+      base-path: /management
+  endpoint:
+    health:
+      show-details: never
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+# Production environment specific settings
+cors:
+  allowed-origins: https://app.moktob.com,https://admin.moktob.com
+  allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+  allowed-headers: Authorization,Content-Type,X-Requested-With
+
+# Rate limiting for production
+resilience4j:
+  ratelimiter:
+    instances:
+      default:
+        limitForPeriod: 500
+        limitRefreshPeriod: 1s
+        timeoutDuration: 0s
+      auth:
+        limitForPeriod: 20
+        limitRefreshPeriod: 1m
+        timeoutDuration: 0s
+
+# Security headers
+security:
+  headers:
+    content-security-policy: default-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'
+    x-frame-options: DENY
+    strict-transport-security: max-age=31536000; includeSubDomains

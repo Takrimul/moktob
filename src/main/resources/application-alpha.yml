@@ -1,0 +1,38 @@
+# application-alpha.yml
+# ============================================================
+# ALPHA PROFILE CONFIGURATION
+# ============================================================
+
+spring:
+  config:
+    activate:
+      on-profile: alpha  # Modern way to specify a profile in Spring Boot 2.4+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/moktob_saas
+  jpa:
+    hibernate:
+      ddl-auto: update  # Consider using 'validate' in non-dev environments
+
+server:
+  port: 8081
+
+jwt:
+  secret: moktobAlphaSecretKey1234567890
+  expiration: 3600000  # 1 hour - shorter for alpha environment
+
+logging:
+  level:
+    com.moktob: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+# Custom alpha-specific configuration
+alpha:
+  feature-toggles:
+    new-user-flow: true
+    enhanced-security: false
+
+  cors:
+    allowed-origins: http://localhost:3000,http://localhost:8080
+    allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+    allowed-headers: Authorization,Content-Type
