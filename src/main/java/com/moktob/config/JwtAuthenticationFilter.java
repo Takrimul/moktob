@@ -1,6 +1,7 @@
 package com.moktob.config;
 
 import com.moktob.common.TenantContextHolder;
+import com.moktob.service.RedisTokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,6 +25,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
+    private final RedisTokenService redisTokenService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
@@ -49,6 +51,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             try {
+                // Check if token exists in Redis (not logged out)
+                if (!redisTokenService.isTokenValid(jwtToken)) {
+                    log.debug("Token not found in Redis or has been logged out: {}", username);
+                    chain.doFilter(request, response);
+                    return;
+                }
+                
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
                 if (jwtUtil.isTokenValid(jwtToken, userDetails)) {
