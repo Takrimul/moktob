@@ -20,7 +20,7 @@ import java.util.function.Function;
 @Slf4j
 public class JwtUtil {
 
-    @Value("${jwt.secret:moktobSecretKey123456789012345678901234567890}")
+    @Value("${jwt.secret:c2VjcmV0S2V5Rm9ySldUU2lnbmF0dXJlVGhhdElzU2VjdXJlQW5kTG9uZ0Vub3VnaEZvckhhc2hpbmdBbGdvcml0aG1z}")
     private String secretKey;
     
     @Value("${jwt.expiration:86400000}")
@@ -88,8 +88,8 @@ public class JwtUtil {
     }
 
     private Key getSignInKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-        return Keys.hmacShaKeyFor(keyBytes);
+        // Generate a secure key for HS256 (256 bits)
+        return Keys.secretKeyFor(SignatureAlgorithm.HS256);
     }
 
     // Legacy methods for backward compatibility
