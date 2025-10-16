@@ -51,6 +51,9 @@ public class AuthController {
         
         // Custom password check using the same encoder used during registration
         if (!passwordEncoder.matches(authenticationRequest.getPassword(), user.getPasswordHash())) {
+            String hashPass = passwordEncoder.encode(authenticationRequest.getPassword());
+            log.debug("Password hash of login request data: {} is {}", user.getUsername(), hashPass);
+            log.debug("Password in db: {}", user.getPasswordHash());
             log.error("Bad credentials for user: {}", authenticationRequest.getUsername());
             return ResponseEntity.status(401).body("Incorrect username or password");
         }

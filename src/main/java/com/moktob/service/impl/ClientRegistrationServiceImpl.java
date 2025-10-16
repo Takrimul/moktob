@@ -108,7 +108,8 @@ public class ClientRegistrationServiceImpl implements ClientRegistrationService 
             Role adminRole = roleService.getRoleByName("ADMIN").orElse(null);
             
             // Generate temporary password
-            String tempPassword = authenticationService.generateTemporaryPassword();
+//            String tempPassword = authenticationService.generateTemporaryPassword();
+            String tempPassword = "T@k1234";
             log.debug("Generated temp password: {}", tempPassword);
             
             String encodedPassword = passwordEncoder.encode(tempPassword);

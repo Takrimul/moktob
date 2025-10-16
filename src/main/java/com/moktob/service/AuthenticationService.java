@@ -133,6 +133,8 @@ public class AuthenticationService {
     }
 
     public String generateTemporaryPassword() {
+
+
         SecureRandom random = new SecureRandom();
         List<Character> passwordChars = new ArrayList<>();
         
