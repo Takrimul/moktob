@@ -1,7 +1,6 @@
 package com.moktob.service;
 
 import com.moktob.common.TenantContextHolder;
-import com.moktob.config.CustomPasswordEncoder;
 import com.moktob.config.JwtAuthenticationResponse;
 import com.moktob.config.JwtTokenUtil;
 import com.moktob.config.LoginRequest;
@@ -19,6 +18,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class AuthenticationService {
     private final UserAccountRepository userAccountRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenUtil jwtTokenUtil;
-    private final CustomPasswordEncoder customPasswordEncoder;
+    private final PasswordEncoder passwordEncoder;
     private final RoleService roleService;
 
 
@@ -83,7 +83,7 @@ public class AuthenticationService {
 
         UserAccount user = new UserAccount();
         user.setUsername(request.getUsername());
-        user.setPasswordHash(customPasswordEncoder.encode(request.getPassword()));
+        user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         user.setFullName(request.getFullName());
         user.setEmail(request.getEmail());
         user.setPhone(request.getPhone());
@@ -107,12 +107,12 @@ public class AuthenticationService {
         UserAccount user = userOpt.get();
 
         // Verify current password
-        if (!customPasswordEncoder.matches(request.getCurrentPassword(), user.getPasswordHash())) {
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPasswordHash())) {
             throw new IllegalArgumentException("Current password is incorrect");
         }
-
+        
         // Set new password
-        user.setPasswordHash(customPasswordEncoder.encode(request.getNewPassword()));
+        user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
         userAccountRepository.save(user);
 
         log.info("Password changed for user: {}", user.getUsername());
@@ -125,7 +125,7 @@ public class AuthenticationService {
         }
 
         UserAccount user = userOpt.get();
-        user.setPasswordHash(customPasswordEncoder.encode(request.getNewPassword()));
+        user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
         userAccountRepository.save(user);
 
         log.info("Password reset for user: {}", user.getUsername());
@@ -164,19 +164,19 @@ public class AuthenticationService {
     }
 
     public String encodePassword(String password) {
-        return customPasswordEncoder.encode(password);
+        return passwordEncoder.encode(password);
     }
 
     public void debugPasswordEncoding(String plainPassword, String storedHash) {
         log.debug("Plain password: {}", plainPassword);
         log.debug("Stored hash: {}", storedHash);
-        boolean matches = customPasswordEncoder.matches(plainPassword, storedHash);
+        boolean matches = passwordEncoder.matches(plainPassword, storedHash);
         log.debug("Password matches: {}", matches);
-
+        
         // Generate new hash for comparison
-        String newHash = customPasswordEncoder.encode(plainPassword);
+        String newHash = passwordEncoder.encode(plainPassword);
         log.debug("New hash for same password: {}", newHash);
-        log.debug("New hash matches stored: {}", customPasswordEncoder.matches(plainPassword, newHash));
+        log.debug("New hash matches stored: {}", passwordEncoder.matches(plainPassword, newHash));
     }
 
     public List<UserAccount> getUsersByRole(String roleName) {
