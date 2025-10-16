@@ -50,7 +50,6 @@ public class AuthController {
         String storedPasswordHash = userDetails.getPassword();
         log.info("Stored password hash: {}", storedPasswordHash);
         boolean matched = passwordEncoder.matches(authenticationRequest.getPassword(), storedPasswordHash);
-        log.info("Password match result: {}", matched);
 
         Optional<UserAccount> userAccount = userAccountRepository.findByUsernameWithRole(authenticationRequest.getUsername());
 
