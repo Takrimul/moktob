@@ -14,7 +14,7 @@ spring:
       ddl-auto: update  # Consider using 'validate' in non-dev environments
 
 server:
-  port: 8081
+  port: 8080
 
 jwt:
   secret: moktobAlphaSecretKey1234567890

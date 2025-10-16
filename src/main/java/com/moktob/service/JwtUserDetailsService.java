@@ -23,16 +23,30 @@ public class JwtUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        log.debug("Loading user by username: {}", username);
         Optional<UserAccount> userAccount = userAccountRepository.findByUsername(username);
         
         if (userAccount.isEmpty()) {
+            log.error("User not found: {}", username);
             throw new UsernameNotFoundException("User not found: " + username);
         }
         
         UserAccount user = userAccount.get();
+        log.debug("Found user: {}, client_id: {}, is_active: {}", username, user.getClientId(), user.getIsActive());
+        
+        // Check if user is active
+        if (!user.getIsActive()) {
+            log.error("User account is disabled: {}", username);
+            throw new UsernameNotFoundException("User account is disabled: " + username);
+        }
+        
         return new User(
             user.getUsername(),
             user.getPasswordHash(),
+            user.getIsActive(),
+            true, // accountNonExpired
+            true, // credentialsNonExpired
+            true, // accountNonLocked
             Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
         );
     }
