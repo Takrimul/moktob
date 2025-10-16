@@ -113,6 +113,7 @@ public class ClientRegistrationServiceImpl implements ClientRegistrationService 
             
             String encodedPassword = passwordEncoder.encode(tempPassword);
             log.debug("Encoded password hash: {}", encodedPassword);
+            log.debug("Password hash starts with $2a$: {}", encodedPassword.startsWith("$2a$"));
             
             UserAccount adminUser = new UserAccount();
             adminUser.setUsername(request.getAdminUsername());

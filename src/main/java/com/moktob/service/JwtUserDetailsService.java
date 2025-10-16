@@ -43,7 +43,7 @@ public class JwtUserDetailsService implements UserDetailsService {
         return new User(
             user.getUsername(),
             user.getPasswordHash(),
-            user.getIsActive(),
+                true,
             true, // accountNonExpired
             true, // credentialsNonExpired
             true, // accountNonLocked
