@@ -26,7 +26,7 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder(CustomPasswordEncoder customPasswordEncoder) {
-        return customPasswordEncoder.getEncoder();
+        return customPasswordEncoder;
     }
 
     @Bean

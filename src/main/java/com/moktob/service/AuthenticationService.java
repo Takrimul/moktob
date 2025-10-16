@@ -19,13 +19,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
+import java.security.SecureRandom;
 
 @Service
 @RequiredArgsConstructor
@@ -40,13 +40,6 @@ public class AuthenticationService {
 
 
     public JwtAuthenticationResponse authenticate(LoginRequest loginRequest) {
-        // Debug password encoding
-        Optional<UserAccount> userOpt = userAccountRepository.findByUsername(loginRequest.getUsername());
-        if (userOpt.isPresent()) {
-            UserAccount user = userOpt.get();
-            debugPasswordEncoding(loginRequest.getPassword(), user.getPasswordHash());
-        }
-        
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsername(),
@@ -56,16 +49,16 @@ public class AuthenticationService {
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         Optional<UserAccount> userAccount = userAccountRepository.findByUsername(userDetails.getUsername());
-        
+
         if (userAccount.isEmpty()) {
             throw new UsernameNotFoundException("User not found");
         }
 
         UserAccount user = userAccount.get();
         String token = jwtTokenUtil.generateToken(userDetails, user.getClientId(), user.getId());
-        
+
         String roleName = user.getRole() != null ? user.getRole().getRoleName() : "USER";
-        
+
         return new JwtAuthenticationResponse(
                 token,
                 user.getClientId(),
@@ -82,12 +75,12 @@ public class AuthenticationService {
 
     public UserAccount createUser(CreateUserRequest request) {
         Long clientId = TenantContextHolder.getTenantId();
-        
+
         // Check if username already exists
         if (userAccountRepository.findByUsername(request.getUsername()).isPresent()) {
             throw new IllegalArgumentException("Username already exists");
         }
-        
+
         UserAccount user = new UserAccount();
         user.setUsername(request.getUsername());
         user.setPasswordHash(customPasswordEncoder.encode(request.getPassword()));
@@ -95,13 +88,13 @@ public class AuthenticationService {
         user.setEmail(request.getEmail());
         user.setPhone(request.getPhone());
         user.setIsActive(true);
-        
+
         // Set role if provided
         if (request.getRoleName() != null) {
             Optional<Role> role = roleService.getRoleByName(request.getRoleName());
             role.ifPresent(r -> user.setRoleId(r.getId()));
         }
-        
+
         return userAccountRepository.save(user);
     }
 
@@ -110,18 +103,18 @@ public class AuthenticationService {
         if (userOpt.isEmpty()) {
             throw new IllegalArgumentException("User not found");
         }
-        
+
         UserAccount user = userOpt.get();
-        
+
         // Verify current password
         if (!customPasswordEncoder.matches(request.getCurrentPassword(), user.getPasswordHash())) {
             throw new IllegalArgumentException("Current password is incorrect");
         }
-        
+
         // Set new password
         user.setPasswordHash(customPasswordEncoder.encode(request.getNewPassword()));
         userAccountRepository.save(user);
-        
+
         log.info("Password changed for user: {}", user.getUsername());
     }
 
@@ -130,16 +123,44 @@ public class AuthenticationService {
         if (userOpt.isEmpty()) {
             throw new IllegalArgumentException("User not found");
         }
-        
+
         UserAccount user = userOpt.get();
         user.setPasswordHash(customPasswordEncoder.encode(request.getNewPassword()));
         userAccountRepository.save(user);
-        
+
         log.info("Password reset for user: {}", user.getUsername());
     }
 
     public String generateTemporaryPassword() {
-        return UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        SecureRandom random = new SecureRandom();
+        List<Character> passwordChars = new ArrayList<>();
+        
+        String UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        String LOWER = "abcdefghijklmnopqrstuvwxyz";
+        String DIGITS = "0123456789";
+        String SPECIAL = "!@#$%^&*";
+        int LENGTH = 8;
+
+        // Ensure at least one digit and one special character
+        passwordChars.add(DIGITS.charAt(random.nextInt(DIGITS.length())));
+        passwordChars.add(SPECIAL.charAt(random.nextInt(SPECIAL.length())));
+
+        // Fill remaining with mix of all types
+        String allChars = UPPER + LOWER + DIGITS + SPECIAL;
+        while (passwordChars.size() < LENGTH) {
+            passwordChars.add(allChars.charAt(random.nextInt(allChars.length())));
+        }
+
+        // Shuffle for randomness
+        Collections.shuffle(passwordChars, random);
+
+        // Convert to string
+        StringBuilder password = new StringBuilder();
+        for (char c : passwordChars) {
+            password.append(c);
+        }
+
+        return password.toString();
     }
 
     public String encodePassword(String password) {
@@ -151,7 +172,7 @@ public class AuthenticationService {
         log.debug("Stored hash: {}", storedHash);
         boolean matches = customPasswordEncoder.matches(plainPassword, storedHash);
         log.debug("Password matches: {}", matches);
-        
+
         // Generate new hash for comparison
         String newHash = customPasswordEncoder.encode(plainPassword);
         log.debug("New hash for same password: {}", newHash);
@@ -161,11 +182,11 @@ public class AuthenticationService {
     public List<UserAccount> getUsersByRole(String roleName) {
         Long clientId = TenantContextHolder.getTenantId();
         Optional<Role> role = roleService.getRoleByName(roleName);
-        
+
         if (role.isEmpty()) {
             return new ArrayList<>();
         }
-        
+
         return userAccountRepository.findByClientId(clientId).stream()
                 .filter(user -> user.getRoleId() != null && user.getRoleId().equals(role.get().getId()))
                 .toList();
