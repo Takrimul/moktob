@@ -19,13 +19,19 @@ public class AuthController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/login")
-    public ResponseEntity<JwtAuthenticationResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
         try {
             JwtAuthenticationResponse response = authenticationService.authenticate(loginRequest);
             return ResponseEntity.ok(response);
+        } catch (org.springframework.security.authentication.BadCredentialsException e) {
+            log.error("Bad credentials for user: {}", loginRequest.getUsername());
+            return ResponseEntity.status(401).body("Invalid username or password");
+        } catch (org.springframework.security.core.userdetails.UsernameNotFoundException e) {
+            log.error("User not found: {}", loginRequest.getUsername());
+            return ResponseEntity.status(401).body("Invalid username or password");
         } catch (Exception e) {
             log.error("Authentication failed for user: {}", loginRequest.getUsername(), e);
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(500).body("Internal server error");
         }
     }
 
