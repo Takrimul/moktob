@@ -13,6 +13,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
@@ -27,17 +28,13 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     private final UserAccountRepository userAccountRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
     public ResponseEntity<?> createAuthenticationToken(@Valid @RequestBody AuthenticationRequest authenticationRequest) throws Exception {
-//        try {
-//            authenticationManager.authenticate(
-//                new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword())
-//            );
-//        } catch (BadCredentialsException e) {
-//            log.error("Bad credentials for user: {}", authenticationRequest.getUsername());
-//            return ResponseEntity.status(401).body("Incorrect username or password");
-//        }
+
+        String passHash = passwordEncoder.encode(authenticationRequest.getPassword());
+        log.info("Encoded password: {}", passHash);
 
         // Get user details from the authentication
         final UserDetails userDetails = userAccountRepository.findByUsername(authenticationRequest.getUsername())
@@ -49,15 +46,21 @@ public class AuthController {
                         java.util.Collections.singletonList(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_ADMIN"))
                 ))
                 .orElseThrow(() -> new RuntimeException("User not found"));
+
+        String storedPasswordHash = userDetails.getPassword();
+        log.info("Stored password hash: {}", storedPasswordHash);
+        boolean matched = passwordEncoder.matches(authenticationRequest.getPassword(), storedPasswordHash);
+        log.info("Password match result: {}", matched);
+
         Optional<UserAccount> userAccount = userAccountRepository.findByUsernameWithRole(authenticationRequest.getUsername());
-        
+
         if (userAccount.isEmpty()) {
             return ResponseEntity.status(401).body("User not found");
         }
 
         UserAccount user = userAccount.get();
         final String jwt = jwtUtil.generateToken(userDetails, user.getClientId(), user.getId());
-        
+
         String roleName = user.getRole() != null ? user.getRole().getRoleName() : "ADMIN";
 
         return ResponseEntity.ok(new AuthenticationResponse(
