@@ -34,11 +34,18 @@ public class AuthenticationService {
     private final UserAccountRepository userAccountRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenUtil jwtTokenUtil;
-    public final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
     private final RoleService roleService;
 
 
     public JwtAuthenticationResponse authenticate(LoginRequest loginRequest) {
+        // Debug password encoding
+        Optional<UserAccount> userOpt = userAccountRepository.findByUsername(loginRequest.getUsername());
+        if (userOpt.isPresent()) {
+            UserAccount user = userOpt.get();
+            debugPasswordEncoding(loginRequest.getPassword(), user.getPasswordHash());
+        }
+        
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsername(),
@@ -132,6 +139,22 @@ public class AuthenticationService {
 
     public String generateTemporaryPassword() {
         return UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+    }
+
+    public String encodePassword(String password) {
+        return passwordEncoder.encode(password);
+    }
+
+    public void debugPasswordEncoding(String plainPassword, String storedHash) {
+        log.debug("Plain password: {}", plainPassword);
+        log.debug("Stored hash: {}", storedHash);
+        boolean matches = passwordEncoder.matches(plainPassword, storedHash);
+        log.debug("Password matches: {}", matches);
+        
+        // Generate new hash for comparison
+        String newHash = passwordEncoder.encode(plainPassword);
+        log.debug("New hash for same password: {}", newHash);
+        log.debug("New hash matches stored: {}", passwordEncoder.matches(plainPassword, newHash));
     }
 
     public List<UserAccount> getUsersByRole(String roleName) {

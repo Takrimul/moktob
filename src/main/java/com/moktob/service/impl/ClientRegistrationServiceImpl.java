@@ -42,6 +42,7 @@ public class ClientRegistrationServiceImpl implements ClientRegistrationService 
         // Create admin user for the client
         UserAccount adminUser = createAdminUser(savedClient.getClientId(), request);
         
+        log.debug("Creating response with tempPasswordForResponse: {}", tempPasswordForResponse);
         return new ClientRegistrationResponse(
                 savedClient,
                 adminUser.getUsername(),
@@ -106,10 +107,14 @@ public class ClientRegistrationServiceImpl implements ClientRegistrationService 
             
             // Generate temporary password
             String tempPassword = authenticationService.generateTemporaryPassword();
+            log.debug("Generated temp password: {}", tempPassword);
+            
+            String encodedPassword = authenticationService.encodePassword(tempPassword);
+            log.debug("Encoded password hash: {}", encodedPassword);
             
             UserAccount adminUser = new UserAccount();
             adminUser.setUsername(request.getAdminUsername());
-            adminUser.setPasswordHash(authenticationService.passwordEncoder.encode(tempPassword));
+            adminUser.setPasswordHash(encodedPassword);
             adminUser.setFullName(request.getAdminFullName());
             adminUser.setEmail(request.getAdminEmail());
             adminUser.setPhone(request.getAdminPhone());
@@ -120,6 +125,7 @@ public class ClientRegistrationServiceImpl implements ClientRegistrationService 
             
             // Store temp password in response
             tempPasswordForResponse = tempPassword;
+            log.debug("Stored tempPasswordForResponse: {}", tempPasswordForResponse);
             
             return savedUser;
             
