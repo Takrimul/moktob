@@ -49,7 +49,7 @@ public class AuthController {
                         java.util.Collections.singletonList(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_ADMIN"))
                 ))
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        Optional<UserAccount> userAccount = userAccountRepository.findByUsername(authenticationRequest.getUsername());
+        Optional<UserAccount> userAccount = userAccountRepository.findByUsernameWithRole(authenticationRequest.getUsername());
         
         if (userAccount.isEmpty()) {
             return ResponseEntity.status(401).body("User not found");
