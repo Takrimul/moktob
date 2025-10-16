@@ -40,6 +40,7 @@ public class AuthenticationService {
 
 
     public JwtAuthenticationResponse authenticate(LoginRequest loginRequest) {
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsername(),
