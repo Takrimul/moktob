@@ -9,8 +9,8 @@ import com.moktob.core.UserAccount;
 import com.moktob.core.UserAccountService;
 import com.moktob.dto.ClientRegistrationRequest;
 import com.moktob.dto.ClientRegistrationResponse;
-import com.moktob.service.AuthenticationService;
 import com.moktob.service.ClientRegistrationService;
+import com.moktob.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,8 +28,8 @@ public class ClientRegistrationServiceImpl implements ClientRegistrationService 
     private final ClientService clientService;
     private final RoleService roleService;
     private final UserAccountService userAccountService;
-    private final AuthenticationService authenticationService;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
     @Override
     @Transactional
@@ -43,6 +43,16 @@ public class ClientRegistrationServiceImpl implements ClientRegistrationService 
         
         // Create an admin user for the client
         UserAccount adminUser = createAdminUser(savedClient.getClientId(), request);
+        
+        // Send registration email with credentials
+        try {
+            emailService.sendClientRegistrationEmail(savedClient, adminUser, tempPasswordForResponse);
+            log.info("Registration email sent successfully to: {}", savedClient.getContactEmail());
+        } catch (Exception e) {
+            log.error("Failed to send registration email to: {}. Error: {}", 
+                     savedClient.getContactEmail(), e.getMessage(), e);
+            // Continue with registration even if email fails
+        }
         
         log.debug("Creating response with tempPasswordForResponse: {}", tempPasswordForResponse);
         return new ClientRegistrationResponse(
