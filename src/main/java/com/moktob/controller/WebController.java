@@ -167,7 +167,7 @@ public class WebController {
         model.addAttribute("title", "Error - Moktob Management System");
         return "error/index";
     }
-
+    
     // Forgot password page
     @GetMapping("/forgot-password")
     public String forgotPasswordPage(Model model) {

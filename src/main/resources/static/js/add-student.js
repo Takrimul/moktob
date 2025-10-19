@@ -40,12 +40,16 @@ function initializeForm() {
     const requiredFields = ['name'];
     requiredFields.forEach(fieldName => {
         const field = document.getElementById(fieldName);
-        field.addEventListener('blur', () => validateField(field));
-        field.addEventListener('input', () => clearFieldError(field));
+        if (field) {
+            field.addEventListener('blur', () => validateField(field));
+            field.addEventListener('input', () => clearFieldError(field));
+        }
     });
 }
 
 function validateField(field) {
+    if (!field) return false;
+    
     const value = field.value.trim();
     const isValid = value.length > 0;
     
@@ -77,16 +81,18 @@ function validateEmail(field) {
 }
 
 function clearFieldError(field) {
-    field.classList.remove('is-invalid');
+    if (field) {
+        field.classList.remove('is-invalid');
+    }
 }
 
 function validateForm() {
-    const requiredFields = ['name', 'email'];
+    const requiredFields = ['name'];
     let isValid = true;
     
     requiredFields.forEach(fieldName => {
         const field = document.getElementById(fieldName);
-        if (!validateField(field)) {
+        if (field && !validateField(field)) {
             isValid = false;
         }
     });
@@ -115,12 +121,12 @@ async function handleFormSubmit(event) {
         
         // Collect form data
         const formData = {
-            name: document.getElementById('name').value.trim(),
-            guardianName: document.getElementById('guardianName').value.trim() || null,
-            dob: document.getElementById('dateOfBirth').value || null,
-            guardianContact: document.getElementById('guardianContact').value.trim() || null,
-            address: document.getElementById('address').value.trim() || null,
-            classId: document.getElementById('currentClassId').value || null
+            name: document.getElementById('name')?.value?.trim() || '',
+            guardianName: document.getElementById('guardianName')?.value?.trim() || null,
+            dob: document.getElementById('dateOfBirth')?.value || null,
+            guardianContact: document.getElementById('guardianContact')?.value?.trim() || null,
+            address: document.getElementById('address')?.value?.trim() || null,
+            classId: document.getElementById('currentClassId')?.value || null
         };
         
         // Remove null values
