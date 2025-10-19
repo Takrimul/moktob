@@ -1,6 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
-    loadClasses();
-    initializeForm();
+    // Wait a bit to ensure all scripts are loaded
+    setTimeout(() => {
+        loadClasses();
+        initializeForm();
+    }, 100);
 });
 
 let classes = [];
@@ -11,10 +14,14 @@ async function loadClasses() {
         populateClassDropdown();
     } catch (error) {
         console.error('Error loading classes:', error);
-        MoktobPopup.error({
-            title: 'Error',
-            message: 'Failed to load classes. Please refresh the page and try again.'
-        });
+        if (typeof MoktobPopup !== 'undefined' && MoktobPopup.error) {
+            MoktobPopup.error({
+                title: 'Error',
+                message: 'Failed to load classes. Please refresh the page and try again.'
+            });
+        } else {
+            alert('Error: Failed to load classes. Please refresh the page and try again.');
+        }
     }
 }
 
@@ -103,11 +110,20 @@ function validateForm() {
 async function handleFormSubmit(event) {
     event.preventDefault();
     
+    // Debug: Check if MoktobPopup is available
+    console.log('MoktobPopup available:', typeof MoktobPopup);
+    console.log('MoktobPopup.success available:', typeof MoktobPopup?.success);
+    
     if (!validateForm()) {
-        MoktobPopup.error({
-            title: 'Validation Error',
-            message: 'Please fill in all required fields correctly.'
-        });
+        if (typeof MoktobPopup !== 'undefined' && MoktobPopup.error) {
+            MoktobPopup.error({
+                title: 'Validation Error',
+                message: 'Please fill in all required fields correctly.'
+            });
+        } else {
+            // Fallback to browser alert
+            alert('Validation Error: Please fill in all required fields correctly.');
+        }
         return;
     }
     
@@ -147,15 +163,21 @@ async function handleFormSubmit(event) {
         console.log('Student created successfully:', response);
         
         // Show success popup
-        MoktobPopup.success({
-            title: 'Success!',
-            message: 'Student has been added successfully.',
-            confirmText: 'OK',
-            onConfirm: () => {
-                // Redirect back to students page
-                window.location.href = '/moktob/students';
-            }
-        });
+        if (typeof MoktobPopup !== 'undefined' && MoktobPopup.success) {
+            MoktobPopup.success({
+                title: 'Success!',
+                message: 'Student has been added successfully.',
+                confirmText: 'OK',
+                onConfirm: () => {
+                    // Redirect back to students page
+                    window.location.href = '/moktob/students';
+                }
+            });
+        } else {
+            // Fallback to browser alert
+            alert('Student has been added successfully!');
+            window.location.href = '/moktob/students';
+        }
         
     } catch (error) {
         console.error('Error creating student:', error);
@@ -173,10 +195,16 @@ async function handleFormSubmit(event) {
             }, 2000);
         }
         
-        MoktobPopup.error({
-            title: 'Error',
-            message: errorMessage
-        });
+        // Show error message
+        if (typeof MoktobPopup !== 'undefined' && MoktobPopup.error) {
+            MoktobPopup.error({
+                title: 'Error',
+                message: errorMessage
+            });
+        } else {
+            // Fallback to browser alert
+            alert('Error: ' + errorMessage);
+        }
         
     } finally {
         // Re-enable submit button
