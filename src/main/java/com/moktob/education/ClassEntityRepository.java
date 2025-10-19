@@ -13,4 +13,8 @@ public interface ClassEntityRepository extends JpaRepository<ClassEntity, Long> 
     Optional<ClassEntity> findByClientIdAndId(Long clientId, Long id);
     List<ClassEntity> findByClientIdAndTeacherId(Long clientId, Long teacherId);
     List<ClassEntity> findByClientIdAndClassNameContainingIgnoreCase(Long clientId, String className);
+    
+    long countByClientId(Long clientId);
+    
+    long countByClientIdAndIsActiveTrue(Long clientId);
 }
