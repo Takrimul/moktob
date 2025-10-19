@@ -3,6 +3,7 @@ package com.moktob.controller;
 import com.moktob.attendance.Attendance;
 import com.moktob.attendance.AttendanceService;
 import com.moktob.common.AttendanceStatus;
+import com.moktob.dto.AttendanceRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -31,14 +32,13 @@ public class AttendanceController {
     }
     
     @PostMapping
-    public ResponseEntity<Attendance> createAttendance(@RequestBody Attendance attendance) {
-        return ResponseEntity.ok(attendanceService.saveAttendance(attendance));
+    public ResponseEntity<Attendance> createAttendance(@RequestBody AttendanceRequest attendanceRequest) {
+        return ResponseEntity.ok(attendanceService.saveAttendance(attendanceRequest));
     }
     
     @PutMapping("/{id}")
-    public ResponseEntity<Attendance> updateAttendance(@PathVariable Long id, @RequestBody Attendance attendance) {
-        attendance.setId(id);
-        return ResponseEntity.ok(attendanceService.saveAttendance(attendance));
+    public ResponseEntity<Attendance> updateAttendance(@PathVariable Long id, @RequestBody AttendanceRequest attendanceRequest) {
+        return ResponseEntity.ok(attendanceService.saveAttendance(attendanceRequest));
     }
     
     @DeleteMapping("/{id}")

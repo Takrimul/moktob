@@ -1,5 +1,6 @@
 package com.moktob.controller;
 
+import com.moktob.dto.StudentRequest;
 import com.moktob.education.Student;
 import com.moktob.education.StudentService;
 import lombok.RequiredArgsConstructor;
@@ -28,12 +29,12 @@ public class StudentController {
     }
     
     @PostMapping
-    public ResponseEntity<Student> createStudent(@RequestBody Student student) {
-        return ResponseEntity.ok(studentService.saveStudent(student));
+    public ResponseEntity<Student> createStudent(@RequestBody StudentRequest studentRequest) {
+        return ResponseEntity.ok(studentService.saveStudent(studentRequest));
     }
     
     @PutMapping("/{id}")
-    public ResponseEntity<Student> updateStudent(@PathVariable Long id, @RequestBody Student student) {
+    public ResponseEntity<Student> updateStudent(@PathVariable Long id, @RequestBody StudentRequest student) {
         student.setId(id);
         return ResponseEntity.ok(studentService.saveStudent(student));
     }

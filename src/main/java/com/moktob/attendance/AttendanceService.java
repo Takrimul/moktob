@@ -2,6 +2,7 @@ package com.moktob.attendance;
 
 import com.moktob.common.AttendanceStatus;
 import com.moktob.common.TenantContextHolder;
+import com.moktob.dto.AttendanceRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,13 +25,26 @@ public class AttendanceService {
         Long clientId = TenantContextHolder.getTenantId();
         return attendanceRepository.findByClientIdAndId(clientId, id);
     }
-    
-    public Attendance saveAttendance(Attendance attendance) {
+
+    public Attendance saveAttendance(AttendanceRequest attendanceRequest) {
         Long clientId = TenantContextHolder.getTenantId();
+
+        Attendance attendance = attendanceRequest.getId() != null
+                ? attendanceRepository.findByClientIdAndId(clientId, attendanceRequest.getId())
+                .orElseThrow(() -> new RuntimeException("Attendance not found"))
+                : new Attendance();
+
+        attendance.setStudentId(attendanceRequest.getStudentId());
+        attendance.setClassId(attendanceRequest.getClassId());
+        attendance.setTeacherId(attendanceRequest.getTeacherId());
+        attendance.setAttendanceDate(attendanceRequest.getAttendanceDate());
+        attendance.setStatus(attendanceRequest.getStatus());
         attendance.setClientId(clientId);
+
         return attendanceRepository.save(attendance);
     }
-    
+
+
     public void deleteAttendance(Long id) {
         attendanceRepository.deleteById(id);
     }
