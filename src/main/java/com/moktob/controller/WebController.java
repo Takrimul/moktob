@@ -66,6 +66,14 @@ public class WebController {
         return "students/index";
     }
 
+    // Add Student page
+    @GetMapping("/students/add")
+    public String addStudentPage(Model model) {
+        model.addAttribute("pageTitle", "Add Student");
+        model.addAttribute("title", "Add Student - Moktob Management System");
+        return "students/add";
+    }
+
     // Teachers page
     @GetMapping("/teachers")
     public String teachersPage(Model model) {

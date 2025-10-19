@@ -2,6 +2,7 @@ package com.moktob.controller;
 
 import com.moktob.dto.ClassRequest;
 import com.moktob.dto.ClassResponseDTO;
+import com.moktob.dto.ClassDropdownDTO;
 import com.moktob.education.ClassEntity;
 import com.moktob.education.ClassEntityService;
 import lombok.RequiredArgsConstructor;
@@ -54,5 +55,10 @@ public class ClassController {
     @GetMapping("/search")
     public ResponseEntity<List<ClassEntity>> searchClassesByName(@RequestParam String className) {
         return ResponseEntity.ok(classEntityService.searchClassesByName(className));
+    }
+    
+    @GetMapping("/dropdown")
+    public ResponseEntity<List<ClassDropdownDTO>> getClassesForDropdown() {
+        return ResponseEntity.ok(classEntityService.getClassesForDropdown());
     }
 }

@@ -3,6 +3,7 @@ package com.moktob.education;
 import com.moktob.common.TenantContextHolder;
 import com.moktob.dto.ClassRequest;
 import com.moktob.dto.ClassResponseDTO;
+import com.moktob.dto.ClassDropdownDTO;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -86,5 +87,26 @@ public class ClassEntityService {
     public List<ClassEntity> searchClassesByName(String className) {
         Long clientId = TenantContextHolder.getTenantId();
         return classEntityRepository.findByClientIdAndClassNameContainingIgnoreCase(clientId, className);
+    }
+    
+    public List<ClassDropdownDTO> getClassesForDropdown() {
+        Long clientId = TenantContextHolder.getTenantId();
+        log.info("ClassEntityService.getClassesForDropdown() - clientId: {}", clientId);
+        if (clientId == null) {
+            log.warn("Client ID is null in TenantContextHolder!");
+            return List.of();
+        }
+        List<Object[]> results = classEntityRepository.findClassWithTeacherNamesAndStudentCountsByClientId(clientId);
+        return results.stream()
+                .map(this::convertArrayToDropdownDTO)
+                .collect(Collectors.toList());
+    }
+    
+    private ClassDropdownDTO convertArrayToDropdownDTO(Object[] row) {
+        return new ClassDropdownDTO(
+                (Long) row[0],           // id
+                (String) row[1],         // className
+                (String) row[3]          // teacherName
+        );
     }
 }
