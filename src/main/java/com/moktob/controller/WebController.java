@@ -29,6 +29,12 @@ public class WebController {
     public String moktobHome() {
         return "redirect:/moktob/login";
     }
+    
+    // Moktob root page with trailing slash
+    @GetMapping("/moktob/")
+    public String moktobHomeSlash() {
+        return "redirect:/moktob/login";
+    }
 
     // Login page
     @GetMapping("/login")
@@ -47,22 +53,9 @@ public class WebController {
     // Dashboard page
     @GetMapping("/dashboard")
     public String dashboardPage(Model model) {
-        try {
-            LocalDate endDate = LocalDate.now();
-            LocalDate startDate = endDate.minusDays(30);
-            
-            var dashboardData = dashboardService.getDashboardOverview(startDate, endDate);
-            
-            model.addAttribute("dashboard", dashboardData);
-            model.addAttribute("pageTitle", "Dashboard");
-            model.addAttribute("title", "Dashboard - Moktob Management System");
-            
-            return "dashboard/index";
-        } catch (Exception e) {
-            log.error("Error loading dashboard", e);
-            model.addAttribute("error", "Unable to load dashboard data");
-            return "dashboard/index";
-        }
+        model.addAttribute("pageTitle", "Dashboard");
+        model.addAttribute("title", "Dashboard - Moktob Management System");
+        return "dashboard/index";
     }
 
     // Students page

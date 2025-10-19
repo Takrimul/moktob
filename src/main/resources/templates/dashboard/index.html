@@ -1,294 +1,228 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/dashboard-layout :: dashboard-layout (~{::title}, ~{::content})}">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Dashboard - Moktob Management System</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title ?: 'Dashboard - Moktob Management System'}">Dashboard</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link th:href="@{/css/style.css}" rel="stylesheet">
 </head>
 <body>
-    <div th:fragment="content">
-        <!-- Statistics Cards -->
-        <div class="row mb-4">
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-primary shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                    Total Students
-                                </div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${dashboard.totalStudents}">0</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-user-graduate fa-2x text-gray-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-success shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                    Total Teachers
-                                </div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${dashboard.totalTeachers}">0</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-chalkboard-teacher fa-2x text-gray-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-info shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                    Total Classes
-                                </div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${dashboard.totalClasses}">0</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-school fa-2x text-gray-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-warning shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                    Attendance Rate
-                                </div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                    <span th:text="${#numbers.formatDecimal(dashboard.overallAttendanceRate, 1, 1)}">0.0</span>%
-                                </div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-calendar-check fa-2x text-gray-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Charts Row -->
+    <div class="container-fluid">
         <div class="row">
-            <!-- Attendance Trend Chart -->
-            <div class="col-xl-8 col-lg-7">
-                <div class="card shadow mb-4">
-                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                        <h6 class="m-0 font-weight-bold text-primary">Attendance Trends</h6>
-                        <div class="dropdown no-arrow">
-                            <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                                <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/moktob/dashboard">
+                                <i class="fas fa-tachometer-alt me-2"></i>
+                                Dashboard
                             </a>
-                            <div class="dropdown-menu dropdown-menu-right shadow">
-                                <a class="dropdown-item" href="#">Last 7 days</a>
-                                <a class="dropdown-item" href="#">Last 30 days</a>
-                                <a class="dropdown-item" href="#">Last 3 months</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="chart-area">
-                            <canvas id="attendanceTrendChart"></canvas>
-                        </div>
-                    </div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/moktob/students">
+                                <i class="fas fa-user-graduate me-2"></i>
+                                Students
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/moktob/teachers">
+                                <i class="fas fa-chalkboard-teacher me-2"></i>
+                                Teachers
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/moktob/classes">
+                                <i class="fas fa-school me-2"></i>
+                                Classes
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/moktob/attendance">
+                                <i class="fas fa-calendar-check me-2"></i>
+                                Attendance
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/moktob/payments">
+                                <i class="fas fa-credit-card me-2"></i>
+                                Payments
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/moktob/reports">
+                                <i class="fas fa-chart-bar me-2"></i>
+                                Reports
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/moktob/settings">
+                                <i class="fas fa-cog me-2"></i>
+                                Settings
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" onclick="logout()">
+                                <i class="fas fa-sign-out-alt me-2"></i>
+                                Logout
+                            </a>
+                        </li>
+                    </ul>
                 </div>
-            </div>
+            </nav>
 
-            <!-- Class Attendance Pie Chart -->
-            <div class="col-xl-4 col-lg-5">
-                <div class="card shadow mb-4">
-                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                        <h6 class="m-0 font-weight-bold text-primary">Class Attendance</h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="chart-pie pt-4 pb-2">
-                            <canvas id="classAttendanceChart"></canvas>
+            <!-- Main content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2" th:text="${pageTitle ?: 'Dashboard'}">Dashboard</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group me-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-download me-1"></i>Export
+                            </button>
                         </div>
-                        <div class="mt-4 text-center small">
-                            <span class="mr-2">
-                                <i class="fas fa-circle text-primary"></i> Present
-                            </span>
-                            <span class="mr-2">
-                                <i class="fas fa-circle text-success"></i> Absent
-                            </span>
-                            <span class="mr-2">
-                                <i class="fas fa-circle text-info"></i> Late
-                            </span>
-                        </div>
+                        <button type="button" class="btn btn-sm btn-primary">
+                            <i class="fas fa-plus me-1"></i>Add New
+                        </button>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Data Tables Row -->
-        <div class="row">
-            <!-- Top Performing Students -->
-            <div class="col-lg-6">
-                <div class="card shadow mb-4">
-                    <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">Top Performing Students</h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-bordered" width="100%" cellspacing="0">
-                                <thead>
-                                    <tr>
-                                        <th>Student</th>
-                                        <th>Class</th>
-                                        <th>Attendance</th>
-                                        <th>Score</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr th:each="student : ${dashboard.topPerformingStudents}">
-                                        <td th:text="${student.studentName}">Student Name</td>
-                                        <td th:text="${student.className}">Class Name</td>
-                                        <td>
-                                            <span class="badge bg-success" th:text="${#numbers.formatDecimal(student.attendanceRate, 1, 1)} + '%'">95%</span>
-                                        </td>
-                                        <td th:text="${#numbers.formatDecimal(student.overallScore, 1, 1)}">88.5</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                <!-- Statistics Cards -->
+                <div class="row mb-4">
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-primary shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                            Total Students
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">0</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-user-graduate fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <!-- Class Attendance Summary -->
-            <div class="col-lg-6">
-                <div class="card shadow mb-4">
-                    <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">Class Attendance Summary</h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-bordered" width="100%" cellspacing="0">
-                                <thead>
-                                    <tr>
-                                        <th>Class</th>
-                                        <th>Teacher</th>
-                                        <th>Students</th>
-                                        <th>Attendance</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr th:each="classSummary : ${dashboard.classAttendanceSummaries}">
-                                        <td th:text="${classSummary.className}">Class Name</td>
-                                        <td th:text="${classSummary.teacherName}">Teacher Name</td>
-                                        <td th:text="${classSummary.totalStudents}">20</td>
-                                        <td>
-                                            <span class="badge bg-primary" th:text="${#numbers.formatDecimal(classSummary.attendanceRate, 1, 1)} + '%'">85%</span>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-success shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                            Total Teachers
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">0</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-chalkboard-teacher fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Quick Actions -->
-        <div class="row">
-            <div class="col-12">
-                <div class="card shadow mb-4">
-                    <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">Quick Actions</h6>
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-info shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                            Total Classes
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">0</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-school fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-3 mb-3">
-                                <a href="/moktob/students/add" class="btn btn-primary btn-block w-100">
-                                    <i class="fas fa-user-plus me-2"></i>Add Student
-                                </a>
-                            </div>
-                            <div class="col-md-3 mb-3">
-                                <a href="/moktob/teachers/add" class="btn btn-success btn-block w-100">
-                                    <i class="fas fa-chalkboard-teacher me-2"></i>Add Teacher
-                                </a>
-                            </div>
-                            <div class="col-md-3 mb-3">
-                                <a href="/moktob/classes/add" class="btn btn-info btn-block w-100">
-                                    <i class="fas fa-school me-2"></i>Add Class
-                                </a>
-                            </div>
-                            <div class="col-md-3 mb-3">
-                                <a href="/moktob/attendance/mark" class="btn btn-warning btn-block w-100">
-                                    <i class="fas fa-calendar-check me-2"></i>Mark Attendance
-                                </a>
+
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-warning shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                            Attendance Rate
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">0.0%</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-calendar-check fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+
+                <!-- Welcome Message -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h3 class="card-title">Welcome to Moktob Management System</h3>
+                                <p class="card-text">Your comprehensive solution for managing students, teachers, classes, and attendance.</p>
+                                <div class="row mt-4">
+                                    <div class="col-md-4">
+                                        <a href="/moktob/students" class="btn btn-primary btn-block w-100">
+                                            <i class="fas fa-user-graduate me-2"></i>Manage Students
+                                        </a>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <a href="/moktob/teachers" class="btn btn-success btn-block w-100">
+                                            <i class="fas fa-chalkboard-teacher me-2"></i>Manage Teachers
+                                        </a>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <a href="/moktob/classes" class="btn btn-info btn-block w-100">
+                                            <i class="fas fa-school me-2"></i>Manage Classes
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <a href="/moktob/attendance" class="btn btn-warning btn-block w-100">
+                                            <i class="fas fa-calendar-check me-2"></i>Mark Attendance
+                                        </a>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <a href="/moktob/payments" class="btn btn-secondary btn-block w-100">
+                                            <i class="fas fa-credit-card me-2"></i>Manage Payments
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
         </div>
     </div>
 
-    <!-- Chart.js Scripts -->
-    <script th:fragment="additional-scripts">
-        // Attendance Trend Chart
-        const attendanceTrendCtx = document.getElementById('attendanceTrendChart').getContext('2d');
-        const attendanceTrendChart = new Chart(attendanceTrendCtx, {
-            type: 'line',
-            data: {
-                labels: /*[[${dashboard.attendanceTrends}]]*/ [],
-                datasets: [{
-                    label: 'Attendance Rate',
-                    data: /*[[${dashboard.attendanceTrends}]]*/ [],
-                    borderColor: 'rgb(75, 192, 192)',
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    tension: 0.1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: 100
-                    }
-                }
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script th:src="@{/js/app.js}"></script>
+    <script>
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                MoktobApp.removeToken();
+                window.location.href = '/moktob/login';
             }
-        });
-
-        // Class Attendance Pie Chart
-        const classAttendanceCtx = document.getElementById('classAttendanceChart').getContext('2d');
-        const classAttendanceChart = new Chart(classAttendanceCtx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Present', 'Absent', 'Late'],
-                datasets: [{
-                    data: [/*[[${dashboard.totalPresent}]]*/ 0, /*[[${dashboard.totalAbsent}]]*/ 0, /*[[${dashboard.totalLate}]]*/ 0],
-                    backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc'],
-                    hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf']
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom'
-                    }
-                }
-            }
-        });
+        }
     </script>
 </body>
 </html>
