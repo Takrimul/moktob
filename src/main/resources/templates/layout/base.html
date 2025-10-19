@@ -187,14 +187,136 @@
     </main>
 
     <!-- Footer -->
-    <footer th:fragment="footer" class="footer mt-auto py-3 bg-light">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    <span class="text-muted">&copy; 2024 Moktob Management System. All rights reserved.</span>
+    <footer th:fragment="footer" class="footer mt-auto bg-dark text-light">
+        <div class="container-fluid">
+            <div class="row py-4">
+                <!-- Company Info -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fas fa-mosque fa-2x text-primary me-3"></i>
+                        <div>
+                            <h5 class="mb-0 text-white">Moktob Management System</h5>
+                            <small class="text-muted">Educational Excellence Platform</small>
+                        </div>
+                    </div>
+                    <p class="text-muted mb-3">
+                        A comprehensive management system for Islamic educational institutions, 
+                        providing tools for student management, attendance tracking, and academic progress monitoring.
+                    </p>
+                    <div class="d-flex">
+                        <a href="#" class="text-light me-3">
+                            <i class="fab fa-facebook-f fa-lg"></i>
+                        </a>
+                        <a href="#" class="text-light me-3">
+                            <i class="fab fa-twitter fa-lg"></i>
+                        </a>
+                        <a href="#" class="text-light me-3">
+                            <i class="fab fa-linkedin-in fa-lg"></i>
+                        </a>
+                        <a href="#" class="text-light">
+                            <i class="fab fa-instagram fa-lg"></i>
+                        </a>
+                    </div>
                 </div>
-                <div class="col-md-6 text-end">
-                    <span class="text-muted">Version 1.0.0</span>
+
+                <!-- Quick Links -->
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h6 class="text-white mb-3">Quick Links</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <a href="/moktob/dashboard" class="text-muted text-decoration-none">
+                                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="/moktob/students" class="text-muted text-decoration-none">
+                                <i class="fas fa-user-graduate me-2"></i>Students
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="/moktob/teachers" class="text-muted text-decoration-none">
+                                <i class="fas fa-chalkboard-teacher me-2"></i>Teachers
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="/moktob/classes" class="text-muted text-decoration-none">
+                                <i class="fas fa-school me-2"></i>Classes
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="/moktob/attendance" class="text-muted text-decoration-none">
+                                <i class="fas fa-calendar-check me-2"></i>Attendance
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Support -->
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h6 class="text-white mb-3">Support</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <a href="/moktob/help" class="text-muted text-decoration-none">
+                                <i class="fas fa-question-circle me-2"></i>Help Center
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="/moktob/contact" class="text-muted text-decoration-none">
+                                <i class="fas fa-envelope me-2"></i>Contact Us
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="/moktob/documentation" class="text-muted text-decoration-none">
+                                <i class="fas fa-book me-2"></i>Documentation
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="/moktob/faq" class="text-muted text-decoration-none">
+                                <i class="fas fa-lightbulb me-2"></i>FAQ
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <h6 class="text-white mb-3">Contact Information</h6>
+                    <div class="mb-3">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas fa-map-marker-alt text-primary me-3"></i>
+                            <span class="text-muted">123 Education Street, Learning City, LC 12345</span>
+                        </div>
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas fa-phone text-primary me-3"></i>
+                            <span class="text-muted">+1 (555) 123-4567</span>
+                        </div>
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas fa-envelope text-primary me-3"></i>
+                            <span class="text-muted">info@moktob.edu</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-clock text-primary me-3"></i>
+                            <span class="text-muted">Mon - Fri: 8:00 AM - 6:00 PM</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Bar -->
+            <div class="border-top border-secondary pt-3">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <p class="text-muted mb-0">
+                            &copy; 2024 Moktob Management System. All rights reserved.
+                        </p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <div class="d-flex justify-content-md-end align-items-center">
+                            <span class="text-muted me-3">Version 1.0.0</span>
+                            <a href="/moktob/privacy" class="text-muted text-decoration-none me-3">Privacy Policy</a>
+                            <a href="/moktob/terms" class="text-muted text-decoration-none">Terms of Service</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -318,12 +318,97 @@ body {
     background: #a8a8a8;
 }
 
+/* Footer Styles */
+.footer {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    color: #ecf0f1;
+    margin-top: auto;
+}
+
+.footer h5,
+.footer h6 {
+    color: #ffffff;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.footer .text-muted {
+    color: #bdc3c7 !important;
+}
+
+.footer a {
+    color: #bdc3c7;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.footer a:hover {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.footer .fab,
+.footer .fas {
+    transition: all 0.3s ease;
+}
+
+.footer .fab:hover,
+.footer .fas:hover {
+    transform: translateY(-2px);
+    color: var(--primary-color);
+}
+
+.footer .border-secondary {
+    border-color: #34495e !important;
+}
+
+.footer .list-unstyled li {
+    margin-bottom: 0.5rem;
+}
+
+.footer .list-unstyled li a {
+    display: flex;
+    align-items: center;
+    padding: 0.25rem 0;
+}
+
+.footer .list-unstyled li a:hover {
+    padding-left: 0.5rem;
+}
+
+/* Footer Responsive */
+@media (max-width: 768px) {
+    .footer .text-md-end {
+        text-align: left !important;
+        margin-top: 1rem;
+    }
+    
+    .footer .d-flex.justify-content-md-end {
+        justify-content: flex-start !important;
+    }
+}
+
+/* Sticky Footer */
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
 /* Print Styles */
 @media print {
     .sidebar,
     .navbar,
     .btn,
-    .card-header {
+    .card-header,
+    .footer {
         display: none !important;
     }
     
