@@ -87,9 +87,9 @@
                                 <i class="fas fa-download me-1"></i>Export
                             </button>
                         </div>
-                        <button type="button" class="btn btn-sm btn-primary">
-                            <i class="fas fa-plus me-1"></i>Add Class
-                        </button>
+                            <button type="button" class="btn btn-sm btn-primary" onclick="addClass()">
+                                <i class="fas fa-plus me-1"></i>Add Class
+                            </button>
                     </div>
                 </div>
 
@@ -131,10 +131,18 @@
     <script th:src="@{/js/app.js}"></script>
     <script>
         function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                MoktobApp.removeToken();
-                window.location.href = '/moktob/login';
-            }
+            MoktobPopup.confirm({
+                title: 'Logout Confirmation',
+                message: 'Are you sure you want to logout?',
+                onConfirm: () => {
+                    MoktobApp.removeToken();
+                    window.location.href = '/moktob/login';
+                }
+            });
+        }
+
+        function addClass() {
+            window.location.href = '/moktob/classes/add';
         }
         
         // Load classes data when page loads

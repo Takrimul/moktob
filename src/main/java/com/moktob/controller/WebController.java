@@ -82,12 +82,28 @@ public class WebController {
         return "teachers/index";
     }
 
+    // Add Teacher page
+    @GetMapping("/teachers/add")
+    public String addTeacherPage(Model model) {
+        model.addAttribute("pageTitle", "Add Teacher");
+        model.addAttribute("title", "Add Teacher - Moktob Management System");
+        return "teachers/add";
+    }
+
     // Classes page
     @GetMapping("/classes")
     public String classesPage(Model model) {
         model.addAttribute("pageTitle", "Classes");
         model.addAttribute("title", "Classes - Moktob Management System");
         return "classes/index";
+    }
+
+    // Add Class page
+    @GetMapping("/classes/add")
+    public String addClassPage(Model model) {
+        model.addAttribute("pageTitle", "Add Class");
+        model.addAttribute("title", "Add Class - Moktob Management System");
+        return "classes/add";
     }
 
     // Attendance page
