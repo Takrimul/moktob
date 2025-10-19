@@ -144,7 +144,7 @@ async function handleFormSubmit(event) {
         console.log('Submitting student data:', formData);
         
         // Submit to API
-        const response = await MoktobApp.apiRequest('/api/students', {
+        const response = await MoktobApp.apiRequest('/moktob/api/students', {
             method: 'POST',
             body: JSON.stringify(formData)
         });

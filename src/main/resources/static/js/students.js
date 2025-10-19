@@ -14,7 +14,7 @@ async function loadStudents() {
     `;
 
     try {
-        const students = await MoktobApp.apiRequest('/api/students');
+        const students = await MoktobApp.apiRequest('/moktob/api/students');
         renderStudentsTable(students);
     } catch (error) {
         console.error('Error loading students:', error);
@@ -106,7 +106,7 @@ function deleteStudent(studentId) {
         type: 'error',
         onConfirm: async () => {
             try {
-                await MoktobApp.apiRequest(`/api/students/${studentId}`, {
+                await MoktobApp.apiRequest(`/moktob/api/students/${studentId}`, {
                     method: 'DELETE'
                 });
                 

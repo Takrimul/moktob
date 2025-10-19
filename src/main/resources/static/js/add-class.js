@@ -113,11 +113,15 @@ async function handleFormSubmit(event) {
             throw new Error('Class name is required');
         }
         
+        console.log('Submitting class data:', formData);
+        
         // Submit the form
         const response = await MoktobApp.apiRequest('/moktob/api/classes', {
             method: 'POST',
             body: JSON.stringify(formData)
         });
+        
+        console.log('Class created successfully:', response);
         
         // Show success message
         MoktobPopup.success({

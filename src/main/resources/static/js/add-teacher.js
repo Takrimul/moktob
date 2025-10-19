@@ -89,11 +89,15 @@ async function handleFormSubmit(event) {
             throw new Error('Email is required');
         }
         
+        console.log('Submitting teacher data:', formData);
+        
         // Submit the form
         const response = await MoktobApp.apiRequest('/moktob/api/teachers', {
             method: 'POST',
             body: JSON.stringify(formData)
         });
+        
+        console.log('Teacher created successfully:', response);
         
         // Show success message
         MoktobPopup.success({
