@@ -41,7 +41,7 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: takrimul25@gmail.com
-    password: ${MAIL_PASSWORD:missionIslam#01}
+    password: ${MAIL_PASSWORD:ettg hqde yowf dhdr}
     properties:
       mail:
         smtp:
