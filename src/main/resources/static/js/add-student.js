@@ -37,16 +37,12 @@ function initializeForm() {
     form.addEventListener('submit', handleFormSubmit);
 
     // Real-time validation
-    const requiredFields = ['name', 'email'];
+    const requiredFields = ['name'];
     requiredFields.forEach(fieldName => {
         const field = document.getElementById(fieldName);
         field.addEventListener('blur', () => validateField(field));
         field.addEventListener('input', () => clearFieldError(field));
     });
-
-    // Email validation
-    const emailField = document.getElementById('email');
-    emailField.addEventListener('blur', () => validateEmail(emailField));
 }
 
 function validateField(field) {
@@ -95,12 +91,6 @@ function validateForm() {
         }
     });
     
-    // Validate email format
-    const emailField = document.getElementById('email');
-    if (emailField.value.trim() && !validateEmail(emailField)) {
-        isValid = false;
-    }
-    
     return isValid;
 }
 
@@ -126,7 +116,6 @@ async function handleFormSubmit(event) {
         // Collect form data
         const formData = {
             name: document.getElementById('name').value.trim(),
-            email: document.getElementById('email').value.trim(),
             guardianName: document.getElementById('guardianName').value.trim() || null,
             dob: document.getElementById('dateOfBirth').value || null,
             guardianContact: document.getElementById('guardianContact').value.trim() || null,

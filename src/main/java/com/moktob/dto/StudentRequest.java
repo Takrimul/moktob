@@ -11,7 +11,6 @@ public class StudentRequest {
     private String guardianName;
     private LocalDate dob;
     private String guardianContact;
-    private String email;
     private String address;
     private Long classId;
 
