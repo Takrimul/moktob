@@ -7,7 +7,7 @@ let classes = [];
 
 async function loadClasses() {
     try {
-        classes = await MoktobApp.apiRequest('/api/classes/dropdown');
+        classes = await MoktobApp.apiRequest('/moktob/api/classes/dropdown');
         populateClassDropdown();
     } catch (error) {
         console.error('Error loading classes:', error);
