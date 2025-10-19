@@ -77,7 +77,7 @@ public class AuthenticationService {
     public UserAccount createUser(CreateUserRequest request) {
         Long clientId = TenantContextHolder.getTenantId();
 
-        // Check if username already exists
+        // Check if a username already exists
         if (userAccountRepository.findByUsername(request.getUsername()).isPresent()) {
             throw new IllegalArgumentException("Username already exists");
         }
@@ -89,6 +89,7 @@ public class AuthenticationService {
         user.setEmail(request.getEmail());
         user.setPhone(request.getPhone());
         user.setIsActive(true);
+        user.setClientId(clientId);
 
         // Set role if provided
         if (request.getRoleName() != null) {

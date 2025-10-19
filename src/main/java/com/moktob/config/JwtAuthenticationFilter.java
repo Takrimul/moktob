@@ -51,12 +51,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             try {
-                // Check if token exists in Redis (not logged out)
-                if (!redisTokenService.isTokenValid(jwtToken)) {
-                    log.debug("Token not found in Redis or has been logged out: {}", username);
-                    chain.doFilter(request, response);
-                    return;
-                }
+                // Check if a token exists in Redis (not logged out)
+//                if (!redisTokenService.isTokenValid(jwtToken)) {
+//                    log.debug("Token not found in Redis or has been logged out: {}", username);
+//                    chain.doFilter(request, response);
+//                    return;
+//                }
                 
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
