@@ -54,6 +54,8 @@ function handleLogin(event) {
             const rememberMe = document.getElementById('rememberMe').checked;
             MoktobApp.setToken(data.jwt, rememberMe);
             
+            // Token is already stored in localStorage by MoktobApp.setToken()
+            
             // Show success message
             MoktobApp.showAlert('Login successful! Redirecting...', 'success');
             

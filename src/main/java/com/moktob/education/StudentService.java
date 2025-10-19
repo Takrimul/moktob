@@ -3,6 +3,7 @@ package com.moktob.education;
 import com.moktob.common.TenantContextHolder;
 import com.moktob.dto.StudentRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,12 +11,18 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class StudentService {
 
     private final StudentRepository studentRepository;
 
     public List<Student> getAllStudents() {
         Long clientId = TenantContextHolder.getTenantId();
+        log.info("StudentService.getAllStudents() - clientId: {}", clientId);
+        if (clientId == null) {
+            log.warn("Client ID is null in TenantContextHolder!");
+            return List.of(); // Return empty list if no client ID
+        }
         return studentRepository.findByClientId(clientId);
     }
 

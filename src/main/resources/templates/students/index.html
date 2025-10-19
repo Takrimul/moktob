@@ -97,7 +97,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-striped table-hover">
+                            <table class="table table-striped table-hover" id="studentsTable">
                                 <thead class="table-dark">
                                     <tr>
                                         <th>ID</th>
@@ -109,11 +109,11 @@
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="studentsTableBody">
                                     <tr>
                                         <td colspan="7" class="text-center text-muted">
-                                            <i class="fas fa-info-circle me-2"></i>
-                                            No students found. Add your first student to get started.
+                                            <i class="fas fa-spinner fa-spin me-2"></i>
+                                            Loading students...
                                         </td>
                                     </tr>
                                 </tbody>
@@ -135,6 +135,61 @@
                 MoktobApp.removeToken();
                 window.location.href = '/moktob/login';
             }
+        }
+        
+        // Load students data when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStudents();
+        });
+        
+        function loadStudents() {
+            const token = MoktobApp.getToken();
+            if (!token) {
+                window.location.href = '/moktob/login';
+                return;
+            }
+            
+            MoktobApp.apiRequest('/moktob/api/students')
+                .then(students => {
+                    const tbody = document.getElementById('studentsTableBody');
+                    if (students && students.length > 0) {
+                        tbody.innerHTML = students.map(student => `
+                            <tr>
+                                <td>${student.id}</td>
+                                <td>${student.name || 'N/A'}</td>
+                                <td>${student.email || 'N/A'}</td>
+                                <td>${student.phone || 'N/A'}</td>
+                                <td>${student.className || 'N/A'}</td>
+                                <td><span class="badge bg-success">Active</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary me-1">Edit</button>
+                                    <button class="btn btn-sm btn-danger">Delete</button>
+                                </td>
+                            </tr>
+                        `).join('');
+                    } else {
+                        tbody.innerHTML = `
+                            <tr>
+                                <td colspan="7" class="text-center text-muted">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    No students found. Add your first student to get started.
+                                </td>
+                            </tr>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading students:', error);
+                    const tbody = document.getElementById('studentsTableBody');
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="7" class="text-center text-danger">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                Error loading students. Please try again.
+                            </td>
+                        </tr>
+                    `;
+                });
         }
     </script>
 </body>
