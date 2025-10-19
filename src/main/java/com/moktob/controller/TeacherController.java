@@ -1,6 +1,7 @@
 package com.moktob.controller;
 
 import com.moktob.dto.TeacherRequest;
+import com.moktob.dto.TeacherResponseDTO;
 import com.moktob.education.Teacher;
 import com.moktob.education.TeacherService;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ public class TeacherController {
     private final TeacherService teacherService;
     
     @GetMapping
-    public ResponseEntity<List<Teacher>> getAllTeachers() {
+    public ResponseEntity<List<TeacherResponseDTO>> getAllTeachers() {
         return ResponseEntity.ok(teacherService.getAllTeachers());
     }
     
