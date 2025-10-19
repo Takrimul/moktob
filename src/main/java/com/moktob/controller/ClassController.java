@@ -1,5 +1,6 @@
 package com.moktob.controller;
 
+import com.moktob.dto.ClassRequest;
 import com.moktob.education.ClassEntity;
 import com.moktob.education.ClassEntityService;
 import lombok.RequiredArgsConstructor;
@@ -26,16 +27,16 @@ public class ClassController {
         Optional<ClassEntity> classEntity = classEntityService.getClassById(id);
         return classEntity.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
-    
+
+    // Create and Update methods use ClassRequest DTO for better request handling
     @PostMapping
-    public ResponseEntity<ClassEntity> createClass(@RequestBody ClassEntity classEntity) {
-        return ResponseEntity.ok(classEntityService.saveClass(classEntity));
+    public ResponseEntity<ClassEntity> createClass(@RequestBody ClassRequest classRequest) {
+        return ResponseEntity.ok(classEntityService.saveClass(classRequest));
     }
     
     @PutMapping("/{id}")
-    public ResponseEntity<ClassEntity> updateClass(@PathVariable Long id, @RequestBody ClassEntity classEntity) {
-        classEntity.setId(id);
-        return ResponseEntity.ok(classEntityService.saveClass(classEntity));
+    public ResponseEntity<ClassEntity> updateClass(@PathVariable Long id, @RequestBody ClassRequest classRequest) {;
+        return ResponseEntity.ok(classEntityService.saveClass(classRequest));
     }
     
     @DeleteMapping("/{id}")

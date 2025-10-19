@@ -1,5 +1,6 @@
 package com.moktob.controller;
 
+import com.moktob.dto.TeacherRequest;
 import com.moktob.education.Teacher;
 import com.moktob.education.TeacherService;
 import lombok.RequiredArgsConstructor;
@@ -26,14 +27,15 @@ public class TeacherController {
         Optional<Teacher> teacher = teacherService.getTeacherById(id);
         return teacher.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
-    
+
+    // Create a new teacher
     @PostMapping
-    public ResponseEntity<Teacher> createTeacher(@RequestBody Teacher teacher) {
+    public ResponseEntity<Teacher> createTeacher(@RequestBody TeacherRequest teacher) {
         return ResponseEntity.ok(teacherService.saveTeacher(teacher));
     }
     
     @PutMapping("/{id}")
-    public ResponseEntity<Teacher> updateTeacher(@PathVariable Long id, @RequestBody Teacher teacher) {
+    public ResponseEntity<Teacher> updateTeacher(@PathVariable Long id, @RequestBody TeacherRequest teacher) {
         teacher.setId(id);
         return ResponseEntity.ok(teacherService.saveTeacher(teacher));
     }

@@ -1,6 +1,7 @@
 package com.moktob.education;
 
 import com.moktob.common.TenantContextHolder;
+import com.moktob.dto.TeacherRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,13 +23,26 @@ public class TeacherService {
         Long clientId = TenantContextHolder.getTenantId();
         return teacherRepository.findByClientIdAndId(clientId, id);
     }
-    
-    public Teacher saveTeacher(Teacher teacher) {
+
+    public Teacher saveTeacher(TeacherRequest teacher) {
         Long clientId = TenantContextHolder.getTenantId();
-        teacher.setClientId(clientId);
-        return teacherRepository.save(teacher);
+
+        Teacher entity = teacher.getId() != null
+                ? teacherRepository.findByClientIdAndId(clientId, teacher.getId())
+                .orElse(new Teacher())
+                : new Teacher();
+
+        entity.setName(teacher.getName());
+        entity.setEmail(teacher.getEmail());
+        entity.setQualification(teacher.getQualification());
+        entity.setPhone(teacher.getPhoneNumber());
+        entity.setIsActive(teacher.getIsActive());
+        entity.setClientId(clientId);
+
+        return teacherRepository.save(entity);
     }
-    
+
+
     public void deleteTeacher(Long id) {
         teacherRepository.deleteById(id);
     }
