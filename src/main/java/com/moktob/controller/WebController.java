@@ -21,7 +21,13 @@ public class WebController {
     // Home page
     @GetMapping("/")
     public String home() {
-        return "redirect:/moktob/dashboard";
+        return "redirect:/moktob/login";
+    }
+
+    // Moktob root page
+    @GetMapping("/moktob")
+    public String moktobHome() {
+        return "redirect:/moktob/login";
     }
 
     // Login page
