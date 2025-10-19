@@ -48,6 +48,7 @@ function handleLogin(event) {
     })
     .then(response => response.json())
     .then(data => {
+        console.log('Login response:', data);
         if (data.token) {
             // Store token
             const rememberMe = document.getElementById('rememberMe').checked;
