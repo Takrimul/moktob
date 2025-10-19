@@ -1,6 +1,7 @@
 package com.moktob.controller;
 
 import com.moktob.dto.ClassRequest;
+import com.moktob.dto.ClassResponseDTO;
 import com.moktob.education.ClassEntity;
 import com.moktob.education.ClassEntityService;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ public class ClassController {
     private final ClassEntityService classEntityService;
     
     @GetMapping
-    public ResponseEntity<List<ClassEntity>> getAllClasses() {
+    public ResponseEntity<List<ClassResponseDTO>> getAllClasses() {
         return ResponseEntity.ok(classEntityService.getAllClasses());
     }
     
@@ -35,7 +36,7 @@ public class ClassController {
     }
     
     @PutMapping("/{id}")
-    public ResponseEntity<ClassEntity> updateClass(@PathVariable Long id, @RequestBody ClassRequest classRequest) {;
+    public ResponseEntity<ClassEntity> updateClass(@PathVariable Long id, @RequestBody ClassRequest classRequest) {
         return ResponseEntity.ok(classEntityService.saveClass(classRequest));
     }
     

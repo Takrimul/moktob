@@ -2,22 +2,48 @@ package com.moktob.education;
 
 import com.moktob.common.TenantContextHolder;
 import com.moktob.dto.ClassRequest;
+import com.moktob.dto.ClassResponseDTO;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ClassEntityService {
     
     private final ClassEntityRepository classEntityRepository;
     
-    public List<ClassEntity> getAllClasses() {
+    public List<ClassResponseDTO> getAllClasses() {
         Long clientId = TenantContextHolder.getTenantId();
-        return classEntityRepository.findByClientId(clientId);
+        log.info("ClassEntityService.getAllClasses() - clientId: {}", clientId);
+        if (clientId == null) {
+            log.warn("Client ID is null in TenantContextHolder!");
+            return List.of(); // Return empty list if no client ID
+        }
+        List<Object[]> results = classEntityRepository.findClassWithTeacherNamesAndStudentCountsByClientId(clientId);
+        return results.stream()
+                .map(this::convertArrayToDTO)
+                .collect(Collectors.toList());
+    }
+    
+    private ClassResponseDTO convertArrayToDTO(Object[] row) {
+        return new ClassResponseDTO(
+                (Long) row[0],           // id
+                (String) row[1],         // className
+                (Long) row[2],           // teacherId
+                (String) row[3],         // teacherName
+                (LocalTime) row[4],      // startTime
+                (LocalTime) row[5],      // endTime
+                (String) row[6],         // daysOfWeek
+                ((Number) row[7]).longValue() // studentCount
+        );
     }
     
     public Optional<ClassEntity> getClassById(Long id) {

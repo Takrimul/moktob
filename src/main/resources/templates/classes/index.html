@@ -97,23 +97,23 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-striped table-hover">
+                            <table class="table table-striped table-hover" id="classesTable">
                                 <thead class="table-dark">
                                     <tr>
                                         <th>ID</th>
                                         <th>Class Name</th>
-                                        <th>Subject</th>
                                         <th>Teacher</th>
-                                        <th>Students</th>
                                         <th>Schedule</th>
+                                        <th>Days</th>
+                                        <th>Students</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="classesTableBody">
                                     <tr>
                                         <td colspan="7" class="text-center text-muted">
-                                            <i class="fas fa-info-circle me-2"></i>
-                                            No classes found. Add your first class to get started.
+                                            <i class="fas fa-spinner fa-spin me-2"></i>
+                                            Loading classes...
                                         </td>
                                     </tr>
                                 </tbody>
@@ -135,6 +135,66 @@
                 MoktobApp.removeToken();
                 window.location.href = '/moktob/login';
             }
+        }
+        
+        // Load classes data when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadClasses();
+        });
+        
+        function loadClasses() {
+            const token = MoktobApp.getToken();
+            if (!token) {
+                window.location.href = '/moktob/login';
+                return;
+            }
+            
+            MoktobApp.apiRequest('/moktob/api/classes')
+                .then(classes => {
+                    const tbody = document.getElementById('classesTableBody');
+                    if (classes && classes.length > 0) {
+                        tbody.innerHTML = classes.map(classItem => `
+                            <tr>
+                                <td>${classItem.id}</td>
+                                <td>${classItem.className || 'N/A'}</td>
+                                <td>${classItem.teacherName || 'N/A'}</td>
+                                <td>
+                                    ${classItem.startTime ? classItem.startTime.substring(0, 5) : 'N/A'} - 
+                                    ${classItem.endTime ? classItem.endTime.substring(0, 5) : 'N/A'}
+                                </td>
+                                <td>${classItem.daysOfWeek || 'N/A'}</td>
+                                <td>
+                                    <span class="badge bg-info">${classItem.studentCount || 0} students</span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary me-1">Edit</button>
+                                    <button class="btn btn-sm btn-danger">Delete</button>
+                                </td>
+                            </tr>
+                        `).join('');
+                    } else {
+                        tbody.innerHTML = `
+                            <tr>
+                                <td colspan="7" class="text-center text-muted">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    No classes found. Add your first class to get started.
+                                </td>
+                            </tr>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading classes:', error);
+                    const tbody = document.getElementById('classesTableBody');
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="7" class="text-center text-danger">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                Error loading classes. Please try again.
+                            </td>
+                        </tr>
+                    `;
+                });
         }
     </script>
 </body>
