@@ -1,7 +1,9 @@
 let selectedClassId = null;
 let selectedDate = null;
+let selectedTeacherId = null;
 let students = [];
 let attendanceData = {};
+let classes = [];
 
 // Initialize page
 document.addEventListener('DOMContentLoaded', function() {
@@ -29,7 +31,7 @@ function loadUserInfo() {
 
 async function loadClasses() {
     try {
-        const classes = await MoktobApp.apiRequest('/moktob/api/classes/dropdown');
+        classes = await MoktobApp.apiRequest('/moktob/api/classes/dropdown');
         const classSelect = document.getElementById('classSelect');
         
         classSelect.innerHTML = '<option value="">Select a class...</option>';
@@ -37,6 +39,7 @@ async function loadClasses() {
             const option = document.createElement('option');
             option.value = cls.id;
             option.textContent = `${cls.className} - ${cls.teacherName}`;
+            option.dataset.teacherId = cls.teacherId; // Store teacherId in dataset
             classSelect.appendChild(option);
         });
     } catch (error) {
@@ -55,7 +58,13 @@ async function loadClassStudents() {
     selectedClassId = classSelect.value;
     selectedDate = dateInput.value;
     
-    if (!selectedClassId || !selectedDate) {
+    // Get teacherId from selected option
+    const selectedOption = classSelect.selectedOptions[0];
+    selectedTeacherId = selectedOption ? selectedOption.dataset.teacherId : null;
+    
+    console.log('Selected class:', selectedClassId, 'Teacher ID:', selectedTeacherId);
+    
+    if (!selectedClassId || !selectedDate || !selectedTeacherId) {
         hideAttendanceForm();
         return;
     }
@@ -260,6 +269,7 @@ async function saveAttendance() {
         const attendanceRecords = students.map(student => ({
             classId: parseInt(selectedClassId),
             studentId: student.id,
+            teacherId: parseInt(selectedTeacherId),
             attendanceDate: selectedDate,
             status: attendanceData[student.id] || 'PRESENT'
         }));

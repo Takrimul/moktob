@@ -11,4 +11,5 @@ public class ClassDropdownDTO {
     private Long id;
     private String className;
     private String teacherName;
+    private Long teacherId;
 }

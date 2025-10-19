@@ -106,7 +106,8 @@ public class ClassEntityService {
         return new ClassDropdownDTO(
                 (Long) row[0],           // id
                 (String) row[1],         // className
-                (String) row[3]          // teacherName
+                (String) row[3],         // teacherName
+                (Long) row[2]            // teacherId
         );
     }
 }
