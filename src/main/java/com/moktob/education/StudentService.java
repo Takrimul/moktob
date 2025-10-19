@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,24 +26,24 @@ public class StudentService {
             log.warn("Client ID is null in TenantContextHolder!");
             return List.of(); // Return empty list if no client ID
         }
-        List<Student> students = studentRepository.findByClientId(clientId);
-        return students.stream()
-                .map(this::convertToDTO)
+        List<Object[]> results = studentRepository.findStudentWithClassNamesByClientId(clientId);
+        return results.stream()
+                .map(this::convertArrayToDTO)
                 .collect(Collectors.toList());
     }
     
-    private StudentResponseDTO convertToDTO(Student student) {
+    private StudentResponseDTO convertArrayToDTO(Object[] row) {
         return new StudentResponseDTO(
-                student.getId(),
-                student.getName(),
-                student.getDateOfBirth(),
-                student.getGuardianName(),
-                student.getGuardianContact(),
-                student.getAddress(),
-                student.getEnrollmentDate(),
-                student.getCurrentClassId(),
-                student.getPhotoUrl(),
-                student.getCurrentClass().getClassName()// className will be populated separately if needed
+                (Long) row[0],           // id
+                (String) row[1],         // name
+                (LocalDate) row[2],      // dateOfBirth
+                (String) row[3],         // guardianName
+                (String) row[4],         // guardianContact
+                (String) row[5],         // address
+                (LocalDate) row[6],      // enrollmentDate
+                (Long) row[7],           // currentClassId
+                (String) row[8],         // photoUrl
+                (String) row[9]          // className
         );
     }
 

@@ -21,4 +21,10 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     List<Student> findByClientIdAndNameContainingIgnoreCase(Long clientId, String name);
     
     long countByClientId(Long clientId);
+    
+    @Query("SELECT s.id, s.name, s.dateOfBirth, s.guardianName, s.guardianContact, s.address, " +
+           "s.enrollmentDate, s.currentClassId, s.photoUrl, c.className " +
+           "FROM Student s LEFT JOIN ClassEntity c ON s.currentClassId = c.id " +
+           "WHERE s.clientId = :clientId")
+    List<Object[]> findStudentWithClassNamesByClientId(@Param("clientId") Long clientId);
 }
