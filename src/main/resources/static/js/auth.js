@@ -49,10 +49,10 @@ function handleLogin(event) {
     .then(response => response.json())
     .then(data => {
         console.log('Login response:', data);
-        if (data.token) {
+        if (data.jwt) {
             // Store token
             const rememberMe = document.getElementById('rememberMe').checked;
-            MoktobApp.setToken(data.token, rememberMe);
+            MoktobApp.setToken(data.jwt, rememberMe);
             
             // Show success message
             MoktobApp.showAlert('Login successful! Redirecting...', 'success');
