@@ -2,12 +2,14 @@ package com.moktob.education;
 
 import com.moktob.common.TenantContextHolder;
 import com.moktob.dto.StudentRequest;
+import com.moktob.dto.StudentResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -16,14 +18,32 @@ public class StudentService {
 
     private final StudentRepository studentRepository;
 
-    public List<Student> getAllStudents() {
+    public List<StudentResponseDTO> getAllStudents() {
         Long clientId = TenantContextHolder.getTenantId();
         log.info("StudentService.getAllStudents() - clientId: {}", clientId);
         if (clientId == null) {
             log.warn("Client ID is null in TenantContextHolder!");
             return List.of(); // Return empty list if no client ID
         }
-        return studentRepository.findByClientId(clientId);
+        List<Student> students = studentRepository.findByClientId(clientId);
+        return students.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+    
+    private StudentResponseDTO convertToDTO(Student student) {
+        return new StudentResponseDTO(
+                student.getId(),
+                student.getName(),
+                student.getDateOfBirth(),
+                student.getGuardianName(),
+                student.getGuardianContact(),
+                student.getAddress(),
+                student.getEnrollmentDate(),
+                student.getCurrentClassId(),
+                student.getPhotoUrl(),
+                student.getCurrentClass().getClassName()// className will be populated separately if needed
+        );
     }
 
     public Optional<Student> getStudentById(Long id) {

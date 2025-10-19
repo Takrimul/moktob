@@ -57,11 +57,12 @@ public class TenantContextFilter implements Filter {
             String authHeader = request.getHeader("Authorization");
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
                 String token = authHeader.substring(7);
+                log.debug("Extracting client ID from token: {}", token.substring(0, Math.min(20, token.length())) + "...");
                 return jwtTokenUtil.getClientIdFromToken(token);
             }
             return null;
         } catch (Exception e) {
-            log.debug("Error extracting client ID from auth header", e);
+            log.warn("Error extracting client ID from auth header: {}", e.getMessage());
             return null;
         }
     }
