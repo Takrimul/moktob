@@ -53,9 +53,9 @@ public class DashboardService {
                 ? (double) totalPresent / totalAttendanceRecords * 100 
                 : 0.0;
 
-        long activeStudents = studentRepository.countByClientIdAndIsActiveTrue(clientId);
+        long activeStudents = studentRepository.countByClientId(clientId);
         long activeTeachers = teacherRepository.countByClientIdAndIsActiveTrue(clientId);
-        long activeClasses = classEntityRepository.countByClientIdAndIsActiveTrue(clientId);
+        long activeClasses = classEntityRepository.countByClientId(clientId);
 
         return new DashboardOverviewDTO(
                 totalStudents,
