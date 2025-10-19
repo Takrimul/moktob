@@ -78,4 +78,38 @@ public class AttendanceService {
         Long clientId = TenantContextHolder.getTenantId();
         return attendanceRepository.findByClientIdAndAttendanceDateBetween(clientId, startDate, endDate);
     }
+    
+    public List<Attendance> getAttendanceByDateAndClass(LocalDate date, Long classId) {
+        Long clientId = TenantContextHolder.getTenantId();
+        if (classId != null) {
+            return attendanceRepository.findByClientIdAndAttendanceDateAndClassId(clientId, date, classId);
+        } else {
+            return attendanceRepository.findByClientIdAndAttendanceDate(clientId, date);
+        }
+    }
+    
+    public List<Attendance> saveBulkAttendance(List<AttendanceRequest> attendanceRequests) {
+        Long clientId = TenantContextHolder.getTenantId();
+        
+        return attendanceRequests.stream()
+                .map(request -> {
+                    // Check if attendance already exists for this student, class, and date
+                    Optional<Attendance> existingAttendance = attendanceRepository
+                            .findByClientIdAndStudentIdAndClassIdAndAttendanceDate(
+                                    clientId, request.getStudentId(), request.getClassId(), request.getAttendanceDate());
+                    
+                    Attendance attendance = existingAttendance.orElse(new Attendance());
+                    
+                    attendance.setStudentId(request.getStudentId());
+                    attendance.setClassId(request.getClassId());
+                    attendance.setTeacherId(request.getTeacherId());
+                    attendance.setAttendanceDate(request.getAttendanceDate());
+                    attendance.setStatus(request.getStatus());
+                    attendance.setRemarks(request.getRemarks());
+                    attendance.setClientId(clientId);
+                    
+                    return attendanceRepository.save(attendance);
+                })
+                .toList();
+    }
 }

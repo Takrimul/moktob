@@ -71,4 +71,16 @@ public class AttendanceController {
     public ResponseEntity<List<Attendance>> getAttendanceByStatus(@PathVariable AttendanceStatus status) {
         return ResponseEntity.ok(attendanceService.getAttendanceByStatus(status));
     }
+    
+    @GetMapping("/by-date")
+    public ResponseEntity<List<Attendance>> getAttendanceByDateAndClass(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam(required = false) Long classId) {
+        return ResponseEntity.ok(attendanceService.getAttendanceByDateAndClass(date, classId));
+    }
+    
+    @PostMapping("/bulk")
+    public ResponseEntity<List<Attendance>> createBulkAttendance(@RequestBody List<AttendanceRequest> attendanceRequests) {
+        return ResponseEntity.ok(attendanceService.saveBulkAttendance(attendanceRequests));
+    }
 }
