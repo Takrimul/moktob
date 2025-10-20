@@ -205,4 +205,13 @@ public class WebController {
         model.addAttribute("title", "Forgot Password - Moktob Management System");
         return "auth/forgot-password";
     }
+
+    // Reset password page
+    @GetMapping("/reset-password")
+    public String resetPasswordPage(@RequestParam(required = false) String token, Model model) {
+        model.addAttribute("pageTitle", "Reset Password");
+        model.addAttribute("title", "Reset Password - Moktob Management System");
+        model.addAttribute("token", token);
+        return "auth/reset-password";
+    }
 }

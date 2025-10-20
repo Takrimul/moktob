@@ -6,7 +6,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -17,6 +16,7 @@ public class RedisTokenService {
     
     private static final String TOKEN_PREFIX = "jwt:token:";
     private static final String USER_PREFIX = "jwt:user:";
+    private static final String RESET_TOKEN_PREFIX = "reset:token:";
     
     public void storeToken(String token, String username, Long clientId, Long userId, Duration expiration) {
         try {
@@ -85,6 +85,46 @@ public class RedisTokenService {
             }
         } catch (Exception e) {
             log.error("Failed to remove user token from Redis", e);
+        }
+    }
+    
+    // Reset token methods
+    public void storeResetToken(String resetToken, String username, Long clientId, Long userId, Duration expiration) {
+        try {
+            String resetTokenKey = RESET_TOKEN_PREFIX + resetToken;
+            
+            // Store reset token with user info
+            TokenInfo tokenInfo = new TokenInfo(username, clientId, userId, System.currentTimeMillis());
+            redisTemplate.opsForValue().set(resetTokenKey, tokenInfo, expiration);
+            
+            log.debug("Stored reset token for user: {} with expiration: {} seconds", username, expiration.getSeconds());
+        } catch (Exception e) {
+            log.error("Failed to store reset token in Redis for user: {}", username, e);
+        }
+    }
+    
+    public java.util.Optional<String> validateResetToken(String resetToken) {
+        try {
+            String resetTokenKey = RESET_TOKEN_PREFIX + resetToken;
+            TokenInfo tokenInfo = (TokenInfo) redisTemplate.opsForValue().get(resetTokenKey);
+            
+            if (tokenInfo != null) {
+                return java.util.Optional.of(tokenInfo.getUsername());
+            }
+            return java.util.Optional.empty();
+        } catch (Exception e) {
+            log.error("Failed to validate reset token in Redis", e);
+            return java.util.Optional.empty();
+        }
+    }
+    
+    public void removeResetToken(String resetToken) {
+        try {
+            String resetTokenKey = RESET_TOKEN_PREFIX + resetToken;
+            redisTemplate.delete(resetTokenKey);
+            log.debug("Removed reset token: {}", resetToken);
+        } catch (Exception e) {
+            log.error("Failed to remove reset token from Redis", e);
         }
     }
     

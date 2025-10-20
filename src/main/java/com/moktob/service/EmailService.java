@@ -5,4 +5,6 @@ import com.moktob.core.UserAccount;
 
 public interface EmailService {
     void sendClientRegistrationEmail(Client client, UserAccount adminUser, String temporaryPassword);
+    void sendPasswordResetEmail(String toEmail, String username, String resetUrl);
+    void sendWelcomeEmail(String toEmail, String username, String temporaryPassword);
 }

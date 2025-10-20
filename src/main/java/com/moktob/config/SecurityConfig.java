@@ -63,6 +63,7 @@ public class SecurityConfig {
                 .requestMatchers("/moktob/login").permitAll()
                 .requestMatchers("/moktob/register").permitAll()
                 .requestMatchers("/moktob/forgot-password").permitAll()
+                .requestMatchers("/moktob/reset-password").permitAll()
                 .requestMatchers("/moktob/error").permitAll()
                 .requestMatchers("/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
                 .requestMatchers("/moktob/**").authenticated()
