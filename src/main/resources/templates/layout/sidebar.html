@@ -74,8 +74,16 @@
         
         navLinks.forEach(link => {
             const href = link.getAttribute('href');
-            if (href && currentPath.includes(href.replace('/moktob', ''))) {
-                link.classList.add('active');
+            if (href) {
+                // Remove /moktob prefix for comparison
+                const linkPath = href.replace('/moktob', '');
+                const currentPathClean = currentPath.replace('/moktob', '');
+                
+                // Check if current path matches the link path
+                if (currentPathClean === linkPath || 
+                    (linkPath !== '/dashboard' && currentPathClean.startsWith(linkPath))) {
+                    link.classList.add('active');
+                }
             }
         });
     });

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{dashboard/index :: dashboard-layout(title='Students - Moktob Management System', content=~{::content})}">
+      th:replace="~{layout/base :: base-layout(pageTitle='Students - Moktob Management System', content=~{::content})}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,21 +8,6 @@
 </head>
 <body>
 <div th:fragment="content">
-    <!-- Page Header -->
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h2">Students Management</h1>
-        <div class="btn-toolbar mb-2 mb-md-0">
-            <div class="btn-group me-2">
-                <button type="button" class="btn btn-sm btn-outline-secondary">
-                    <i class="fas fa-download me-1"></i>Export
-                </button>
-            </div>
-            <button type="button" class="btn btn-sm btn-primary" onclick="addStudent()">
-                <i class="fas fa-plus me-1"></i>Add Student
-            </button>
-        </div>
-    </div>
-
     <!-- Students Table -->
     <div class="card shadow">
         <div class="card-header bg-white py-3">
@@ -56,104 +41,118 @@
     </div>
 </div>
 
-<!-- Page specific scripts -->
-<script th:src="@{/js/popup.js}"></script>
-<script th:src="@{/js/students.js}"></script>
-<script>
-    function addStudent() {
-        window.location.href = '/moktob/students/add';
-    }
+<!-- Page Actions -->
+<div th:fragment="page-actions">
+    <div class="btn-group me-2">
+        <button type="button" class="btn btn-sm btn-outline-secondary">
+            <i class="fas fa-download me-1"></i>Export
+        </button>
+    </div>
+    <button type="button" class="btn btn-sm btn-primary" onclick="addStudent()">
+        <i class="fas fa-plus me-1"></i>Add Student
+    </button>
+</div>
 
-    // Load students data when page loads
-    document.addEventListener('DOMContentLoaded', function() {
-        loadStudents();
-    });
-
-    function loadStudents() {
-        const token = MoktobApp.getToken();
-        if (!token) {
-            window.location.href = '/moktob/login';
-            return;
+<!-- Additional JS -->
+<div th:fragment="additional-js">
+    <script th:src="@{/js/popup.js}"></script>
+    <script th:src="@{/js/students.js}"></script>
+    <script>
+        function addStudent() {
+            window.location.href = '/moktob/students/add';
         }
 
-        MoktobApp.apiRequest('/moktob/api/students')
-            .then(students => {
-                const tbody = document.getElementById('studentsTableBody');
-                if (students && students.length > 0) {
-                    tbody.innerHTML = students.map(student => `
-                            <tr>
-                                <td>${student.id}</td>
-                                <td>${student.name || 'N/A'}</td>
-                                <td>${student.guardianName || 'N/A'}</td>
-                                <td>${student.guardianContact || 'N/A'}</td>
-                                <td>${student.className || 'N/A'}</td>
-                                <td><span class="badge bg-success">Active</span></td>
-                                <td>
-                                    <button class="btn btn-sm btn-primary me-1" onclick="editStudent(${student.id})">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </button>
-                                    <button class="btn btn-sm btn-danger" onclick="deleteStudent(${student.id})">
-                                        <i class="fas fa-trash"></i> Delete
-                                    </button>
-                                </td>
-                            </tr>
-                        `).join('');
-                } else {
+        // Load students data when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStudents();
+        });
+
+        function loadStudents() {
+            const token = MoktobApp.getToken();
+            if (!token) {
+                window.location.href = '/moktob/login';
+                return;
+            }
+
+            MoktobApp.apiRequest('/moktob/api/students')
+                .then(students => {
+                    const tbody = document.getElementById('studentsTableBody');
+                    if (students && students.length > 0) {
+                        tbody.innerHTML = students.map(student => `
+                                <tr>
+                                    <td>${student.id}</td>
+                                    <td>${student.name || 'N/A'}</td>
+                                    <td>${student.guardianName || 'N/A'}</td>
+                                    <td>${student.guardianContact || 'N/A'}</td>
+                                    <td>${student.className || 'N/A'}</td>
+                                    <td><span class="badge bg-success">Active</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary me-1" onclick="editStudent(${student.id})">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </button>
+                                        <button class="btn btn-sm btn-danger" onclick="deleteStudent(${student.id})">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                            `).join('');
+                    } else {
+                        tbody.innerHTML = `
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        No students found. Add your first student to get started.
+                                    </td>
+                                </tr>
+                            `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading students:', error);
+                    const tbody = document.getElementById('studentsTableBody');
                     tbody.innerHTML = `
                             <tr>
-                                <td colspan="7" class="text-center text-muted">
-                                    <i class="fas fa-info-circle me-2"></i>
-                                    No students found. Add your first student to get started.
+                                <td colspan="7" class="text-center text-danger">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    Error loading students. Please try again.
                                 </td>
                             </tr>
                         `;
-                }
-            })
-            .catch(error => {
-                console.error('Error loading students:', error);
-                const tbody = document.getElementById('studentsTableBody');
-                tbody.innerHTML = `
-                        <tr>
-                            <td colspan="7" class="text-center text-danger">
-                                <i class="fas fa-exclamation-triangle me-2"></i>
-                                Error loading students. Please try again.
-                            </td>
-                        </tr>
-                    `;
-            });
-    }
+                });
+        }
 
-    function editStudent(id) {
-        window.location.href = `/moktob/students/edit/${id}`;
-    }
+        function editStudent(id) {
+            window.location.href = `/moktob/students/edit/${id}`;
+        }
 
-    function deleteStudent(id) {
-        MoktobPopup.confirm({
-            title: 'Delete Confirmation',
-            message: 'Are you sure you want to delete this student? This action cannot be undone.',
-            onConfirm: () => {
-                MoktobApp.apiRequest(`/moktob/api/students/${id}`, {
-                    method: 'DELETE'
-                })
-                    .then(() => {
-                        MoktobPopup.alert({
-                            title: 'Success',
-                            message: 'Student deleted successfully',
-                            type: 'success'
-                        });
-                        loadStudents(); // Reload the table
+        function deleteStudent(id) {
+            MoktobPopup.confirm({
+                title: 'Delete Confirmation',
+                message: 'Are you sure you want to delete this student? This action cannot be undone.',
+                onConfirm: () => {
+                    MoktobApp.apiRequest(`/moktob/api/students/${id}`, {
+                        method: 'DELETE'
                     })
-                    .catch(error => {
-                        console.error('Error deleting student:', error);
-                        MoktobPopup.alert({
-                            title: 'Error',
-                            message: 'Failed to delete student. Please try again.',
-                            type: 'error'
+                        .then(() => {
+                            MoktobPopup.alert({
+                                title: 'Success',
+                                message: 'Student deleted successfully',
+                                type: 'success'
+                            });
+                            loadStudents(); // Reload the table
+                        })
+                        .catch(error => {
+                            console.error('Error deleting student:', error);
+                            MoktobPopup.alert({
+                                title: 'Error',
+                                message: 'Failed to delete student. Please try again.',
+                                type: 'error'
+                            });
                         });
-                    });
-            }
-        });
-    }
-</script>
+                }
+            });
+        }
+    </script>
+</div>
 </body>
 </html>
