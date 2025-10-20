@@ -225,7 +225,7 @@
             `;
 
             // Load students for the selected class
-            MoktobApp.apiRequest(`/moktob/api/attendance/class/${classId}`)
+            MoktobApp.apiRequest(`/moktob/api/students/class/${classId}`)
                 .then(students => {
                     if (students && students.length > 0) {
                         tbody.innerHTML = students.map((student, index) => `
