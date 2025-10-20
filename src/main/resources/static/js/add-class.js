@@ -1,13 +1,78 @@
 document.addEventListener('DOMContentLoaded', () => {
     initializeForm();
+    checkEditMode();
 });
 
 let teachers = [];
+let isEditMode = false;
+let classId = null;
 
 async function initializeForm() {
     await loadTeachers();
     setupFormValidation();
     setupFormSubmission();
+}
+
+function checkEditMode() {
+    const isEditField = document.getElementById('isEdit');
+    const classIdField = document.getElementById('classId');
+    
+    if (isEditField && isEditField.value === 'true') {
+        isEditMode = true;
+        classId = classIdField ? classIdField.value : null;
+        
+        if (classId) {
+            loadClassData(classId);
+        }
+    }
+}
+
+async function loadClassData(id) {
+    try {
+        const classData = await MoktobApp.apiRequest(`/moktob/api/classes/${id}`);
+        
+        // Populate form fields with class data
+        if (classData) {
+            document.getElementById('className').value = classData.className || '';
+            document.getElementById('startTime').value = classData.startTime || '';
+            document.getElementById('endTime').value = classData.endTime || '';
+            
+            // Set teacher selection after teachers are loaded
+            if (classData.teacherId) {
+                if (teachers.length > 0) {
+                    document.getElementById('teacherId').value = classData.teacherId;
+                } else {
+                    // If teachers not loaded yet, wait and try again
+                    setTimeout(() => {
+                        if (teachers.length > 0) {
+                            document.getElementById('teacherId').value = classData.teacherId;
+                        }
+                    }, 500);
+                }
+            }
+            
+            // Set days of week checkboxes
+            if (classData.daysOfWeek) {
+                const days = classData.daysOfWeek.split(', ');
+                days.forEach(day => {
+                    const checkbox = document.querySelector(`input[name="daysOfWeek"][value="${day}"]`);
+                    if (checkbox) {
+                        checkbox.checked = true;
+                    }
+                });
+            }
+        }
+    } catch (error) {
+        console.error('Error loading class data:', error);
+        if (typeof MoktobPopup !== 'undefined' && MoktobPopup.error) {
+            MoktobPopup.error({
+                title: 'Error',
+                message: 'Failed to load class data. Please try again.'
+            });
+        } else {
+            alert('Error: Failed to load class data. Please try again.');
+        }
+    }
 }
 
 async function loadTeachers() {
@@ -90,7 +155,7 @@ async function handleFormSubmit(event) {
     try {
         // Disable submit button and show loading
         submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Saving...';
+        submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin me-1"></i>${isEditMode ? 'Updating...' : 'Saving...'}`;
         
         // Collect form data
         const formData = {
@@ -115,35 +180,39 @@ async function handleFormSubmit(event) {
         
         console.log('Submitting class data:', formData);
         
+        // Determine API endpoint and method based on edit mode
+        const apiUrl = isEditMode ? `/moktob/api/classes/${classId}` : '/moktob/api/classes';
+        const method = isEditMode ? 'PUT' : 'POST';
+        
         // Submit the form
-        const response = await MoktobApp.apiRequest('/moktob/api/classes', {
-            method: 'POST',
+        const response = await MoktobApp.apiRequest(apiUrl, {
+            method: method,
             body: JSON.stringify(formData)
         });
         
-        console.log('Class created successfully:', response);
+        console.log(`Class ${isEditMode ? 'updated' : 'created'} successfully:`, response);
         
         // Show success message
         MoktobPopup.success({
             title: 'Success',
-            message: 'Class created successfully!',
+            message: `Class ${isEditMode ? 'updated' : 'created'} successfully!`,
             onConfirm: () => {
                 window.location.href = '/moktob/classes';
             }
         });
         
     } catch (error) {
-        console.error('Error creating class:', error);
+        console.error(`Error ${isEditMode ? 'updating' : 'creating'} class:`, error);
         
         // Show error message
         MoktobPopup.error({
             title: 'Error',
-            message: error.message || 'Failed to create class. Please try again.'
+            message: error.message || `Failed to ${isEditMode ? 'update' : 'create'} class. Please try again.`
         });
         
         // Re-enable submit button
         submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="fas fa-save me-1"></i>Save Class';
+        submitBtn.innerHTML = `<i class="fas fa-save me-1"></i>${isEditMode ? 'Update Class' : 'Save Class'}`;
     }
 }
 

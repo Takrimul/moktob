@@ -96,6 +96,17 @@ public class WebController {
     public String addTeacherPage(Model model) {
         model.addAttribute("pageTitle", "Add Teacher");
         model.addAttribute("title", "Add Teacher - Moktob Management System");
+        model.addAttribute("isEdit", false);
+        return "teachers/add";
+    }
+
+    // Edit Teacher page
+    @GetMapping("/teachers/edit/{id}")
+    public String editTeacherPage(@PathVariable Long id, Model model) {
+        model.addAttribute("pageTitle", "Edit Teacher");
+        model.addAttribute("title", "Edit Teacher - Moktob Management System");
+        model.addAttribute("isEdit", true);
+        model.addAttribute("teacherId", id);
         return "teachers/add";
     }
 
@@ -112,6 +123,17 @@ public class WebController {
     public String addClassPage(Model model) {
         model.addAttribute("pageTitle", "Add Class");
         model.addAttribute("title", "Add Class - Moktob Management System");
+        model.addAttribute("isEdit", false);
+        return "classes/add";
+    }
+
+    // Edit Class page
+    @GetMapping("/classes/edit/{id}")
+    public String editClassPage(@PathVariable Long id, Model model) {
+        model.addAttribute("pageTitle", "Edit Class");
+        model.addAttribute("title", "Edit Class - Moktob Management System");
+        model.addAttribute("isEdit", true);
+        model.addAttribute("classId", id);
         return "classes/add";
     }
 

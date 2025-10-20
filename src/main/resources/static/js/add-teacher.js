@@ -1,10 +1,54 @@
 document.addEventListener('DOMContentLoaded', () => {
     initializeForm();
+    checkEditMode();
 });
+
+let isEditMode = false;
+let teacherId = null;
 
 function initializeForm() {
     setupFormValidation();
     setupFormSubmission();
+}
+
+function checkEditMode() {
+    const isEditField = document.getElementById('isEdit');
+    const teacherIdField = document.getElementById('teacherId');
+    
+    if (isEditField && isEditField.value === 'true') {
+        isEditMode = true;
+        teacherId = teacherIdField ? teacherIdField.value : null;
+        
+        if (teacherId) {
+            loadTeacherData(teacherId);
+        }
+    }
+}
+
+async function loadTeacherData(id) {
+    try {
+        const teacher = await MoktobApp.apiRequest(`/moktob/api/teachers/${id}`);
+        
+        // Populate form fields with teacher data
+        if (teacher) {
+            document.getElementById('name').value = teacher.name || '';
+            document.getElementById('email').value = teacher.email || '';
+            document.getElementById('phoneNumber').value = teacher.phoneNumber || '';
+            document.getElementById('qualification').value = teacher.qualification || '';
+            document.getElementById('joiningDate').value = teacher.joiningDate || '';
+            document.getElementById('isActive').value = teacher.isActive ? 'true' : 'false';
+        }
+    } catch (error) {
+        console.error('Error loading teacher data:', error);
+        if (typeof MoktobPopup !== 'undefined' && MoktobPopup.error) {
+            MoktobPopup.error({
+                title: 'Error',
+                message: 'Failed to load teacher data. Please try again.'
+            });
+        } else {
+            alert('Error: Failed to load teacher data. Please try again.');
+        }
+    }
 }
 
 function setupFormValidation() {
@@ -62,7 +106,7 @@ async function handleFormSubmit(event) {
     try {
         // Disable submit button and show loading
         submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Saving...';
+        submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin me-1"></i>${isEditMode ? 'Updating...' : 'Saving...'}`;
         
         // Collect form data
         const formData = {
@@ -91,34 +135,38 @@ async function handleFormSubmit(event) {
         
         console.log('Submitting teacher data:', formData);
         
+        // Determine API endpoint and method based on edit mode
+        const apiUrl = isEditMode ? `/moktob/api/teachers/${teacherId}` : '/moktob/api/teachers';
+        const method = isEditMode ? 'PUT' : 'POST';
+        
         // Submit the form
-        const response = await MoktobApp.apiRequest('/moktob/api/teachers', {
-            method: 'POST',
+        const response = await MoktobApp.apiRequest(apiUrl, {
+            method: method,
             body: JSON.stringify(formData)
         });
         
-        console.log('Teacher created successfully:', response);
+        console.log(`Teacher ${isEditMode ? 'updated' : 'created'} successfully:`, response);
         
         // Show success message
         MoktobPopup.success({
             title: 'Success',
-            message: 'Teacher created successfully!',
+            message: `Teacher ${isEditMode ? 'updated' : 'created'} successfully!`,
             onConfirm: () => {
                 window.location.href = '/moktob/teachers';
             }
         });
         
     } catch (error) {
-        console.error('Error creating teacher:', error);
+        console.error(`Error ${isEditMode ? 'updating' : 'creating'} teacher:`, error);
         
         // Show error message
         MoktobPopup.error({
             title: 'Error',
-            message: error.message || 'Failed to create teacher. Please try again.'
+            message: error.message || `Failed to ${isEditMode ? 'update' : 'create'} teacher. Please try again.`
         });
         
         // Re-enable submit button
         submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="fas fa-save me-1"></i>Save Teacher';
+        submitBtn.innerHTML = `<i class="fas fa-save me-1"></i>${isEditMode ? 'Update Teacher' : 'Save Teacher'}`;
     }
 }

@@ -3,86 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${title}"></title>
-    
+    <title th:text="${title}">Add Teacher - Moktob Management System</title>
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <!-- Custom CSS -->
     <link th:href="@{/css/style.css}" rel="stylesheet">
 </head>
 <body>
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
-                <div class="position-sticky pt-3">
-                    <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link" href="/moktob/dashboard">
-                                <i class="fas fa-tachometer-alt me-2"></i>
-                                Dashboard
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/moktob/students">
-                                <i class="fas fa-user-graduate me-2"></i>
-                                Students
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link active" href="/moktob/teachers">
-                                <i class="fas fa-chalkboard-teacher me-2"></i>
-                                Teachers
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/moktob/classes">
-                                <i class="fas fa-school me-2"></i>
-                                Classes
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/moktob/attendance">
-                                <i class="fas fa-calendar-check me-2"></i>
-                                Attendance
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/moktob/payments">
-                                <i class="fas fa-credit-card me-2"></i>
-                                Payments
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/moktob/reports">
-                                <i class="fas fa-chart-bar me-2"></i>
-                                Reports
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/moktob/settings">
-                                <i class="fas fa-cog me-2"></i>
-                                Settings
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#" onclick="logout()">
-                                <i class="fas fa-sign-out-alt me-2"></i>
-                                Logout
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
+    <!-- Topbar -->
+    <div th:replace="~{layout/topbar :: topbar}"></div>
 
-            <!-- Main content -->
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+    <!-- Sidebar -->
+    <div th:replace="~{layout/sidebar :: sidebar}"></div>
+
+    <!-- Main Content -->
+    <div class="container-fluid main-content">
+        <div class="row">
+            <div class="col-12">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2" th:text="${pageTitle}"></h1>
+                    <h1 class="h2" th:text="${isEdit ? 'Edit Teacher' : 'Add New Teacher'}">Add New Teacher</h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
-                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="window.history.back()">
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="goBack()">
                             <i class="fas fa-arrow-left me-1"></i>Back to Teachers
                         </button>
                     </div>
@@ -90,10 +34,17 @@
 
                 <div class="card">
                     <div class="card-header">
-                        Add New Teacher
+                        <h5 class="card-title mb-0">
+                            <i th:class="${isEdit ? 'fas fa-user-edit me-2' : 'fas fa-user-plus me-2'}"></i>
+                            <span th:text="${isEdit ? 'Edit Teacher Information' : 'Teacher Information'}">Teacher Information</span>
+                        </h5>
                     </div>
                     <div class="card-body">
-                        <form id="addTeacherForm">
+                        <form id="addTeacherForm" novalidate>
+                            <!-- Hidden fields for edit mode -->
+                            <input type="hidden" id="isEdit" th:value="${isEdit}" />
+                            <input type="hidden" id="teacherId" th:value="${teacherId}" />
+                            
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
@@ -129,10 +80,11 @@
                                     </select>
                                 </div>
                                 <div class="col-12 mt-4">
-                                    <button type="submit" class="btn btn-primary me-2">
-                                        <i class="fas fa-save me-1"></i>Save Teacher
+                                    <button type="submit" class="btn btn-primary me-2" id="submitBtn">
+                                        <i th:class="${isEdit ? 'fas fa-save me-1' : 'fas fa-save me-1'}"></i>
+                                        <span th:text="${isEdit ? 'Update Teacher' : 'Save Teacher'}">Save Teacher</span>
                                     </button>
-                                    <button type="button" class="btn btn-secondary" onclick="window.history.back()">
+                                    <button type="button" class="btn btn-secondary" onclick="goBack()">
                                         <i class="fas fa-times-circle me-1"></i>Cancel
                                     </button>
                                 </div>
@@ -140,9 +92,12 @@
                         </form>
                     </div>
                 </div>
-            </main>
+            </div>
         </div>
     </div>
+
+    <!-- Footer -->
+    <div th:replace="~{layout/footer :: footer}"></div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -151,15 +106,8 @@
     <script th:src="@{/js/popup.js}"></script>
     <script th:src="@{/js/add-teacher.js}"></script>
     <script>
-        function logout() {
-            MoktobPopup.confirm({
-                title: 'Logout Confirmation',
-                message: 'Are you sure you want to logout?',
-                onConfirm: () => {
-                    MoktobApp.removeToken();
-                    window.location.href = '/moktob/login';
-                }
-            });
+        function goBack() {
+            window.location.href = '/moktob/teachers';
         }
     </script>
 </body>
