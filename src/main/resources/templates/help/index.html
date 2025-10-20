@@ -1,298 +1,324 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{layout/simple :: simple-layout(pageTitle='Help & Documentation - Moktob Management System', content=~{::content})}">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Help & Documentation - Moktob Management System</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link th:href="@{/css/style.css}" rel="stylesheet">
 </head>
 <body>
-<div th:fragment="content">
-    <!-- Help Content -->
-    <div class="row">
-        <div class="col-lg-10 mx-auto">
-            <div class="card shadow">
-                <div class="card-header bg-info text-white">
-                    <h4 class="mb-0">
-                        <i class="fas fa-question-circle me-2"></i>Help & Documentation
-                    </h4>
+    <!-- Topbar -->
+    <div th:replace="~{layout/topbar :: topbar}"></div>
+
+    <!-- Sidebar -->
+    <div th:replace="~{layout/sidebar :: sidebar}"></div>
+
+    <!-- Main Content -->
+    <div class="container-fluid main-content">
+        <div class="row">
+            <div class="col-12">
+                <!-- Page Header -->
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Help & Documentation</h1>
                 </div>
-                <div class="card-body">
-                    <!-- Quick Start Guide -->
-                    <div class="mb-5">
-                        <h5 class="text-info mb-3">
-                            <i class="fas fa-rocket me-2"></i>Quick Start Guide
-                        </h5>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <div class="card border-info">
-                                    <div class="card-body">
-                                        <h6 class="card-title text-info">
-                                            <i class="fas fa-user-plus me-2"></i>Adding Students
+
+                <!-- Page Content -->
+                <div>
+                    <!-- Help Content -->
+                    <div class="row">
+                        <div class="col-lg-10 mx-auto">
+                            <div class="card shadow">
+                                <div class="card-header bg-info text-white">
+                                    <h4 class="mb-0">
+                                        <i class="fas fa-question-circle me-2"></i>Help & Documentation
+                                    </h4>
+                                </div>
+                                <div class="card-body">
+                                    <!-- Quick Start Guide -->
+                                    <div class="mb-5">
+                                        <h5 class="text-info mb-3">
+                                            <i class="fas fa-rocket me-2"></i>Quick Start Guide
+                                        </h5>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <div class="card border-info">
+                                                    <div class="card-body">
+                                                        <h6 class="card-title text-info">
+                                                            <i class="fas fa-user-plus me-2"></i>Adding Students
+                                                        </h6>
+                                                        <p class="card-text small">Learn how to add new students to your institution and manage their information.</p>
+                                                        <a href="#students" class="btn btn-sm btn-outline-info">View Guide</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <div class="card border-info">
+                                                    <div class="card-body">
+                                                        <h6 class="card-title text-info">
+                                                            <i class="fas fa-chalkboard-teacher me-2"></i>Managing Teachers
+                                                        </h6>
+                                                        <p class="card-text small">Set up teacher profiles and assign them to classes.</p>
+                                                        <a href="#teachers" class="btn btn-sm btn-outline-info">View Guide</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <div class="card border-info">
+                                                    <div class="card-body">
+                                                        <h6 class="card-title text-info">
+                                                            <i class="fas fa-calendar-check me-2"></i>Taking Attendance
+                                                        </h6>
+                                                        <p class="card-text small">Record and manage student attendance efficiently.</p>
+                                                        <a href="#attendance" class="btn btn-sm btn-outline-info">View Guide</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <div class="card border-info">
+                                                    <div class="card-body">
+                                                        <h6 class="card-title text-info">
+                                                            <i class="fas fa-chart-bar me-2"></i>Generating Reports
+                                                        </h6>
+                                                        <p class="card-text small">Create comprehensive reports for students and classes.</p>
+                                                        <a href="#reports" class="btn btn-sm btn-outline-info">View Guide</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Detailed Sections -->
+                                    <div class="mb-5" id="students">
+                                        <h5 class="text-info mb-3">
+                                            <i class="fas fa-user-graduate me-2"></i>Student Management
+                                        </h5>
+                                        <div class="accordion" id="studentsAccordion">
+                                            <div class="accordion-item">
+                                                <h2 class="accordion-header">
+                                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#addStudent">
+                                                        How to Add a New Student
+                                                    </button>
+                                                </h2>
+                                                <div id="addStudent" class="accordion-collapse collapse show" data-bs-parent="#studentsAccordion">
+                                                    <div class="accordion-body">
+                                                        <ol>
+                                                            <li>Navigate to the <strong>Students</strong> section from the sidebar</li>
+                                                            <li>Click the <strong>"Add Student"</strong> button</li>
+                                                            <li>Fill in the required information:
+                                                                <ul>
+                                                                    <li>Student's full name</li>
+                                                                    <li>Guardian's name and contact information</li>
+                                                                    <li>Class assignment</li>
+                                                                    <li>Date of birth</li>
+                                                                </ul>
+                                                            </li>
+                                                            <li>Click <strong>"Save"</strong> to add the student</li>
+                                                        </ol>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="accordion-item">
+                                                <h2 class="accordion-header">
+                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#editStudent">
+                                                        How to Edit Student Information
+                                                    </button>
+                                                </h2>
+                                                <div id="editStudent" class="accordion-collapse collapse" data-bs-parent="#studentsAccordion">
+                                                    <div class="accordion-body">
+                                                        <ol>
+                                                            <li>Go to the <strong>Students</strong> section</li>
+                                                            <li>Find the student you want to edit</li>
+                                                            <li>Click the <strong>"Edit"</strong> button next to their name</li>
+                                                            <li>Update the information as needed</li>
+                                                            <li>Click <strong>"Save Changes"</strong></li>
+                                                        </ol>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-5" id="teachers">
+                                        <h5 class="text-info mb-3">
+                                            <i class="fas fa-chalkboard-teacher me-2"></i>Teacher Management
+                                        </h5>
+                                        <div class="accordion" id="teachersAccordion">
+                                            <div class="accordion-item">
+                                                <h2 class="accordion-header">
+                                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#addTeacher">
+                                                        How to Add a New Teacher
+                                                    </button>
+                                                </h2>
+                                                <div id="addTeacher" class="accordion-collapse collapse show" data-bs-parent="#teachersAccordion">
+                                                    <div class="accordion-body">
+                                                        <ol>
+                                                            <li>Navigate to the <strong>Teachers</strong> section</li>
+                                                            <li>Click the <strong>"Add Teacher"</strong> button</li>
+                                                            <li>Enter teacher details:
+                                                                <ul>
+                                                                    <li>Full name and contact information</li>
+                                                                    <li>Qualifications and certifications</li>
+                                                                    <li>Subjects they can teach</li>
+                                                                    <li>Class assignments</li>
+                                                                </ul>
+                                                            </li>
+                                                            <li>Save the teacher profile</li>
+                                                        </ol>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-5" id="attendance">
+                                        <h5 class="text-info mb-3">
+                                            <i class="fas fa-calendar-check me-2"></i>Attendance Management
+                                        </h5>
+                                        <div class="accordion" id="attendanceAccordion">
+                                            <div class="accordion-item">
+                                                <h2 class="accordion-header">
+                                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#takeAttendance">
+                                                        How to Take Attendance
+                                                    </button>
+                                                </h2>
+                                                <div id="takeAttendance" class="accordion-collapse collapse show" data-bs-parent="#attendanceAccordion">
+                                                    <div class="accordion-body">
+                                                        <ol>
+                                                            <li>Go to the <strong>Attendance</strong> section</li>
+                                                            <li>Select the class and date</li>
+                                                            <li>Mark students as present or absent</li>
+                                                            <li>Add any notes if necessary</li>
+                                                            <li>Save the attendance record</li>
+                                                        </ol>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-5" id="reports">
+                                        <h5 class="text-info mb-3">
+                                            <i class="fas fa-chart-bar me-2"></i>Reports & Analytics
+                                        </h5>
+                                        <div class="accordion" id="reportsAccordion">
+                                            <div class="accordion-item">
+                                                <h2 class="accordion-header">
+                                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#generateReport">
+                                                        How to Generate Reports
+                                                    </button>
+                                                </h2>
+                                                <div id="generateReport" class="accordion-collapse collapse show" data-bs-parent="#reportsAccordion">
+                                                    <div class="accordion-body">
+                                                        <ol>
+                                                            <li>Navigate to the <strong>Reports</strong> section</li>
+                                                            <li>Choose the type of report you need:
+                                                                <ul>
+                                                                    <li>Student attendance reports</li>
+                                                                    <li>Class performance summaries</li>
+                                                                    <li>Teacher workload reports</li>
+                                                                    <li>Financial reports</li>
+                                                                </ul>
+                                                            </li>
+                                                            <li>Select date ranges and filters</li>
+                                                            <li>Click <strong>"Generate Report"</strong></li>
+                                                            <li>Export or print the report as needed</li>
+                                                        </ol>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- FAQ Section -->
+                                    <div class="mb-5">
+                                        <h5 class="text-info mb-3">
+                                            <i class="fas fa-question me-2"></i>Frequently Asked Questions
+                                        </h5>
+                                        <div class="accordion" id="faqAccordion">
+                                            <div class="accordion-item">
+                                                <h2 class="accordion-header">
+                                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                                        How do I reset my password?
+                                                    </button>
+                                                </h2>
+                                                <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                                                    <div class="accordion-body">
+                                                        <p>To reset your password:</p>
+                                                        <ol>
+                                                            <li>Click on your profile in the top-right corner</li>
+                                                            <li>Select "Settings" from the dropdown</li>
+                                                            <li>Go to the "Security" tab</li>
+                                                            <li>Click "Change Password"</li>
+                                                            <li>Enter your current password and new password</li>
+                                                            <li>Click "Update Password"</li>
+                                                        </ol>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="accordion-item">
+                                                <h2 class="accordion-header">
+                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                                        Can I export student data?
+                                                    </button>
+                                                </h2>
+                                                <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                                    <div class="accordion-body">
+                                                        <p>Yes, you can export student data in various formats:</p>
+                                                        <ul>
+                                                            <li>Go to the Students section</li>
+                                                            <li>Click the "Export" button</li>
+                                                            <li>Choose your preferred format (Excel, CSV, PDF)</li>
+                                                            <li>Select the data fields you want to include</li>
+                                                            <li>Click "Download"</li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="accordion-item">
+                                                <h2 class="accordion-header">
+                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                                        How do I backup my data?
+                                                    </button>
+                                                </h2>
+                                                <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                                    <div class="accordion-body">
+                                                        <p>Data backup is automatically handled by our system:</p>
+                                                        <ul>
+                                                            <li>Daily automated backups</li>
+                                                            <li>Secure cloud storage</li>
+                                                            <li>Point-in-time recovery options</li>
+                                                            <li>Manual backup requests available through support</li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Contact Support -->
+                                    <div class="alert alert-info">
+                                        <h6 class="alert-heading">
+                                            <i class="fas fa-headset me-2"></i>Need More Help?
                                         </h6>
-                                        <p class="card-text small">Learn how to add new students to your institution and manage their information.</p>
-                                        <a href="#students" class="btn btn-sm btn-outline-info">View Guide</a>
+                                        <p class="mb-2">If you can't find what you're looking for, our support team is here to help!</p>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <p class="mb-1"><i class="fas fa-envelope me-2"></i><strong>Email:</strong> help@moktob.com</p>
+                                                <p class="mb-1"><i class="fas fa-phone me-2"></i><strong>Phone:</strong> +880 1234 567890</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p class="mb-1"><i class="fas fa-clock me-2"></i><strong>Hours:</strong> Mon-Fri 9AM-6PM</p>
+                                                <p class="mb-1"><i class="fas fa-comments me-2"></i><strong>Live Chat:</strong> Available in-app</p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <div class="card border-info">
-                                    <div class="card-body">
-                                        <h6 class="card-title text-info">
-                                            <i class="fas fa-chalkboard-teacher me-2"></i>Managing Teachers
-                                        </h6>
-                                        <p class="card-text small">Set up teacher profiles and assign them to classes.</p>
-                                        <a href="#teachers" class="btn btn-sm btn-outline-info">View Guide</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <div class="card border-info">
-                                    <div class="card-body">
-                                        <h6 class="card-title text-info">
-                                            <i class="fas fa-calendar-check me-2"></i>Taking Attendance
-                                        </h6>
-                                        <p class="card-text small">Record and manage student attendance efficiently.</p>
-                                        <a href="#attendance" class="btn btn-sm btn-outline-info">View Guide</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <div class="card border-info">
-                                    <div class="card-body">
-                                        <h6 class="card-title text-info">
-                                            <i class="fas fa-chart-bar me-2"></i>Generating Reports
-                                        </h6>
-                                        <p class="card-text small">Create comprehensive reports for students and classes.</p>
-                                        <a href="#reports" class="btn btn-sm btn-outline-info">View Guide</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Detailed Sections -->
-                    <div class="mb-5" id="students">
-                        <h5 class="text-info mb-3">
-                            <i class="fas fa-user-graduate me-2"></i>Student Management
-                        </h5>
-                        <div class="accordion" id="studentsAccordion">
-                            <div class="accordion-item">
-                                <h2 class="accordion-header">
-                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#addStudent">
-                                        How to Add a New Student
-                                    </button>
-                                </h2>
-                                <div id="addStudent" class="accordion-collapse collapse show" data-bs-parent="#studentsAccordion">
-                                    <div class="accordion-body">
-                                        <ol>
-                                            <li>Navigate to the <strong>Students</strong> section from the sidebar</li>
-                                            <li>Click the <strong>"Add Student"</strong> button</li>
-                                            <li>Fill in the required information:
-                                                <ul>
-                                                    <li>Student's full name</li>
-                                                    <li>Guardian's name and contact information</li>
-                                                    <li>Class assignment</li>
-                                                    <li>Date of birth</li>
-                                                </ul>
-                                            </li>
-                                            <li>Click <strong>"Save"</strong> to add the student</li>
-                                        </ol>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="accordion-item">
-                                <h2 class="accordion-header">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#editStudent">
-                                        How to Edit Student Information
-                                    </button>
-                                </h2>
-                                <div id="editStudent" class="accordion-collapse collapse" data-bs-parent="#studentsAccordion">
-                                    <div class="accordion-body">
-                                        <ol>
-                                            <li>Go to the <strong>Students</strong> section</li>
-                                            <li>Find the student you want to edit</li>
-                                            <li>Click the <strong>"Edit"</strong> button next to their name</li>
-                                            <li>Update the information as needed</li>
-                                            <li>Click <strong>"Save Changes"</strong></li>
-                                        </ol>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-5" id="teachers">
-                        <h5 class="text-info mb-3">
-                            <i class="fas fa-chalkboard-teacher me-2"></i>Teacher Management
-                        </h5>
-                        <div class="accordion" id="teachersAccordion">
-                            <div class="accordion-item">
-                                <h2 class="accordion-header">
-                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#addTeacher">
-                                        How to Add a New Teacher
-                                    </button>
-                                </h2>
-                                <div id="addTeacher" class="accordion-collapse collapse show" data-bs-parent="#teachersAccordion">
-                                    <div class="accordion-body">
-                                        <ol>
-                                            <li>Navigate to the <strong>Teachers</strong> section</li>
-                                            <li>Click the <strong>"Add Teacher"</strong> button</li>
-                                            <li>Enter teacher details:
-                                                <ul>
-                                                    <li>Full name and contact information</li>
-                                                    <li>Qualifications and certifications</li>
-                                                    <li>Subjects they can teach</li>
-                                                    <li>Class assignments</li>
-                                                </ul>
-                                            </li>
-                                            <li>Save the teacher profile</li>
-                                        </ol>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-5" id="attendance">
-                        <h5 class="text-info mb-3">
-                            <i class="fas fa-calendar-check me-2"></i>Attendance Management
-                        </h5>
-                        <div class="accordion" id="attendanceAccordion">
-                            <div class="accordion-item">
-                                <h2 class="accordion-header">
-                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#takeAttendance">
-                                        How to Take Attendance
-                                    </button>
-                                </h2>
-                                <div id="takeAttendance" class="accordion-collapse collapse show" data-bs-parent="#attendanceAccordion">
-                                    <div class="accordion-body">
-                                        <ol>
-                                            <li>Go to the <strong>Attendance</strong> section</li>
-                                            <li>Select the class and date</li>
-                                            <li>Mark students as present or absent</li>
-                                            <li>Add any notes if necessary</li>
-                                            <li>Save the attendance record</li>
-                                        </ol>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-5" id="reports">
-                        <h5 class="text-info mb-3">
-                            <i class="fas fa-chart-bar me-2"></i>Reports & Analytics
-                        </h5>
-                        <div class="accordion" id="reportsAccordion">
-                            <div class="accordion-item">
-                                <h2 class="accordion-header">
-                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#generateReport">
-                                        How to Generate Reports
-                                    </button>
-                                </h2>
-                                <div id="generateReport" class="accordion-collapse collapse show" data-bs-parent="#reportsAccordion">
-                                    <div class="accordion-body">
-                                        <ol>
-                                            <li>Navigate to the <strong>Reports</strong> section</li>
-                                            <li>Choose the type of report you need:
-                                                <ul>
-                                                    <li>Student attendance reports</li>
-                                                    <li>Class performance summaries</li>
-                                                    <li>Teacher workload reports</li>
-                                                    <li>Financial reports</li>
-                                                </ul>
-                                            </li>
-                                            <li>Select date ranges and filters</li>
-                                            <li>Click <strong>"Generate Report"</strong></li>
-                                            <li>Export or print the report as needed</li>
-                                        </ol>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- FAQ Section -->
-                    <div class="mb-5">
-                        <h5 class="text-info mb-3">
-                            <i class="fas fa-question me-2"></i>Frequently Asked Questions
-                        </h5>
-                        <div class="accordion" id="faqAccordion">
-                            <div class="accordion-item">
-                                <h2 class="accordion-header">
-                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
-                                        How do I reset my password?
-                                    </button>
-                                </h2>
-                                <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
-                                    <div class="accordion-body">
-                                        <p>To reset your password:</p>
-                                        <ol>
-                                            <li>Click on your profile in the top-right corner</li>
-                                            <li>Select "Settings" from the dropdown</li>
-                                            <li>Go to the "Security" tab</li>
-                                            <li>Click "Change Password"</li>
-                                            <li>Enter your current password and new password</li>
-                                            <li>Click "Update Password"</li>
-                                        </ol>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="accordion-item">
-                                <h2 class="accordion-header">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
-                                        Can I export student data?
-                                    </button>
-                                </h2>
-                                <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                                    <div class="accordion-body">
-                                        <p>Yes, you can export student data in various formats:</p>
-                                        <ul>
-                                            <li>Go to the Students section</li>
-                                            <li>Click the "Export" button</li>
-                                            <li>Choose your preferred format (Excel, CSV, PDF)</li>
-                                            <li>Select the data fields you want to include</li>
-                                            <li>Click "Download"</li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="accordion-item">
-                                <h2 class="accordion-header">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
-                                        How do I backup my data?
-                                    </button>
-                                </h2>
-                                <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                                    <div class="accordion-body">
-                                        <p>Data backup is automatically handled by our system:</p>
-                                        <ul>
-                                            <li>Daily automated backups</li>
-                                            <li>Secure cloud storage</li>
-                                            <li>Point-in-time recovery options</li>
-                                            <li>Manual backup requests available through support</li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Contact Support -->
-                    <div class="alert alert-info">
-                        <h6 class="alert-heading">
-                            <i class="fas fa-headset me-2"></i>Need More Help?
-                        </h6>
-                        <p class="mb-2">If you can't find what you're looking for, our support team is here to help!</p>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <p class="mb-1"><i class="fas fa-envelope me-2"></i><strong>Email:</strong> help@moktob.com</p>
-                                <p class="mb-1"><i class="fas fa-phone me-2"></i><strong>Phone:</strong> +880 1234 567890</p>
-                            </div>
-                            <div class="col-md-6">
-                                <p class="mb-1"><i class="fas fa-clock me-2"></i><strong>Hours:</strong> Mon-Fri 9AM-6PM</p>
-                                <p class="mb-1"><i class="fas fa-comments me-2"></i><strong>Live Chat:</strong> Available in-app</p>
                             </div>
                         </div>
                     </div>
@@ -300,6 +326,15 @@
             </div>
         </div>
     </div>
-</div>
+
+    <!-- Footer -->
+    <div th:replace="~{layout/footer :: footer}"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom JS -->
+    <script th:src="@{/js/app.js}"></script>
 </body>
 </html>

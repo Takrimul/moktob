@@ -1,94 +1,198 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{layout/base :: base-layout(pageTitle='Profile - Moktob Management System', content=~{::content})}">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile - Moktob Management System</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link th:href="@{/css/style.css}" rel="stylesheet">
 </head>
 <body>
-<div th:fragment="content">
-    <!-- Profile Information -->
-    <div class="row">
-        <div class="col-lg-4">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-primary">Profile Picture</h6>
-                </div>
-                <div class="card-body text-center">
-                    <div class="mb-3">
-                        <i class="fas fa-user-circle fa-5x text-gray-300"></i>
+    <!-- Topbar -->
+    <div th:replace="~{layout/topbar :: topbar}"></div>
+
+    <!-- Sidebar -->
+    <div th:replace="~{layout/sidebar :: sidebar}"></div>
+
+    <!-- Main Content -->
+    <div class="container-fluid main-content">
+        <div class="row">
+            <div class="col-12">
+                <!-- Page Header -->
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Profile</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group me-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="saveProfile()">
+                                <i class="fas fa-save me-1"></i>Save Changes
+                            </button>
+                        </div>
                     </div>
-                    <button class="btn btn-primary btn-sm">
-                        <i class="fas fa-upload me-1"></i>Upload Photo
-                    </button>
                 </div>
-            </div>
-        </div>
 
-        <div class="col-lg-8">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-primary">Profile Information</h6>
-                </div>
-                <div class="card-body">
-                    <form>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">First Name</label>
-                                    <input type="text" class="form-control" value="Admin" readonly>
+                <!-- Page Content -->
+                <div>
+                    <!-- Profile Information -->
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-primary">Profile Picture</h6>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Last Name</label>
-                                    <input type="text" class="form-control" value="User" readonly>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Email</label>
-                                    <input type="email" class="form-control" value="admin@moktob.com" readonly>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Phone</label>
-                                    <input type="tel" class="form-control" value="+880 1234 567890" readonly>
+                                <div class="card-body text-center">
+                                    <div class="mb-3">
+                                        <i class="fas fa-user-circle fa-5x text-gray-300"></i>
+                                    </div>
+                                    <button class="btn btn-primary btn-sm" onclick="uploadPhoto()">
+                                        <i class="fas fa-upload me-1"></i>Upload Photo
+                                    </button>
                                 </div>
                             </div>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Role</label>
-                            <input type="text" class="form-control" value="Administrator" readonly>
+
+                        <div class="col-lg-8">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-primary">Profile Information</h6>
+                                </div>
+                                <div class="card-body">
+                                    <form id="profileForm">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label">First Name</label>
+                                                    <input type="text" class="form-control" id="firstName" value="Admin" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Last Name</label>
+                                                    <input type="text" class="form-control" id="lastName" value="User" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Email</label>
+                                                    <input type="email" class="form-control" id="email" value="admin@moktob.com" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Phone</label>
+                                                    <input type="tel" class="form-control" id="phone" value="+880 1234 567890" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Role</label>
+                                            <input type="text" class="form-control" id="role" value="Administrator" readonly>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Last Login</label>
+                                            <input type="text" class="form-control" id="lastLogin" value="Today at 10:30 AM" readonly>
+                                        </div>
+                                        <button type="button" class="btn btn-primary" onclick="editProfile()">
+                                            <i class="fas fa-edit me-1"></i>Edit Profile
+                                        </button>
+                                        <button type="button" class="btn btn-warning ms-2" onclick="changePassword()">
+                                            <i class="fas fa-key me-1"></i>Change Password
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Last Login</label>
-                            <input type="text" class="form-control" value="Today at 10:30 AM" readonly>
-                        </div>
-                        <button type="button" class="btn btn-primary">
-                            <i class="fas fa-edit me-1"></i>Edit Profile
-                        </button>
-                        <button type="button" class="btn btn-warning ms-2">
-                            <i class="fas fa-key me-1"></i>Change Password
-                        </button>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Page Actions -->
-<div th:fragment="page-actions">
-    <div class="btn-group me-2">
-        <button type="button" class="btn btn-sm btn-outline-secondary">
-            <i class="fas fa-save me-1"></i>Save Changes
-        </button>
-    </div>
-</div>
+    <!-- Footer -->
+    <div th:replace="~{layout/footer :: footer}"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom JS -->
+    <script th:src="@{/js/app.js}"></script>
+    
+    <script>
+        function saveProfile() {
+            const token = MoktobApp.getToken();
+            if (!token) {
+                window.location.href = '/moktob/login';
+                return;
+            }
+
+            const profileData = {
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value
+            };
+
+            MoktobApp.apiRequest('/moktob/api/profile', {
+                method: 'PUT',
+                body: JSON.stringify(profileData)
+            })
+                .then(() => {
+                    alert('Profile updated successfully!');
+                })
+                .catch(error => {
+                    console.error('Error updating profile:', error);
+                    alert('Failed to update profile. Please try again.');
+                });
+        }
+
+        function uploadPhoto() {
+            alert('Photo upload functionality coming soon...');
+        }
+
+        function editProfile() {
+            const inputs = document.querySelectorAll('#profileForm input[readonly]');
+            inputs.forEach(input => {
+                input.removeAttribute('readonly');
+            });
+            
+            document.querySelector('button[onclick="editProfile()"]').style.display = 'none';
+            document.querySelector('button[onclick="saveProfile()"]').style.display = 'inline-block';
+        }
+
+        function changePassword() {
+            const newPassword = prompt('Enter new password:');
+            if (newPassword) {
+                const confirmPassword = prompt('Confirm new password:');
+                if (newPassword === confirmPassword) {
+                    const token = MoktobApp.getToken();
+                    if (!token) {
+                        window.location.href = '/moktob/login';
+                        return;
+                    }
+
+                    MoktobApp.apiRequest('/moktob/api/profile/password', {
+                        method: 'PUT',
+                        body: JSON.stringify({ password: newPassword })
+                    })
+                        .then(() => {
+                            alert('Password changed successfully!');
+                        })
+                        .catch(error => {
+                            console.error('Error changing password:', error);
+                            alert('Failed to change password. Please try again.');
+                        });
+                } else {
+                    alert('Passwords do not match!');
+                }
+            }
+        }
+    </script>
 </body>
 </html>

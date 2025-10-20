@@ -1,228 +1,259 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{layout/base :: base-layout(pageTitle='Settings - Moktob Management System', content=~{::content})}">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Settings - Moktob Management System</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link th:href="@{/css/style.css}" rel="stylesheet">
 </head>
 <body>
-<div th:fragment="content">
-    <!-- Settings Tabs -->
-    <div class="row">
-        <div class="col-lg-3">
-            <div class="card shadow">
-                <div class="card-header">
-                    <h6 class="m-0 font-weight-bold text-primary">Settings Menu</h6>
-                </div>
-                <div class="card-body p-0">
-                    <div class="list-group list-group-flush">
-                        <a href="#" class="list-group-item list-group-item-action active" onclick="showSettings('general')">
-                            <i class="fas fa-cog me-2"></i>General Settings
-                        </a>
-                        <a href="#" class="list-group-item list-group-item-action" onclick="showSettings('email')">
-                            <i class="fas fa-envelope me-2"></i>Email Settings
-                        </a>
-                        <a href="#" class="list-group-item list-group-item-action" onclick="showSettings('security')">
-                            <i class="fas fa-shield-alt me-2"></i>Security Settings
-                        </a>
-                        <a href="#" class="list-group-item list-group-item-action" onclick="showSettings('backup')">
-                            <i class="fas fa-database me-2"></i>Backup Settings
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <!-- Topbar -->
+    <div th:replace="~{layout/topbar :: topbar}"></div>
 
-        <div class="col-lg-9">
-            <!-- General Settings -->
-            <div id="general-settings" class="settings-panel">
-                <div class="card shadow">
-                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                        <h6 class="m-0 font-weight-bold text-primary">General Settings</h6>
+    <!-- Sidebar -->
+    <div th:replace="~{layout/sidebar :: sidebar}"></div>
+
+    <!-- Main Content -->
+    <div class="container-fluid main-content">
+        <div class="row">
+            <div class="col-12">
+                <!-- Page Header -->
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Settings</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group me-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="resetToDefault()">
+                                <i class="fas fa-sync-alt me-1"></i>Reset to Default
+                            </button>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <form>
-                            <div class="mb-3">
-                                <label class="form-label">School Name</label>
-                                <input type="text" class="form-control" value="Moktob Islamic School">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">School Address</label>
-                                <textarea class="form-control" rows="3">123 Education St, Dhaka, Bangladesh</textarea>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Phone Number</label>
-                                        <input type="tel" class="form-control" value="+880 1234 567890">
-                                    </div>
+                </div>
+
+                <!-- Page Content -->
+                <div>
+                    <!-- Settings Tabs -->
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <div class="card shadow">
+                                <div class="card-header">
+                                    <h6 class="m-0 font-weight-bold text-primary">Settings Menu</h6>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Email</label>
-                                        <input type="email" class="form-control" value="info@moktob.com">
+                                <div class="card-body p-0">
+                                    <div class="list-group list-group-flush">
+                                        <a href="#" class="list-group-item list-group-item-action active" onclick="showSettings('general')">
+                                            <i class="fas fa-cog me-2"></i>General Settings
+                                        </a>
+                                        <a href="#" class="list-group-item list-group-item-action" onclick="showSettings('email')">
+                                            <i class="fas fa-envelope me-2"></i>Email Settings
+                                        </a>
+                                        <a href="#" class="list-group-item list-group-item-action" onclick="showSettings('security')">
+                                            <i class="fas fa-shield-alt me-2"></i>Security Settings
+                                        </a>
+                                        <a href="#" class="list-group-item list-group-item-action" onclick="showSettings('backup')">
+                                            <i class="fas fa-database me-2"></i>Backup Settings
+                                        </a>
                                     </div>
                                 </div>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">Academic Year</label>
-                                <select class="form-select">
-                                    <option selected>2025</option>
-                                    <option>2024</option>
-                                    <option>2023</option>
-                                </select>
-                            </div>
-                            <button type="button" class="btn btn-primary">
-                                <i class="fas fa-save me-1"></i>Save Settings
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
+                        </div>
 
-            <!-- Email Settings -->
-            <div id="email-settings" class="settings-panel" style="display: none;">
-                <div class="card shadow">
-                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                        <h6 class="m-0 font-weight-bold text-primary">Email Settings</h6>
-                    </div>
-                    <div class="card-body">
-                        <form>
-                            <div class="mb-3">
-                                <label class="form-label">SMTP Host</label>
-                                <input type="text" class="form-control" value="smtp.gmail.com">
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">SMTP Port</label>
-                                        <input type="number" class="form-control" value="587">
+                        <div class="col-lg-9">
+                            <!-- General Settings -->
+                            <div id="general-settings" class="settings-panel">
+                                <div class="card shadow">
+                                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                        <h6 class="m-0 font-weight-bold text-primary">General Settings</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <form id="generalForm">
+                                            <div class="mb-3">
+                                                <label class="form-label">School Name</label>
+                                                <input type="text" class="form-control" id="schoolName" value="Moktob Islamic School">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">School Address</label>
+                                                <textarea class="form-control" id="schoolAddress" rows="3">123 Education St, Dhaka, Bangladesh</textarea>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Phone Number</label>
+                                                        <input type="tel" class="form-control" id="phoneNumber" value="+880 1234 567890">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Email</label>
+                                                        <input type="email" class="form-control" id="email" value="info@moktob.com">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Academic Year</label>
+                                                <select class="form-select" id="academicYear">
+                                                    <option selected>2025</option>
+                                                    <option>2024</option>
+                                                    <option>2023</option>
+                                                </select>
+                                            </div>
+                                            <button type="button" class="btn btn-primary" onclick="saveGeneralSettings()">
+                                                <i class="fas fa-save me-1"></i>Save Settings
+                                            </button>
+                                        </form>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Username</label>
-                                        <input type="text" class="form-control" value="takrimul25@gmail.com">
+                            </div>
+
+                            <!-- Email Settings -->
+                            <div id="email-settings" class="settings-panel" style="display: none;">
+                                <div class="card shadow">
+                                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                        <h6 class="m-0 font-weight-bold text-primary">Email Settings</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <form id="emailForm">
+                                            <div class="mb-3">
+                                                <label class="form-label">SMTP Host</label>
+                                                <input type="text" class="form-control" id="smtpHost" value="smtp.gmail.com">
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">SMTP Port</label>
+                                                        <input type="number" class="form-control" id="smtpPort" value="587">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Username</label>
+                                                        <input type="text" class="form-control" id="smtpUsername" value="takrimul25@gmail.com">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Password</label>
+                                                <input type="password" class="form-control" id="smtpPassword" placeholder="Enter email password">
+                                            </div>
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="checkbox" id="enableSSL" checked>
+                                                <label class="form-check-label" for="enableSSL">
+                                                    Enable SSL/TLS
+                                                </label>
+                                            </div>
+                                            <button type="button" class="btn btn-primary" onclick="saveEmailSettings()">
+                                                <i class="fas fa-save me-1"></i>Save Email Settings
+                                            </button>
+                                            <button type="button" class="btn btn-info ms-2" onclick="testEmail()">
+                                                <i class="fas fa-paper-plane me-1"></i>Test Email
+                                            </button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">Password</label>
-                                <input type="password" class="form-control" placeholder="Enter email password">
-                            </div>
-                            <div class="form-check mb-3">
-                                <input class="form-check-input" type="checkbox" id="enableSSL" checked>
-                                <label class="form-check-label" for="enableSSL">
-                                    Enable SSL/TLS
-                                </label>
-                            </div>
-                            <button type="button" class="btn btn-primary">
-                                <i class="fas fa-save me-1"></i>Save Email Settings
-                            </button>
-                            <button type="button" class="btn btn-info ms-2">
-                                <i class="fas fa-paper-plane me-1"></i>Test Email
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Security Settings -->
-            <div id="security-settings" class="settings-panel" style="display: none;">
-                <div class="card shadow">
-                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                        <h6 class="m-0 font-weight-bold text-primary">Security Settings</h6>
-                    </div>
-                    <div class="card-body">
-                        <form>
-                            <div class="mb-3">
-                                <label class="form-label">Session Timeout (minutes)</label>
-                                <input type="number" class="form-control" value="30">
+                            <!-- Security Settings -->
+                            <div id="security-settings" class="settings-panel" style="display: none;">
+                                <div class="card shadow">
+                                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                        <h6 class="m-0 font-weight-bold text-primary">Security Settings</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <form id="securityForm">
+                                            <div class="mb-3">
+                                                <label class="form-label">Session Timeout (minutes)</label>
+                                                <input type="number" class="form-control" id="sessionTimeout" value="30">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Password Policy</label>
+                                                <select class="form-select" id="passwordPolicy">
+                                                    <option selected>Medium (8+ characters)</option>
+                                                    <option>Strong (12+ characters with special chars)</option>
+                                                    <option>Weak (6+ characters)</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="checkbox" id="twoFactor" checked>
+                                                <label class="form-check-label" for="twoFactor">
+                                                    Enable Two-Factor Authentication
+                                                </label>
+                                            </div>
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="checkbox" id="loginLogging" checked>
+                                                <label class="form-check-label" for="loginLogging">
+                                                    Enable Login Logging
+                                                </label>
+                                            </div>
+                                            <button type="button" class="btn btn-primary" onclick="saveSecuritySettings()">
+                                                <i class="fas fa-save me-1"></i>Save Security Settings
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">Password Policy</label>
-                                <select class="form-select">
-                                    <option selected>Medium (8+ characters)</option>
-                                    <option>Strong (12+ characters with special chars)</option>
-                                    <option>Weak (6+ characters)</option>
-                                </select>
-                            </div>
-                            <div class="form-check mb-3">
-                                <input class="form-check-input" type="checkbox" id="twoFactor" checked>
-                                <label class="form-check-label" for="twoFactor">
-                                    Enable Two-Factor Authentication
-                                </label>
-                            </div>
-                            <div class="form-check mb-3">
-                                <input class="form-check-input" type="checkbox" id="loginLogging" checked>
-                                <label class="form-check-label" for="loginLogging">
-                                    Enable Login Logging
-                                </label>
-                            </div>
-                            <button type="button" class="btn btn-primary">
-                                <i class="fas fa-save me-1"></i>Save Security Settings
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Backup Settings -->
-            <div id="backup-settings" class="settings-panel" style="display: none;">
-                <div class="card shadow">
-                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                        <h6 class="m-0 font-weight-bold text-primary">Backup Settings</h6>
-                    </div>
-                    <div class="card-body">
-                        <form>
-                            <div class="mb-3">
-                                <label class="form-label">Backup Frequency</label>
-                                <select class="form-select">
-                                    <option selected>Daily</option>
-                                    <option>Weekly</option>
-                                    <option>Monthly</option>
-                                </select>
+                            <!-- Backup Settings -->
+                            <div id="backup-settings" class="settings-panel" style="display: none;">
+                                <div class="card shadow">
+                                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                        <h6 class="m-0 font-weight-bold text-primary">Backup Settings</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <form id="backupForm">
+                                            <div class="mb-3">
+                                                <label class="form-label">Backup Frequency</label>
+                                                <select class="form-select" id="backupFrequency">
+                                                    <option selected>Daily</option>
+                                                    <option>Weekly</option>
+                                                    <option>Monthly</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Backup Location</label>
+                                                <input type="text" class="form-control" id="backupLocation" value="/backups/moktob/">
+                                            </div>
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="checkbox" id="autoBackup" checked>
+                                                <label class="form-check-label" for="autoBackup">
+                                                    Enable Automatic Backup
+                                                </label>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Retention Period (days)</label>
+                                                <input type="number" class="form-control" id="retentionPeriod" value="30">
+                                            </div>
+                                            <button type="button" class="btn btn-primary" onclick="saveBackupSettings()">
+                                                <i class="fas fa-save me-1"></i>Save Backup Settings
+                                            </button>
+                                            <button type="button" class="btn btn-warning ms-2" onclick="createBackup()">
+                                                <i class="fas fa-download me-1"></i>Create Backup Now
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">Backup Location</label>
-                                <input type="text" class="form-control" value="/backups/moktob/">
-                            </div>
-                            <div class="form-check mb-3">
-                                <input class="form-check-input" type="checkbox" id="autoBackup" checked>
-                                <label class="form-check-label" for="autoBackup">
-                                    Enable Automatic Backup
-                                </label>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Retention Period (days)</label>
-                                <input type="number" class="form-control" value="30">
-                            </div>
-                            <button type="button" class="btn btn-primary">
-                                <i class="fas fa-save me-1"></i>Save Backup Settings
-                            </button>
-                            <button type="button" class="btn btn-warning ms-2">
-                                <i class="fas fa-download me-1"></i>Create Backup Now
-                            </button>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Page Actions -->
-<div th:fragment="page-actions">
-    <div class="btn-group me-2">
-        <button type="button" class="btn btn-sm btn-outline-secondary">
-            <i class="fas fa-sync-alt me-1"></i>Reset to Default
-        </button>
-    </div>
-</div>
+    <!-- Footer -->
+    <div th:replace="~{layout/footer :: footer}"></div>
 
-<!-- Additional JS -->
-<div th:fragment="additional-js">
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom JS -->
+    <script th:src="@{/js/app.js}"></script>
+    
     <script>
         function showSettings(settingsType) {
             // Hide all settings panels
@@ -241,7 +272,145 @@
             // Add active class to clicked menu item
             event.target.classList.add('active');
         }
+
+        function resetToDefault() {
+            if (confirm('Are you sure you want to reset all settings to default? This action cannot be undone.')) {
+                alert('Reset to default functionality coming soon...');
+            }
+        }
+
+        function saveGeneralSettings() {
+            const token = MoktobApp.getToken();
+            if (!token) {
+                window.location.href = '/moktob/login';
+                return;
+            }
+
+            const settingsData = {
+                schoolName: document.getElementById('schoolName').value,
+                schoolAddress: document.getElementById('schoolAddress').value,
+                phoneNumber: document.getElementById('phoneNumber').value,
+                email: document.getElementById('email').value,
+                academicYear: document.getElementById('academicYear').value
+            };
+
+            MoktobApp.apiRequest('/moktob/api/settings/general', {
+                method: 'PUT',
+                body: JSON.stringify(settingsData)
+            })
+                .then(() => {
+                    alert('General settings saved successfully!');
+                })
+                .catch(error => {
+                    console.error('Error saving general settings:', error);
+                    alert('Failed to save general settings. Please try again.');
+                });
+        }
+
+        function saveEmailSettings() {
+            const token = MoktobApp.getToken();
+            if (!token) {
+                window.location.href = '/moktob/login';
+                return;
+            }
+
+            const emailData = {
+                smtpHost: document.getElementById('smtpHost').value,
+                smtpPort: document.getElementById('smtpPort').value,
+                smtpUsername: document.getElementById('smtpUsername').value,
+                smtpPassword: document.getElementById('smtpPassword').value,
+                enableSSL: document.getElementById('enableSSL').checked
+            };
+
+            MoktobApp.apiRequest('/moktob/api/settings/email', {
+                method: 'PUT',
+                body: JSON.stringify(emailData)
+            })
+                .then(() => {
+                    alert('Email settings saved successfully!');
+                })
+                .catch(error => {
+                    console.error('Error saving email settings:', error);
+                    alert('Failed to save email settings. Please try again.');
+                });
+        }
+
+        function saveSecuritySettings() {
+            const token = MoktobApp.getToken();
+            if (!token) {
+                window.location.href = '/moktob/login';
+                return;
+            }
+
+            const securityData = {
+                sessionTimeout: document.getElementById('sessionTimeout').value,
+                passwordPolicy: document.getElementById('passwordPolicy').value,
+                twoFactor: document.getElementById('twoFactor').checked,
+                loginLogging: document.getElementById('loginLogging').checked
+            };
+
+            MoktobApp.apiRequest('/moktob/api/settings/security', {
+                method: 'PUT',
+                body: JSON.stringify(securityData)
+            })
+                .then(() => {
+                    alert('Security settings saved successfully!');
+                })
+                .catch(error => {
+                    console.error('Error saving security settings:', error);
+                    alert('Failed to save security settings. Please try again.');
+                });
+        }
+
+        function saveBackupSettings() {
+            const token = MoktobApp.getToken();
+            if (!token) {
+                window.location.href = '/moktob/login';
+                return;
+            }
+
+            const backupData = {
+                backupFrequency: document.getElementById('backupFrequency').value,
+                backupLocation: document.getElementById('backupLocation').value,
+                autoBackup: document.getElementById('autoBackup').checked,
+                retentionPeriod: document.getElementById('retentionPeriod').value
+            };
+
+            MoktobApp.apiRequest('/moktob/api/settings/backup', {
+                method: 'PUT',
+                body: JSON.stringify(backupData)
+            })
+                .then(() => {
+                    alert('Backup settings saved successfully!');
+                })
+                .catch(error => {
+                    console.error('Error saving backup settings:', error);
+                    alert('Failed to save backup settings. Please try again.');
+                });
+        }
+
+        function testEmail() {
+            alert('Test email functionality coming soon...');
+        }
+
+        function createBackup() {
+            const token = MoktobApp.getToken();
+            if (!token) {
+                window.location.href = '/moktob/login';
+                return;
+            }
+
+            MoktobApp.apiRequest('/moktob/api/backup/create', {
+                method: 'POST'
+            })
+                .then(() => {
+                    alert('Backup created successfully!');
+                })
+                .catch(error => {
+                    console.error('Error creating backup:', error);
+                    alert('Failed to create backup. Please try again.');
+                });
+        }
     </script>
-</div>
 </body>
 </html>
