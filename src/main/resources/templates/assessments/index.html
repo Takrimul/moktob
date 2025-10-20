@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: base-layout(pageTitle='Assessments - Moktob Management System', content=~{::content})}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assessments - Moktob Management System</title>
+</head>
+<body>
+<div th:fragment="content">
+    <!-- Assessments Table -->
+    <div class="card shadow">
+        <div class="card-header bg-white py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Assessment Records</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover" id="assessmentsTable">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Student</th>
+                            <th>Subject</th>
+                            <th>Score</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="assessmentsTableBody">
+                        <tr>
+                            <td colspan="6" class="text-center text-muted">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Assessments module coming soon...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Page Actions -->
+<div th:fragment="page-actions">
+    <div class="btn-group me-2">
+        <button type="button" class="btn btn-sm btn-outline-secondary">
+            <i class="fas fa-download me-1"></i>Export
+        </button>
+    </div>
+    <button type="button" class="btn btn-sm btn-primary" onclick="addAssessment()">
+        <i class="fas fa-plus me-1"></i>Add Assessment
+    </button>
+</div>
+
+<!-- Additional JS -->
+<div th:fragment="additional-js">
+    <script>
+        function addAssessment() {
+            alert('Add Assessment functionality coming soon...');
+        }
+    </script>
+</div>
+</body>
+</html>

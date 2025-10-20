@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: base-layout(pageTitle='Profile - Moktob Management System', content=~{::content})}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Moktob Management System</title>
+</head>
+<body>
+<div th:fragment="content">
+    <!-- Profile Information -->
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Profile Picture</h6>
+                </div>
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="fas fa-user-circle fa-5x text-gray-300"></i>
+                    </div>
+                    <button class="btn btn-primary btn-sm">
+                        <i class="fas fa-upload me-1"></i>Upload Photo
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Profile Information</h6>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">First Name</label>
+                                    <input type="text" class="form-control" value="Admin" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Last Name</label>
+                                    <input type="text" class="form-control" value="User" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" value="admin@moktob.com" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Phone</label>
+                                    <input type="tel" class="form-control" value="+880 1234 567890" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Role</label>
+                            <input type="text" class="form-control" value="Administrator" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Last Login</label>
+                            <input type="text" class="form-control" value="Today at 10:30 AM" readonly>
+                        </div>
+                        <button type="button" class="btn btn-primary">
+                            <i class="fas fa-edit me-1"></i>Edit Profile
+                        </button>
+                        <button type="button" class="btn btn-warning ms-2">
+                            <i class="fas fa-key me-1"></i>Change Password
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Page Actions -->
+<div th:fragment="page-actions">
+    <div class="btn-group me-2">
+        <button type="button" class="btn btn-sm btn-outline-secondary">
+            <i class="fas fa-save me-1"></i>Save Changes
+        </button>
+    </div>
+</div>
+</body>
+</html>
