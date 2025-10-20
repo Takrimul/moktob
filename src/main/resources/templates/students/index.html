@@ -1,169 +1,86 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{dashboard/index :: dashboard-layout(title='Students - Moktob Management System', content=~{::content})}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Students - Moktob Management System</title>
-    
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <!-- Custom CSS -->
-    <link th:href="@{/css/style.css}" rel="stylesheet">
 </head>
 <body>
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
-                <div class="position-sticky pt-3">
-                    <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link" href="/moktob/dashboard">
-                                <i class="fas fa-tachometer-alt me-2"></i>
-                                Dashboard
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link active" href="/moktob/students">
-                                <i class="fas fa-user-graduate me-2"></i>
-                                Students
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/moktob/teachers">
-                                <i class="fas fa-chalkboard-teacher me-2"></i>
-                                Teachers
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/moktob/classes">
-                                <i class="fas fa-school me-2"></i>
-                                Classes
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/moktob/attendance">
-                                <i class="fas fa-calendar-check me-2"></i>
-                                Attendance
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/moktob/payments">
-                                <i class="fas fa-credit-card me-2"></i>
-                                Payments
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/moktob/reports">
-                                <i class="fas fa-chart-bar me-2"></i>
-                                Reports
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/moktob/settings">
-                                <i class="fas fa-cog me-2"></i>
-                                Settings
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#" onclick="logout()">
-                                <i class="fas fa-sign-out-alt me-2"></i>
-                                Logout
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-
-            <!-- Main content -->
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">Students Management</h1>
-                    <div class="btn-toolbar mb-2 mb-md-0">
-                        <div class="btn-group me-2">
-                            <button type="button" class="btn btn-sm btn-outline-secondary">
-                                <i class="fas fa-download me-1"></i>Export
-                            </button>
-                        </div>
-                        <button type="button" class="btn btn-sm btn-primary" onclick="addStudent()">
-                            <i class="fas fa-plus me-1"></i>Add Student
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Students Table -->
-                <div class="card">
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover" id="studentsTable">
-                                <thead class="table-dark">
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Name</th>
-                                        <th>Guardian Name</th>
-                                        <th>Guardian Contact</th>
-                                        <th>Class</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="studentsTableBody">
-                                    <tr>
-                                        <td colspan="7" class="text-center text-muted">
-                                            <i class="fas fa-spinner fa-spin me-2"></i>
-                                            Loading students...
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </main>
+<div th:fragment="content">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Students Management</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group me-2">
+                <button type="button" class="btn btn-sm btn-outline-secondary">
+                    <i class="fas fa-download me-1"></i>Export
+                </button>
+            </div>
+            <button type="button" class="btn btn-sm btn-primary" onclick="addStudent()">
+                <i class="fas fa-plus me-1"></i>Add Student
+            </button>
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Custom JS -->
-    <script th:src="@{/js/app.js}"></script>
-    <script th:src="@{/js/popup.js}"></script>
-    <script th:src="@{/js/students.js}"></script>
-    <script>
-        function logout() {
-            MoktobPopup.confirm({
-                title: 'Logout Confirmation',
-                message: 'Are you sure you want to logout?',
-                onConfirm: () => {
-                    MoktobApp.removeToken();
-                    window.location.href = '/moktob/login';
-                }
-            });
+    <!-- Students Table -->
+    <div class="card shadow">
+        <div class="card-header bg-white py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Student Records</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover" id="studentsTable">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Guardian Name</th>
+                        <th>Guardian Contact</th>
+                        <th>Class</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody id="studentsTableBody">
+                    <tr>
+                        <td colspan="7" class="text-center text-muted">
+                            <i class="fas fa-spinner fa-spin me-2"></i>
+                            Loading students...
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Page specific scripts -->
+<script th:src="@{/js/popup.js}"></script>
+<script th:src="@{/js/students.js}"></script>
+<script>
+    function addStudent() {
+        window.location.href = '/moktob/students/add';
+    }
+
+    // Load students data when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        loadStudents();
+    });
+
+    function loadStudents() {
+        const token = MoktobApp.getToken();
+        if (!token) {
+            window.location.href = '/moktob/login';
+            return;
         }
 
-        function addStudent() {
-            window.location.href = '/moktob/students/add';
-        }
-        
-        // Load students data when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            loadStudents();
-        });
-        
-        function loadStudents() {
-            const token = MoktobApp.getToken();
-            if (!token) {
-                window.location.href = '/moktob/login';
-                return;
-            }
-            
-            MoktobApp.apiRequest('/moktob/api/students')
-                .then(students => {
-                    const tbody = document.getElementById('studentsTableBody');
-                    if (students && students.length > 0) {
-                        tbody.innerHTML = students.map(student => `
+        MoktobApp.apiRequest('/moktob/api/students')
+            .then(students => {
+                const tbody = document.getElementById('studentsTableBody');
+                if (students && students.length > 0) {
+                    tbody.innerHTML = students.map(student => `
                             <tr>
                                 <td>${student.id}</td>
                                 <td>${student.name || 'N/A'}</td>
@@ -172,13 +89,17 @@
                                 <td>${student.className || 'N/A'}</td>
                                 <td><span class="badge bg-success">Active</span></td>
                                 <td>
-                                    <button class="btn btn-sm btn-primary me-1">Edit</button>
-                                    <button class="btn btn-sm btn-danger">Delete</button>
+                                    <button class="btn btn-sm btn-primary me-1" onclick="editStudent(${student.id})">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteStudent(${student.id})">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
                                 </td>
                             </tr>
                         `).join('');
-                    } else {
-                        tbody.innerHTML = `
+                } else {
+                    tbody.innerHTML = `
                             <tr>
                                 <td colspan="7" class="text-center text-muted">
                                     <i class="fas fa-info-circle me-2"></i>
@@ -186,12 +107,12 @@
                                 </td>
                             </tr>
                         `;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading students:', error);
-                    const tbody = document.getElementById('studentsTableBody');
-                    tbody.innerHTML = `
+                }
+            })
+            .catch(error => {
+                console.error('Error loading students:', error);
+                const tbody = document.getElementById('studentsTableBody');
+                tbody.innerHTML = `
                         <tr>
                             <td colspan="7" class="text-center text-danger">
                                 <i class="fas fa-exclamation-triangle me-2"></i>
@@ -199,8 +120,40 @@
                             </td>
                         </tr>
                     `;
-                });
-        }
-    </script>
+            });
+    }
+
+    function editStudent(id) {
+        window.location.href = `/moktob/students/edit/${id}`;
+    }
+
+    function deleteStudent(id) {
+        MoktobPopup.confirm({
+            title: 'Delete Confirmation',
+            message: 'Are you sure you want to delete this student? This action cannot be undone.',
+            onConfirm: () => {
+                MoktobApp.apiRequest(`/moktob/api/students/${id}`, {
+                    method: 'DELETE'
+                })
+                    .then(() => {
+                        MoktobPopup.alert({
+                            title: 'Success',
+                            message: 'Student deleted successfully',
+                            type: 'success'
+                        });
+                        loadStudents(); // Reload the table
+                    })
+                    .catch(error => {
+                        console.error('Error deleting student:', error);
+                        MoktobPopup.alert({
+                            title: 'Error',
+                            message: 'Failed to delete student. Please try again.',
+                            type: 'error'
+                        });
+                    });
+            }
+        });
+    }
+</script>
 </body>
 </html>

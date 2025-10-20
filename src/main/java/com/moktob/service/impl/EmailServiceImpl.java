@@ -60,7 +60,7 @@ public class EmailServiceImpl implements EmailService {
             2. Change your password immediately after first login
             3. You can now start managing your organization
             
-            Login URL: http://localhost:8080/moktob/api/auth/login
+            Login URL: http://localhost:8080/moktob/login
             
             If you have any questions or need assistance, please don't hesitate to contact us.
             
