@@ -52,13 +52,13 @@ public class ClassController {
         return ResponseEntity.ok(classEntityService.getClassesByTeacher(teacherId));
     }
     
-    @GetMapping("/search")
-    public ResponseEntity<List<ClassEntity>> searchClassesByName(@RequestParam String className) {
-        return ResponseEntity.ok(classEntityService.searchClassesByName(className));
-    }
-    
     @GetMapping("/dropdown")
     public ResponseEntity<List<ClassDropdownDTO>> getClassesForDropdown() {
         return ResponseEntity.ok(classEntityService.getClassesForDropdown());
+    }
+    
+    @GetMapping("/search")
+    public ResponseEntity<List<ClassEntity>> searchClassesByName(@RequestParam String className) {
+        return ResponseEntity.ok(classEntityService.searchClassesByName(className));
     }
 }

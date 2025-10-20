@@ -83,4 +83,9 @@ public class AttendanceController {
     public ResponseEntity<List<Attendance>> createBulkAttendance(@RequestBody List<AttendanceRequest> attendanceRequests) {
         return ResponseEntity.ok(attendanceService.saveBulkAttendance(attendanceRequests));
     }
+    
+    @GetMapping("/today")
+    public ResponseEntity<List<Attendance>> getTodayAttendance() {
+        return ResponseEntity.ok(attendanceService.getAttendanceByDate(LocalDate.now()));
+    }
 }
