@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/simple :: simple-layout(pageTitle='Support Center - Moktob Management System', content=~{::content})}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support Center - Moktob Management System</title>
+</head>
+<body>
+<div th:fragment="content">
+    <!-- Support Content -->
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <!-- Support Header -->
+            <div class="card shadow mb-4">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0">
+                        <i class="fas fa-headset me-2"></i>Support Center
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <p class="lead">We're here to help you get the most out of your Moktob Management System. Choose how you'd like to get support.</p>
+                </div>
+            </div>
+
+            <!-- Support Options -->
+            <div class="row mb-4">
+                <div class="col-md-6 mb-3">
+                    <div class="card border-primary h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-ticket-alt fa-3x text-primary mb-3"></i>
+                            <h5 class="card-title text-primary">Submit a Ticket</h5>
+                            <p class="card-text">Create a support ticket for technical issues, feature requests, or general inquiries.</p>
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ticketModal">
+                                <i class="fas fa-plus me-2"></i>Create Ticket
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="card border-success h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-phone fa-3x text-success mb-3"></i>
+                            <h5 class="card-title text-success">Call Support</h5>
+                            <p class="card-text">Speak directly with our support team for immediate assistance.</p>
+                            <a href="tel:+8801234567890" class="btn btn-success">
+                                <i class="fas fa-phone me-2"></i>Call Now
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="card border-info h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-comments fa-3x text-info mb-3"></i>
+                            <h5 class="card-title text-info">Live Chat</h5>
+                            <p class="card-text">Chat with our support team in real-time for quick assistance.</p>
+                            <button class="btn btn-info" onclick="startLiveChat()">
+                                <i class="fas fa-comments me-2"></i>Start Chat
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="card border-warning h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-question-circle fa-3x text-warning mb-3"></i>
+                            <h5 class="card-title text-warning">Help Center</h5>
+                            <p class="card-text">Browse our comprehensive help documentation and FAQs.</p>
+                            <a href="/moktob/help" class="btn btn-warning">
+                                <i class="fas fa-book me-2"></i>View Help
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card shadow">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-envelope me-2"></i>Contact Information
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <h6 class="text-primary">Email Support</h6>
+                                <p class="mb-1"><strong>General Inquiries:</strong> support@moktob.com</p>
+                                <p class="mb-1"><strong>Technical Issues:</strong> tech@moktob.com</p>
+                                <p class="mb-1"><strong>Billing Questions:</strong> billing@moktob.com</p>
+                            </div>
+                            <div class="mb-3">
+                                <h6 class="text-primary">Phone Support</h6>
+                                <p class="mb-1"><strong>Main Line:</strong> +880 1234 567890</p>
+                                <p class="mb-1"><strong>Emergency:</strong> +880 1234 567891</p>
+                            </div>
+                            <div>
+                                <h6 class="text-primary">Office Hours</h6>
+                                <p class="mb-1"><strong>Monday - Friday:</strong> 9:00 AM - 6:00 PM (BST)</p>
+                                <p class="mb-1"><strong>Saturday:</strong> 10:00 AM - 2:00 PM (BST)</p>
+                                <p class="mb-0"><strong>Sunday:</strong> Closed</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card shadow">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-map-marker-alt me-2"></i>Office Location
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <h6 class="text-success">Headquarters</h6>
+                                <p class="mb-1">123 Education Street</p>
+                                <p class="mb-1">Dhaka, Bangladesh 1000</p>
+                                <p class="mb-1">Near Central Mosque</p>
+                            </div>
+                            <div class="mb-3">
+                                <h6 class="text-success">Regional Offices</h6>
+                                <p class="mb-1"><strong>Chittagong:</strong> +880 1234 567892</p>
+                                <p class="mb-1"><strong>Sylhet:</strong> +880 1234 567893</p>
+                                <p class="mb-1"><strong>Rajshahi:</strong> +880 1234 567894</p>
+                            </div>
+                            <div>
+                                <h6 class="text-success">Emergency Contact</h6>
+                                <p class="mb-0">For critical system issues outside office hours</p>
+                                <p class="mb-0"><strong>24/7 Hotline:</strong> +880 1234 567895</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Support Statistics -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card shadow">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-chart-line me-2"></i>Support Statistics
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-md-3 mb-3">
+                                    <div class="border-end">
+                                        <h3 class="text-primary mb-1">24/7</h3>
+                                        <p class="text-muted mb-0">Availability</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="border-end">
+                                        <h3 class="text-success mb-1">&lt;2hrs</h3>
+                                        <p class="text-muted mb-0">Response Time</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="border-end">
+                                        <h3 class="text-info mb-1">98%</h3>
+                                        <p class="text-muted mb-0">Satisfaction Rate</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <h3 class="text-warning mb-1">1000+</h3>
+                                    <p class="text-muted mb-0">Issues Resolved</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ Quick Access -->
+            <div class="card shadow">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-question-circle me-2"></i>Quick FAQ
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <h6 class="text-secondary">How do I reset my password?</h6>
+                                <p class="small text-muted">Go to Settings > Security > Change Password</p>
+                            </div>
+                            <div class="mb-3">
+                                <h6 class="text-secondary">Can I export student data?</h6>
+                                <p class="small text-muted">Yes, use the Export button in the Students section</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <h6 class="text-secondary">How do I backup my data?</h6>
+                                <p class="small text-muted">Automatic daily backups are included</p>
+                            </div>
+                            <div class="mb-3">
+                                <h6 class="text-secondary">Is there mobile support?</h6>
+                                <p class="small text-muted">Yes, our system is fully responsive</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-3">
+                        <a href="/moktob/help" class="btn btn-outline-secondary">
+                            <i class="fas fa-book me-2"></i>View All FAQs
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Support Ticket Modal -->
+    <div class="modal fade" id="ticketModal" tabindex="-1" aria-labelledby="ticketModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="ticketModalLabel">
+                        <i class="fas fa-ticket-alt me-2"></i>Create Support Ticket
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="supportTicketForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="ticketType" class="form-label">Issue Type</label>
+                                <select class="form-select" id="ticketType" required>
+                                    <option value="">Select issue type</option>
+                                    <option value="technical">Technical Issue</option>
+                                    <option value="feature">Feature Request</option>
+                                    <option value="billing">Billing Question</option>
+                                    <option value="general">General Inquiry</option>
+                                    <option value="bug">Bug Report</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="priority" class="form-label">Priority</label>
+                                <select class="form-select" id="priority" required>
+                                    <option value="low">Low</option>
+                                    <option value="medium" selected>Medium</option>
+                                    <option value="high">High</option>
+                                    <option value="urgent">Urgent</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">Subject</label>
+                            <input type="text" class="form-control" id="subject" placeholder="Brief description of your issue" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" rows="5" placeholder="Please provide detailed information about your issue..." required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="contactEmail" class="form-label">Contact Email</label>
+                            <input type="email" class="form-control" id="contactEmail" placeholder="your.email@example.com" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="contactPhone" class="form-label">Contact Phone (Optional)</label>
+                            <input type="tel" class="form-control" id="contactPhone" placeholder="+880 1234 567890">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="submitTicket()">
+                        <i class="fas fa-paper-plane me-2"></i>Submit Ticket
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Additional JS -->
+<div th:fragment="additional-js">
+    <script>
+        function startLiveChat() {
+            alert('Live chat feature will be available soon! For now, please use email or phone support.');
+        }
+
+        function submitTicket() {
+            const form = document.getElementById('supportTicketForm');
+            const formData = new FormData(form);
+            
+            // Basic validation
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            // Simulate ticket submission
+            const ticketData = {
+                type: document.getElementById('ticketType').value,
+                priority: document.getElementById('priority').value,
+                subject: document.getElementById('subject').value,
+                description: document.getElementById('description').value,
+                email: document.getElementById('contactEmail').value,
+                phone: document.getElementById('contactPhone').value
+            };
+
+            // Show success message
+            alert('Support ticket submitted successfully! You will receive a confirmation email shortly.');
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('ticketModal'));
+            modal.hide();
+            
+            // Reset form
+            form.reset();
+        }
+    </script>
+</div>
+</body>
+</html>

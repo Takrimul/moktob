@@ -9,8 +9,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-
 @Controller
 @RequiredArgsConstructor
 @Slf4j
@@ -152,6 +150,38 @@ public class WebController {
         model.addAttribute("pageTitle", "Settings");
         model.addAttribute("title", "Settings - Moktob Management System");
         return "settings/index";
+    }
+
+    // Terms of Service page
+    @GetMapping("/terms")
+    public String termsPage(Model model) {
+        model.addAttribute("pageTitle", "Terms of Service");
+        model.addAttribute("title", "Terms of Service - Moktob Management System");
+        return "terms/index";
+    }
+
+    // Privacy Policy page
+    @GetMapping("/privacy")
+    public String privacyPage(Model model) {
+        model.addAttribute("pageTitle", "Privacy Policy");
+        model.addAttribute("title", "Privacy Policy - Moktob Management System");
+        return "privacy/index";
+    }
+
+    // Help page
+    @GetMapping("/help")
+    public String helpPage(Model model) {
+        model.addAttribute("pageTitle", "Help & Documentation");
+        model.addAttribute("title", "Help & Documentation - Moktob Management System");
+        return "help/index";
+    }
+
+    // Support page
+    @GetMapping("/support")
+    public String supportPage(Model model) {
+        model.addAttribute("pageTitle", "Support Center");
+        model.addAttribute("title", "Support Center - Moktob Management System");
+        return "support/index";
     }
 
     // Logout

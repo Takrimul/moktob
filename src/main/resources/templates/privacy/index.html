@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/simple :: simple-layout(pageTitle='Privacy Policy - Moktob Management System', content=~{::content})}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - Moktob Management System</title>
+</head>
+<body>
+<div th:fragment="content">
+    <!-- Privacy Policy Content -->
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-shield-alt me-2"></i>Privacy Policy
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <p class="text-muted">Last updated: <span th:text="${#dates.format(#dates.createNow(), 'MMMM dd, yyyy')}">October 20, 2025</span></p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5 class="text-success">1. Information We Collect</h5>
+                        <p>We collect information you provide directly to us, such as when you create an account, use our services, or contact us for support. This may include:</p>
+                        <ul>
+                            <li><strong>Personal Information:</strong> Name, email address, phone number, and other contact details</li>
+                            <li><strong>Student Information:</strong> Student names, guardian information, academic records, and attendance data</li>
+                            <li><strong>Teacher Information:</strong> Teacher credentials, class assignments, and performance data</li>
+                            <li><strong>Usage Information:</strong> How you interact with our system, features used, and time spent</li>
+                        </ul>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5 class="text-success">2. How We Use Your Information</h5>
+                        <p>We use the information we collect to:</p>
+                        <ul>
+                            <li>Provide, maintain, and improve our educational management services</li>
+                            <li>Process transactions and send related information</li>
+                            <li>Send technical notices, updates, security alerts, and support messages</li>
+                            <li>Respond to your comments, questions, and requests</li>
+                            <li>Monitor and analyze trends, usage, and activities</li>
+                            <li>Personalize and improve the user experience</li>
+                        </ul>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5 class="text-success">3. Information Sharing and Disclosure</h5>
+                        <p>We do not sell, trade, or otherwise transfer your personal information to third parties without your consent, except in the following circumstances:</p>
+                        <ul>
+                            <li><strong>Educational Purposes:</strong> Sharing student information with authorized teachers and administrators</li>
+                            <li><strong>Legal Requirements:</strong> When required by law or to protect our rights and safety</li>
+                            <li><strong>Service Providers:</strong> With trusted third parties who assist in operating our system</li>
+                            <li><strong>Consent:</strong> When you have given explicit consent for specific sharing</li>
+                        </ul>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5 class="text-success">4. Data Security</h5>
+                        <p>We implement appropriate security measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction. These measures include:</p>
+                        <ul>
+                            <li>Encryption of sensitive data in transit and at rest</li>
+                            <li>Regular security audits and updates</li>
+                            <li>Access controls and authentication systems</li>
+                            <li>Secure data centers with physical security measures</li>
+                            <li>Employee training on data protection best practices</li>
+                        </ul>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5 class="text-success">5. Data Retention</h5>
+                        <p>We retain your personal information for as long as necessary to provide our services and fulfill the purposes outlined in this privacy policy. Student records are retained according to educational regulations and institutional policies.</p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5 class="text-success">6. Your Rights and Choices</h5>
+                        <p>You have the right to:</p>
+                        <ul>
+                            <li><strong>Access:</strong> Request access to your personal information</li>
+                            <li><strong>Correction:</strong> Request correction of inaccurate information</li>
+                            <li><strong>Deletion:</strong> Request deletion of your personal information</li>
+                            <li><strong>Portability:</strong> Request a copy of your data in a portable format</li>
+                            <li><strong>Objection:</strong> Object to certain processing of your information</li>
+                        </ul>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5 class="text-success">7. Children's Privacy</h5>
+                        <p>Our system is designed for educational institutions and may process information about students under 18. We comply with applicable laws regarding children's privacy, including obtaining appropriate consent from parents or guardians when required.</p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5 class="text-success">8. Cookies and Tracking</h5>
+                        <p>We use cookies and similar technologies to enhance your experience, analyze usage patterns, and provide personalized content. You can control cookie preferences through your browser settings.</p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5 class="text-success">9. International Data Transfers</h5>
+                        <p>Your information may be transferred to and processed in countries other than your own. We ensure appropriate safeguards are in place to protect your information in accordance with this privacy policy.</p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5 class="text-success">10. Changes to This Policy</h5>
+                        <p>We may update this privacy policy from time to time. We will notify you of any changes by posting the new policy on this page and updating the "Last updated" date.</p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5 class="text-success">11. Contact Us</h5>
+                        <p>If you have any questions about this Privacy Policy, please contact us at:</p>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-envelope me-2 text-success"></i>Email: privacy@moktob.com</li>
+                            <li><i class="fas fa-phone me-2 text-success"></i>Phone: +880 1234 567890</li>
+                            <li><i class="fas fa-map-marker-alt me-2 text-success"></i>Address: 123 Education Street, Dhaka, Bangladesh 1000</li>
+                        </ul>
+                    </div>
+
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <strong>Your Privacy Matters:</strong> We are committed to protecting your privacy and ensuring the security of your personal information.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
