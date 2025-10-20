@@ -3,10 +3,13 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         loadClasses();
         initializeForm();
+        checkEditMode();
     }, 100);
 });
 
 let classes = [];
+let isEditMode = false;
+let studentId = null;
 
 async function loadClasses() {
     try {
@@ -35,6 +38,59 @@ function populateClassDropdown() {
         option.textContent = `${cls.className} (${cls.teacherName || 'No Teacher'})`;
         classSelect.appendChild(option);
     });
+}
+
+function checkEditMode() {
+    const isEditField = document.getElementById('isEdit');
+    const studentIdField = document.getElementById('studentId');
+    
+    if (isEditField && isEditField.value === 'true') {
+        isEditMode = true;
+        studentId = studentIdField ? studentIdField.value : null;
+        
+        if (studentId) {
+            loadStudentData(studentId);
+        }
+    }
+}
+
+async function loadStudentData(id) {
+    try {
+        const student = await MoktobApp.apiRequest(`/moktob/api/students/${id}`);
+        
+        // Populate form fields with student data
+        if (student) {
+            document.getElementById('name').value = student.name || '';
+            document.getElementById('dateOfBirth').value = student.dob || '';
+            document.getElementById('guardianName').value = student.guardianName || '';
+            document.getElementById('guardianContact').value = student.guardianContact || '';
+            document.getElementById('address').value = student.address || '';
+            
+            // Set class selection - wait for classes to be loaded if needed
+            if (student.classId) {
+                if (classes.length > 0) {
+                    document.getElementById('currentClassId').value = student.classId;
+                } else {
+                    // If classes not loaded yet, wait and try again
+                    setTimeout(() => {
+                        if (classes.length > 0) {
+                            document.getElementById('currentClassId').value = student.classId;
+                        }
+                    }, 500);
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error loading student data:', error);
+        if (typeof MoktobPopup !== 'undefined' && MoktobPopup.error) {
+            MoktobPopup.error({
+                title: 'Error',
+                message: 'Failed to load student data. Please try again.'
+            });
+        } else {
+            alert('Error: Failed to load student data. Please try again.');
+        }
+    }
 }
 
 function initializeForm() {
@@ -133,7 +189,7 @@ async function handleFormSubmit(event) {
     try {
         // Disable submit button and show loading
         submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Saving...';
+        submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin me-1"></i>${isEditMode ? 'Updating...' : 'Saving...'}`;
         
         // Collect form data
         const formData = {
@@ -154,19 +210,23 @@ async function handleFormSubmit(event) {
         
         console.log('Submitting student data:', formData);
         
+        // Determine API endpoint and method based on edit mode
+        const apiUrl = isEditMode ? `/moktob/api/students/${studentId}` : '/moktob/api/students';
+        const method = isEditMode ? 'PUT' : 'POST';
+        
         // Submit to API
-        const response = await MoktobApp.apiRequest('/moktob/api/students', {
-            method: 'POST',
+        const response = await MoktobApp.apiRequest(apiUrl, {
+            method: method,
             body: JSON.stringify(formData)
         });
         
-        console.log('Student created successfully:', response);
+        console.log(`Student ${isEditMode ? 'updated' : 'created'} successfully:`, response);
         
         // Show success popup
         if (typeof MoktobPopup !== 'undefined' && MoktobPopup.success) {
             MoktobPopup.success({
                 title: 'Success!',
-                message: 'Student has been added successfully.',
+                message: `Student has been ${isEditMode ? 'updated' : 'added'} successfully.`,
                 confirmText: 'OK',
                 onConfirm: () => {
                     // Redirect back to students page
@@ -175,14 +235,14 @@ async function handleFormSubmit(event) {
             });
         } else {
             // Fallback to browser alert
-            alert('Student has been added successfully!');
+            alert(`Student has been ${isEditMode ? 'updated' : 'added'} successfully!`);
             window.location.href = '/moktob/students';
         }
         
     } catch (error) {
-        console.error('Error creating student:', error);
+        console.error(`Error ${isEditMode ? 'updating' : 'creating'} student:`, error);
         
-        let errorMessage = 'Failed to add student. Please try again.';
+        let errorMessage = `Failed to ${isEditMode ? 'update' : 'add'} student. Please try again.`;
         
         if (error.message.includes('409') || error.message.includes('Conflict')) {
             errorMessage = 'A student with this email already exists.';

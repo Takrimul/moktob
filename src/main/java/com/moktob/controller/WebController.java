@@ -69,6 +69,17 @@ public class WebController {
     public String addStudentPage(Model model) {
         model.addAttribute("pageTitle", "Add Student");
         model.addAttribute("title", "Add Student - Moktob Management System");
+        model.addAttribute("isEdit", false);
+        return "students/add";
+    }
+
+    // Edit Student page
+    @GetMapping("/students/edit/{id}")
+    public String editStudentPage(@PathVariable Long id, Model model) {
+        model.addAttribute("pageTitle", "Edit Student");
+        model.addAttribute("title", "Edit Student - Moktob Management System");
+        model.addAttribute("isEdit", true);
+        model.addAttribute("studentId", id);
         return "students/add";
     }
 
