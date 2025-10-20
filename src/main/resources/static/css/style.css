@@ -553,7 +553,7 @@ body {
     background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
     color: #ecf0f1;
     margin-top: auto;
-    padding: 2rem 0 1rem 0;
+    padding: 1.5rem 0 1rem 0;
     position: relative;
     z-index: 10;
 }
