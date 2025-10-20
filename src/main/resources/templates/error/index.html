@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error - Moktob Management System</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    
+    <style>
+        .error-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .error-card {
+            background: white;
+            border-radius: 20px;
+            padding: 60px 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            text-align: center;
+            max-width: 600px;
+            width: 90%;
+        }
+        
+        .error-icon {
+            font-size: 5rem;
+            color: #dc3545;
+            margin-bottom: 30px;
+            animation: bounce 2s infinite;
+        }
+        
+        .error-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        
+        .error-message {
+            font-size: 1.2rem;
+            color: #6c757d;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+        
+        .error-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn-error {
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-primary-error {
+            background: linear-gradient(135deg, #007bff, #6f42c1);
+            color: white;
+        }
+        
+        .btn-secondary-error {
+            background: linear-gradient(135deg, #6c757d, #495057);
+            color: white;
+        }
+        
+        .btn-error:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+        
+        .error-details {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            text-align: left;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #495057;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .error-details h6 {
+            color: #dc3545;
+            margin-bottom: 10px;
+        }
+        
+        @media (max-width: 576px) {
+            .error-card {
+                padding: 40px 20px;
+            }
+            
+            .error-title {
+                font-size: 2rem;
+            }
+            
+            .error-icon {
+                font-size: 4rem;
+            }
+            
+            .error-actions {
+                flex-direction: column;
+            }
+            
+            .btn-error {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-card">
+            <div class="error-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            
+            <h1 class="error-title">Oops! Something went wrong</h1>
+            
+            <p class="error-message">
+                We're sorry, but something unexpected happened. Our team has been notified and is working to fix the issue.
+            </p>
+            
+            <div class="error-actions">
+                <a href="/moktob/dashboard" class="btn-error btn-primary-error">
+                    <i class="fas fa-home me-2"></i>Go to Dashboard
+                </a>
+                <button onclick="history.back()" class="btn-error btn-secondary-error">
+                    <i class="fas fa-arrow-left me-2"></i>Go Back
+                </button>
+            </div>
+            
+            <!-- Error Details (only shown in development) -->
+            <div th:if="${#httpServletRequest.getAttribute('javax.servlet.error.status_code') != null}" class="error-details">
+                <h6><i class="fas fa-bug me-2"></i>Error Details</h6>
+                <div><strong>Status:</strong> <span th:text="${#httpServletRequest.getAttribute('javax.servlet.error.status_code')}"></span></div>
+                <div><strong>Error:</strong> <span th:text="${#httpServletRequest.getAttribute('javax.servlet.error.exception')?.message}"></span></div>
+                <div><strong>Path:</strong> <span th:text="${#httpServletRequest.getAttribute('javax.servlet.error.request_uri')}"></span></div>
+                <div><strong>Timestamp:</strong> <span th:text="${#dates.format(#dates.createNow(), 'yyyy-MM-dd HH:mm:ss')}"></span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Auto-refresh after 30 seconds if user doesn't interact
+        let autoRefreshTimer = setTimeout(() => {
+            window.location.href = '/moktob/dashboard';
+        }, 30000);
+        
+        // Clear timer if user interacts
+        document.addEventListener('click', () => {
+            clearTimeout(autoRefreshTimer);
+        });
+        
+        // Log error for debugging
+        console.error('Error page loaded:', {
+            status: document.querySelector('[th\\:text*="status_code"]')?.textContent,
+            error: document.querySelector('[th\\:text*="exception"]')?.textContent,
+            path: document.querySelector('[th\\:text*="request_uri"]')?.textContent
+        });
+    </script>
+</body>
+</html>
