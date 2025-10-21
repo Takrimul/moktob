@@ -58,42 +58,4 @@ public class LearningController {
     public ResponseEntity<List<MemorizationRecord>> getMemorizationRecordsBySurah(@PathVariable String surahName) {
         return ResponseEntity.ok(memorizationRecordService.getRecordsBySurah(surahName));
     }
-    
-    @GetMapping("/assessments")
-    public ResponseEntity<List<Assessment>> getAllAssessments() {
-        return ResponseEntity.ok(assessmentService.getAllAssessments());
-    }
-    
-    @GetMapping("/assessments/{id}")
-    public ResponseEntity<Assessment> getAssessmentById(@PathVariable Long id) {
-        Optional<Assessment> assessment = assessmentService.getAssessmentById(id);
-        return assessment.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
-    }
-    
-    @PostMapping("/assessments")
-    public ResponseEntity<Assessment> createAssessment(@RequestBody Assessment assessment) {
-        return ResponseEntity.ok(assessmentService.saveAssessment(assessment));
-    }
-    
-    @PutMapping("/assessments/{id}")
-    public ResponseEntity<Assessment> updateAssessment(@PathVariable Long id, @RequestBody Assessment assessment) {
-        assessment.setId(id);
-        return ResponseEntity.ok(assessmentService.saveAssessment(assessment));
-    }
-    
-    @DeleteMapping("/assessments/{id}")
-    public ResponseEntity<Void> deleteAssessment(@PathVariable Long id) {
-        assessmentService.deleteAssessment(id);
-        return ResponseEntity.ok().build();
-    }
-    
-    @GetMapping("/assessments/student/{studentId}")
-    public ResponseEntity<List<Assessment>> getAssessmentsByStudent(@PathVariable Long studentId) {
-        return ResponseEntity.ok(assessmentService.getAssessmentsByStudent(studentId));
-    }
-    
-    @GetMapping("/assessments/teacher/{teacherId}")
-    public ResponseEntity<List<Assessment>> getAssessmentsByTeacher(@PathVariable Long teacherId) {
-        return ResponseEntity.ok(assessmentService.getAssessmentsByTeacher(teacherId));
-    }
 }
