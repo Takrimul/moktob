@@ -1,6 +1,9 @@
 package com.moktob.controller;
 
+import com.moktob.common.TenantContextHolder;
 import com.moktob.dto.*;
+import com.moktob.education.ClassEntityService;
+import com.moktob.education.StudentService;
 import com.moktob.learning.AssessmentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +21,8 @@ import java.util.List;
 public class AssessmentController {
 
     private final AssessmentService assessmentService;
+    private final ClassEntityService classEntityService;
+    private final StudentService studentService;
 
     @GetMapping
     public ResponseEntity<List<AssessmentResponseDTO>> getAllAssessments() {
@@ -216,6 +221,54 @@ public class AssessmentController {
             return ResponseEntity.ok(assessment);
         } catch (Exception e) {
             log.error("Error marking parent notification: {}", e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    /**
+     * Get classes for assessment creation based on user role
+     * - Admin: All classes
+     * - Teacher: Only classes assigned to the teacher
+     */
+    @GetMapping("/classes")
+    public ResponseEntity<List<ClassDropdownDTO>> getClassesForAssessment() {
+        try {
+            String roleName = TenantContextHolder.getRoleName();
+            Long teacherId = TenantContextHolder.getTeacherId();
+            
+            List<ClassDropdownDTO> classes;
+            
+            if ("ADMIN".equalsIgnoreCase(roleName)) {
+                // Admin can see all classes
+                classes = classEntityService.getClassesForDropdown();
+                log.info("Admin user fetching all classes for assessment");
+            } else if ("TEACHER".equalsIgnoreCase(roleName) && teacherId != null) {
+                // Teacher can only see their assigned classes
+                classes = classEntityService.getClassesForDropdownByTeacher(teacherId);
+                log.info("Teacher {} fetching assigned classes for assessment", teacherId);
+            } else {
+                log.warn("User with role {} and teacherId {} cannot access classes for assessment", roleName, teacherId);
+                return ResponseEntity.badRequest().build();
+            }
+            
+            return ResponseEntity.ok(classes);
+        } catch (Exception e) {
+            log.error("Error fetching classes for assessment: {}", e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    /**
+     * Get students for a specific class for assessment creation
+     */
+    @GetMapping("/classes/{classId}/students")
+    public ResponseEntity<List<StudentResponseDTO>> getStudentsForAssessment(@PathVariable Long classId) {
+        try {
+            List<StudentResponseDTO> students = studentService.getStudentsByClassForAssessment(classId);
+            log.info("Fetched {} students for class {} for assessment", students.size(), classId);
+            return ResponseEntity.ok(students);
+        } catch (Exception e) {
+            log.error("Error fetching students for class {} for assessment: {}", classId, e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }

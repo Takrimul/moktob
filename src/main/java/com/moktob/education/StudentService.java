@@ -105,6 +105,19 @@ public class StudentService {
         Long clientId = TenantContextHolder.getTenantId();
         return studentRepository.findByClientIdAndCurrentClassId(clientId, classId);
     }
+    
+    public List<StudentResponseDTO> getStudentsByClassForAssessment(Long classId) {
+        Long clientId = TenantContextHolder.getTenantId();
+        log.info("StudentService.getStudentsByClassForAssessment() - clientId: {}, classId: {}", clientId, classId);
+        if (clientId == null) {
+            log.warn("Client ID is null in TenantContextHolder!");
+            return List.of();
+        }
+        List<Object[]> results = studentRepository.findStudentWithClassNamesByClientIdAndClassId(clientId, classId);
+        return results.stream()
+                .map(this::convertArrayToDTO)
+                .collect(Collectors.toList());
+    }
 
     public List<Student> searchStudentsByName(String name) {
         Long clientId = TenantContextHolder.getTenantId();

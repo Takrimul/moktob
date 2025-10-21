@@ -26,4 +26,13 @@ public interface ClassEntityRepository extends JpaRepository<ClassEntity, Long> 
            "WHERE c.clientId = :clientId " +
            "GROUP BY c.id, c.className, c.teacherId, t.name, c.startTime, c.endTime, c.daysOfWeek")
     List<Object[]> findClassWithTeacherNamesAndStudentCountsByClientId(@Param("clientId") Long clientId);
+    
+    @Query("SELECT c.id, c.className, c.teacherId, t.name, c.startTime, c.endTime, c.daysOfWeek, " +
+           "COALESCE(COUNT(scm.studentId), 0) " +
+           "FROM ClassEntity c " +
+           "LEFT JOIN Teacher t ON c.teacherId = t.id " +
+           "LEFT JOIN StudentClassMap scm ON c.id = scm.classEntity.id " +
+           "WHERE c.clientId = :clientId AND c.teacherId = :teacherId " +
+           "GROUP BY c.id, c.className, c.teacherId, t.name, c.startTime, c.endTime, c.daysOfWeek")
+    List<Object[]> findClassWithTeacherNamesAndStudentCountsByClientIdAndTeacherId(@Param("clientId") Long clientId, @Param("teacherId") Long teacherId);
 }

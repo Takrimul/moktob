@@ -110,4 +110,17 @@ public class ClassEntityService {
                 (Long) row[2]            // teacherId
         );
     }
+    
+    public List<ClassDropdownDTO> getClassesForDropdownByTeacher(Long teacherId) {
+        Long clientId = TenantContextHolder.getTenantId();
+        log.info("ClassEntityService.getClassesForDropdownByTeacher() - clientId: {}, teacherId: {}", clientId, teacherId);
+        if (clientId == null) {
+            log.warn("Client ID is null in TenantContextHolder!");
+            return List.of();
+        }
+        List<Object[]> results = classEntityRepository.findClassWithTeacherNamesAndStudentCountsByClientIdAndTeacherId(clientId, teacherId);
+        return results.stream()
+                .map(this::convertArrayToDropdownDTO)
+                .collect(Collectors.toList());
+    }
 }

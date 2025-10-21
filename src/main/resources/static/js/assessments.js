@@ -14,8 +14,7 @@ async function loadInitialData() {
     try {
         await Promise.all([
             loadAssessments(),
-            loadStudents(),
-            loadClasses()
+            loadClassesForAssessment()
         ]);
         updateStatistics();
         populateFilters();
@@ -36,23 +35,26 @@ async function loadAssessments() {
     }
 }
 
-async function loadStudents() {
+async function loadClassesForAssessment() {
     try {
-        const response = await MoktobApp.apiRequest('/moktob/api/students');
-        students = response || [];
-        populateStudentSelect();
+        const response = await MoktobApp.apiRequest('/moktob/api/assessments/classes');
+        classes = response || [];
+        populateClassSelect();
+        populateClassFilter();
     } catch (error) {
-        console.error('Error loading students:', error);
+        console.error('Error loading classes for assessment:', error);
+        showError('Failed to load classes');
     }
 }
 
-async function loadClasses() {
+async function loadStudentsForClass(classId) {
     try {
-        const response = await MoktobApp.apiRequest('/moktob/api/classes');
-        classes = response || [];
-        populateClassFilter();
+        const response = await MoktobApp.apiRequest(`/moktob/api/assessments/classes/${classId}/students`);
+        students = response || [];
+        populateStudentSelect();
     } catch (error) {
-        console.error('Error loading classes:', error);
+        console.error('Error loading students for class:', error);
+        showError('Failed to load students for selected class');
     }
 }
 
@@ -64,6 +66,18 @@ function populateStudentSelect() {
         const option = document.createElement('option');
         option.value = student.id;
         option.textContent = `${student.name} (${student.className || 'No Class'})`;
+        select.appendChild(option);
+    });
+}
+
+function populateClassSelect() {
+    const select = document.getElementById('classSelect');
+    select.innerHTML = '<option value="">Select Class</option>';
+    
+    classes.forEach(cls => {
+        const option = document.createElement('option');
+        option.value = cls.id;
+        option.textContent = `${cls.className} (${cls.teacherName || 'No Teacher'})`;
         select.appendChild(option);
     });
 }
@@ -323,8 +337,30 @@ function toggleView() {
 }
 
 function showAddAssessmentModal() {
+    // Reset form
+    document.getElementById('assessmentForm').reset();
+    document.getElementById('studentSelect').disabled = true;
+    document.getElementById('studentSelect').innerHTML = '<option value="">Select Class First</option>';
+    setDefaultDates();
+    
     const modal = new bootstrap.Modal(document.getElementById('addAssessmentModal'));
     modal.show();
+}
+
+// Handle class selection change
+function onClassSelectChange() {
+    const classSelect = document.getElementById('classSelect');
+    const studentSelect = document.getElementById('studentSelect');
+    const selectedClassId = classSelect.value;
+    
+    if (selectedClassId) {
+        studentSelect.disabled = false;
+        studentSelect.innerHTML = '<option value="">Loading students...</option>';
+        loadStudentsForClass(selectedClassId);
+    } else {
+        studentSelect.disabled = true;
+        studentSelect.innerHTML = '<option value="">Select Class First</option>';
+    }
 }
 
 async function saveAssessment() {
@@ -335,6 +371,7 @@ async function saveAssessment() {
     }
     
     const assessmentData = {
+        classId: parseInt(document.getElementById('classSelect').value),
         studentId: parseInt(document.getElementById('studentSelect').value),
         assessmentType: document.getElementById('assessmentType').value,
         assessmentDate: document.getElementById('assessmentDate').value,
