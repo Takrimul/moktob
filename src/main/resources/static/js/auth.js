@@ -92,21 +92,26 @@ function handleLogin(event) {
             }
         }
         
+        // Reset button first to stop loading
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+        
         // Show error message
         MoktobApp.showAlert(errorMessage, 'danger');
         
         // Clear password field for security
         document.getElementById('password').value = '';
         
-        // Reset button
-        submitBtn.innerHTML = originalText;
-        submitBtn.disabled = false;
-        
         // Focus on username field for better UX
         document.getElementById('username').focus();
         
         // Scroll to top to ensure error message is visible
         window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        // Refresh the page after a short delay to ensure clean state
+        setTimeout(() => {
+            window.location.reload();
+        }, 3000);
     });
 }
 

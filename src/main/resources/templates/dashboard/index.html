@@ -243,7 +243,11 @@
                 document.getElementById('totalStudents').textContent = students ? students.length : 0;
                 document.getElementById('totalTeachers').textContent = teachers ? teachers.length : 0;
                 document.getElementById('totalClasses').textContent = classes ? classes.length : 0;
-                document.getElementById('todayAttendance').textContent = attendance ? attendance.percentage + '%' : '0%';
+                document.getElementById('todayAttendance').textContent =
+                    attendance && !Array.isArray(attendance) && attendance.percentage
+                        ? attendance.percentage + '%'
+                        : '0%';
+
 
                 // Load recent students
                 if (students && students.length > 0) {
