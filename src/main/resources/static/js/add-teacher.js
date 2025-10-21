@@ -33,7 +33,7 @@ async function loadTeacherData(id) {
         if (teacher) {
             document.getElementById('name').value = teacher.name || '';
             document.getElementById('email').value = teacher.email || '';
-            document.getElementById('phoneNumber').value = teacher.phoneNumber || '';
+            document.getElementById('phoneNumber').value = teacher.phone || '';
             document.getElementById('qualification').value = teacher.qualification || '';
             document.getElementById('joiningDate').value = teacher.joiningDate || '';
             document.getElementById('isActive').value = teacher.isActive ? 'true' : 'false';
