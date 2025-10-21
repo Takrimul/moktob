@@ -14,5 +14,6 @@ public class TeacherRequest {
     private String qualification;
     private LocalDate joiningDate;
     private Boolean isActive;
+    private Boolean sendCredentials = true; // Whether to send login credentials via email
 
 }

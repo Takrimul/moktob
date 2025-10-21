@@ -1,11 +1,14 @@
 package com.moktob.education;
 
 import com.moktob.common.TenantContextHolder;
+import com.moktob.core.UserAccount;
 import com.moktob.dto.TeacherRequest;
 import com.moktob.dto.TeacherResponseDTO;
+import com.moktob.service.UserCredentialService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -18,6 +21,7 @@ import java.util.stream.Collectors;
 public class TeacherService {
     
     private final TeacherRepository teacherRepository;
+    private final UserCredentialService userCredentialService;
     
     public List<TeacherResponseDTO> getAllTeachers() {
         Long clientId = TenantContextHolder.getTenantId();
@@ -54,6 +58,7 @@ public class TeacherService {
         return teacherRepository.findByClientIdAndId(clientId, id);
     }
 
+    @Transactional
     public Teacher saveTeacher(TeacherRequest teacher) {
         Long clientId = TenantContextHolder.getTenantId();
 
@@ -69,7 +74,26 @@ public class TeacherService {
         entity.setIsActive(teacher.getIsActive());
         entity.setClientId(clientId);
 
-        return teacherRepository.save(entity);
+        Teacher savedTeacher = teacherRepository.save(entity);
+
+        // Create user account and send credentials if requested
+        if (teacher.getSendCredentials() != null && teacher.getSendCredentials()) {
+            try {
+                UserAccount userAccount = userCredentialService.createTeacherUser(
+                    teacher.getName(), 
+                    teacher.getEmail(), 
+                    true
+                );
+                log.info("User account created for teacher: {} with username: {}", 
+                        teacher.getName(), userAccount.getUsername());
+            } catch (Exception e) {
+                log.error("Failed to create user account for teacher: {}. Error: {}", 
+                         teacher.getName(), e.getMessage(), e);
+                // Don't fail the teacher creation if user account creation fails
+            }
+        }
+
+        return savedTeacher;
     }
 
 

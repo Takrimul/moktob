@@ -1,11 +1,14 @@
 package com.moktob.education;
 
 import com.moktob.common.TenantContextHolder;
+import com.moktob.core.UserAccount;
 import com.moktob.dto.StudentRequest;
 import com.moktob.dto.StudentResponseDTO;
+import com.moktob.service.UserCredentialService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -18,6 +21,7 @@ import java.util.stream.Collectors;
 public class StudentService {
 
     private final StudentRepository studentRepository;
+    private final UserCredentialService userCredentialService;
 
     public List<StudentResponseDTO> getAllStudents() {
         Long clientId = TenantContextHolder.getTenantId();
@@ -52,6 +56,7 @@ public class StudentService {
         return studentRepository.findByClientIdAndId(clientId, id);
     }
 
+    @Transactional
     public Student saveStudent(StudentRequest studentRequest) {
         Long clientId = TenantContextHolder.getTenantId();
 
@@ -68,7 +73,26 @@ public class StudentService {
         student.setCurrentClassId(studentRequest.getClassId());
         student.setClientId(clientId);
 
-        return studentRepository.save(student);
+        Student savedStudent = studentRepository.save(student);
+
+        // Create user account and send credentials if requested
+        if (studentRequest.getSendCredentials() != null && studentRequest.getSendCredentials()) {
+            try {
+                UserAccount userAccount = userCredentialService.createStudentUser(
+                    studentRequest.getName(), 
+                    studentRequest.getEmail(), 
+                    true
+                );
+                log.info("User account created for student: {} with username: {}", 
+                        studentRequest.getName(), userAccount.getUsername());
+            } catch (Exception e) {
+                log.error("Failed to create user account for student: {}. Error: {}", 
+                         studentRequest.getName(), e.getMessage(), e);
+                // Don't fail the student creation if user account creation fails
+            }
+        }
+
+        return savedStudent;
     }
 
 

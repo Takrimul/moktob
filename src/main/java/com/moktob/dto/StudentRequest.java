@@ -13,5 +13,6 @@ public class StudentRequest {
     private String guardianContact;
     private String address;
     private Long classId;
-
+    private String email; // For sending login credentials
+    private Boolean sendCredentials = true; // Whether to send login credentials via email
 }

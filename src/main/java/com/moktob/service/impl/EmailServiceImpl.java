@@ -137,6 +137,116 @@ public class EmailServiceImpl implements EmailService {
         }
     }
     
+    @Override
+    public void sendStudentCredentialsEmail(String toEmail, String studentName, String username, String temporaryPassword) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(fromEmail);
+            message.setTo(toEmail);
+            message.setSubject("Welcome to Moktob Management System - Student Login Credentials");
+            
+            String emailBody = buildStudentCredentialsEmailBody(studentName, username, temporaryPassword);
+            message.setText(emailBody);
+            
+            mailSender.send(message);
+            log.info("Student credentials email sent successfully to: {}", toEmail);
+            
+        } catch (Exception e) {
+            log.error("Failed to send student credentials email to: {}", toEmail, e);
+            throw new RuntimeException("Failed to send student credentials email", e);
+        }
+    }
+
+    @Override
+    public void sendTeacherCredentialsEmail(String toEmail, String teacherName, String username, String temporaryPassword) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(fromEmail);
+            message.setTo(toEmail);
+            message.setSubject("Welcome to Moktob Management System - Teacher Login Credentials");
+            
+            String emailBody = buildTeacherCredentialsEmailBody(teacherName, username, temporaryPassword);
+            message.setText(emailBody);
+            
+            mailSender.send(message);
+            log.info("Teacher credentials email sent successfully to: {}", toEmail);
+            
+        } catch (Exception e) {
+            log.error("Failed to send teacher credentials email to: {}", toEmail, e);
+            throw new RuntimeException("Failed to send teacher credentials email", e);
+        }
+    }
+    
+    private String buildStudentCredentialsEmailBody(String studentName, String username, String temporaryPassword) {
+        return String.format("""
+            Assalamu Alaikum %s,
+            
+            Welcome to Moktob Management System!
+            
+            Your student account has been created successfully. You can now access the system using the following credentials:
+            
+            Username: %s
+            Temporary Password: %s
+            
+            IMPORTANT SECURITY NOTES:
+            - Please change your password after your first login
+            - Keep your login credentials secure and do not share them
+            - If you forget your password, contact your teacher or administrator
+            
+            You can access the system at: http://localhost:8080/moktob/login
+            
+            As a student, you will be able to:
+            - View your class schedule
+            - Check your attendance records
+            - Access learning materials
+            - Communicate with teachers
+            
+            If you have any questions or need assistance, please contact your teacher or the school administration.
+            
+            Best regards,
+            Moktob Management System Team
+            
+            ---
+            This is an automated message. Please do not reply to this email.
+            """, studentName, username, temporaryPassword);
+    }
+    
+    private String buildTeacherCredentialsEmailBody(String teacherName, String username, String temporaryPassword) {
+        return String.format("""
+            Assalamu Alaikum %s,
+            
+            Welcome to Moktob Management System!
+            
+            Your teacher account has been created successfully. You can now access the system using the following credentials:
+            
+            Username: %s
+            Temporary Password: %s
+            
+            IMPORTANT SECURITY NOTES:
+            - Please change your password after your first login
+            - Keep your login credentials secure and do not share them
+            - If you forget your password, use the "Forgot Password" feature
+            
+            You can access the system at: http://localhost:8080/moktob/login
+            
+            As a teacher, you will be able to:
+            - Manage your classes and students
+            - Take attendance
+            - View student progress
+            - Communicate with students and parents
+            - Access teaching materials
+            - Generate reports
+            
+            If you have any questions or need assistance, please contact the school administration.
+            
+            Best regards,
+            Moktob Management System Team
+            
+            ---
+            This is an automated message. Please do not reply to this email.
+            """, teacherName, username, temporaryPassword);
+    }
+    
     private String buildWelcomeEmailBody(String username, String temporaryPassword) {
         return String.format("""
             Assalamu Alaikum %s,
