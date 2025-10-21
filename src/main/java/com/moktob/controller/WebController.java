@@ -4,6 +4,7 @@ import com.moktob.common.TenantContextHolder;
 import com.moktob.dto.ClientRegistrationRequest;
 import com.moktob.dto.AuthenticationRequest;
 import com.moktob.service.DashboardService;
+import com.moktob.service.UserContextService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class WebController {
 
     private final DashboardService dashboardService;
+    private final UserContextService userContextService;
 
     // Home page
     @GetMapping("/")
@@ -205,9 +207,23 @@ public class WebController {
     @GetMapping("/profile")
     public String profilePage(Model model) {
         String userName = TenantContextHolder.getUsername();
+        var userContext = userContextService.buildUserContext(userName);
+        
+        log.debug("Profile page - userName: {}, userContext: {}", userName, userContext);
+        if (userContext != null) {
+            log.debug("UserContext details - fullName: {}, email: {}, phone: {}, roleName: {}, clientName: {}", 
+                     userContext.getFullName(), userContext.getEmail(), userContext.getPhone(), 
+                     userContext.getRoleName(), userContext.getClientName());
+        }
+        
         model.addAttribute("pageTitle", "Profile");
         model.addAttribute("title", "Profile - Moktob Management System");
         model.addAttribute("userName", userName);
+        model.addAttribute("fullName", userContext != null ? userContext.getFullName() : "");
+        model.addAttribute("email", userContext != null ? userContext.getEmail() : "");
+        model.addAttribute("phone", userContext != null ? userContext.getPhone() : "");
+        model.addAttribute("roleName", userContext != null ? userContext.getRoleName() : "");
+        model.addAttribute("clientName", userContext != null ? userContext.getClientName() : "");
         return "profile/index";
     }
 

@@ -62,41 +62,37 @@
                                 </div>
                                 <div class="card-body">
                                     <form id="profileForm">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label class="form-label">First Name</label>
-                                                    <input type="text" class="form-control" id="firstName" value="Admin" readonly>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Last Name</label>
-                                                    <input type="text" class="form-control" id="lastName" value="User" readonly>
-                                                </div>
-                                            </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Full Name</label>
+                                            <input type="text" class="form-control" id="fullName" th:value="${fullName}" readonly>
                                         </div>
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <div class="mb-3">
                                                     <label class="form-label">Email</label>
-                                                    <input type="email" class="form-control" id="email" value="admin@moktob.com" readonly>
+                                                    <input type="email" class="form-control" id="email" th:value="${email}" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="mb-3">
                                                     <label class="form-label">Phone</label>
-                                                    <input type="tel" class="form-control" id="phone" value="+880 1234 567890" readonly>
+                                                    <input type="tel" class="form-control" id="phone" th:value="${phone != null and phone != '' ? phone : 'Not provided'}" readonly>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Role</label>
-                                            <input type="text" class="form-control" id="role" value="Administrator" readonly>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Last Login</label>
-                                            <input type="text" class="form-control" id="lastLogin" value="Today at 10:30 AM" readonly>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Role</label>
+                                                    <input type="text" class="form-control" id="role" th:value="${roleName}" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Organization</label>
+                                                    <input type="text" class="form-control" id="clientName" th:value="${clientName}" readonly>
+                                                </div>
+                                            </div>
                                         </div>
                                         <button type="button" class="btn btn-primary" onclick="editProfile()">
                                             <i class="fas fa-edit me-1"></i>Edit Profile
@@ -133,8 +129,7 @@
             }
 
             const profileData = {
-                firstName: document.getElementById('firstName').value,
-                lastName: document.getElementById('lastName').value,
+                fullName: document.getElementById('fullName').value,
                 email: document.getElementById('email').value,
                 phone: document.getElementById('phone').value
             };
@@ -195,4 +190,5 @@
         }
     </script>
 </body>
+</html>
 </html>
