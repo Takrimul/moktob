@@ -1,4 +1,5 @@
 /* Moktob Management System - Main Styles */
+/* Updated: 2025-01-27 - Footer positioning fix */
 
 :root {
     --primary-color: #4e73df;
@@ -158,12 +159,19 @@ body {
     box-sizing: border-box;
 }
 
-/* Adjust main content for sidebar on desktop */
+/* Adjust main content and footer for sidebar on desktop */
 @media (min-width: 768px) {
     .main-content {
-        margin-left: var(--sidebar-width);
-        max-width: calc(100vw - var(--sidebar-width));
+        margin-left: var(--sidebar-width) !important;
+        max-width: calc(100vw - var(--sidebar-width)) !important;
         padding: 1.5rem;
+    }
+    
+    .footer {
+        margin-left: var(--sidebar-width) !important;
+        width: calc(100vw - var(--sidebar-width)) !important;
+        position: relative !important;
+        z-index: 1 !important;
     }
 }
 
@@ -441,9 +449,20 @@ body {
     }
     
     .main-content {
-        margin-left: 0;
-        max-width: 100vw;
+        margin-left: 0 !important;
+        max-width: 100vw !important;
         padding: 0.75rem;
+    }
+    
+    .footer {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+    
+    /* Mobile footer reset - High specificity */
+    body .footer {
+        margin-left: 0 !important;
+        width: 100% !important;
     }
     
     .card-body {
@@ -556,6 +575,24 @@ body {
     padding: 1.5rem 0 1rem 0;
     position: relative;
     z-index: 10;
+    margin-left: 0;
+    width: 100%;
+}
+
+/* Force footer positioning for sidebar - High specificity */
+body .footer {
+    margin-left: 0;
+    width: 100%;
+}
+
+/* Desktop footer positioning - Force override */
+@media (min-width: 768px) {
+    body .footer {
+        margin-left: 250px !important;
+        width: calc(100vw - 250px) !important;
+        position: relative !important;
+        z-index: 1 !important;
+    }
 }
 
 .footer h5,
@@ -649,6 +686,76 @@ body {
 }
 
 /* Footer Responsive */
+@media (max-width: 991.98px) {
+    /* Medium screens (tablets) */
+    .footer {
+        padding: 2rem 0 1.5rem 0;
+    }
+    
+    .footer .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    .footer h5 {
+        font-size: 1.1rem;
+        margin-bottom: 1.25rem;
+    }
+    
+    .footer .text-muted {
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+    
+    .footer .social-icons {
+        margin-top: 1.5rem;
+        text-align: center;
+    }
+    
+    .footer .social-icons a {
+        height: 2.25rem;
+        width: 2.25rem;
+        margin: 0 8px;
+    }
+    
+    .footer .list-unstyled li {
+        margin-bottom: 1rem;
+    }
+    
+    .footer .list-unstyled li .d-flex {
+        align-items: flex-start;
+    }
+    
+    .footer .list-unstyled li i {
+        margin-right: 0.75rem;
+        margin-top: 0.125rem;
+    }
+    
+    .footer-links {
+        text-align: center;
+        margin-top: 1rem;
+    }
+    
+    .footer-links a {
+        margin: 0 8px;
+        font-size: 0.9rem;
+        display: inline-block;
+        padding: 0.25rem 0;
+    }
+    
+    .copyright {
+        font-size: 0.85rem;
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+    
+    /* Ensure footer positioning is maintained on medium screens */
+    body .footer {
+        margin-left: 250px !important;
+        width: calc(100vw - 250px) !important;
+    }
+}
+
 @media (max-width: 768px) {
     .footer {
         padding: 1.5rem 0 1rem 0;
@@ -679,6 +786,55 @@ body {
     }
 }
 
+@media (max-width: 576px) {
+    /* Small screens (phones) */
+    .footer {
+        padding: 1.25rem 0 0.75rem 0;
+    }
+    
+    .footer .container {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+    
+    .footer h5 {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .footer .text-muted {
+        font-size: 0.85rem;
+        line-height: 1.4;
+    }
+    
+    .footer .social-icons a {
+        height: 2rem;
+        width: 2rem;
+        margin: 0 6px;
+        font-size: 0.9rem;
+    }
+    
+    .footer .list-unstyled li {
+        margin-bottom: 0.75rem;
+    }
+    
+    .footer .list-unstyled li i {
+        margin-right: 0.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .footer-links a {
+        margin: 0 4px;
+        font-size: 0.85rem;
+        padding: 0.2rem 0;
+    }
+    
+    .copyright {
+        font-size: 0.8rem;
+        line-height: 1.3;
+    }
+}
+
 /* Sticky Footer */
 html, body {
     height: 100%;
@@ -691,6 +847,18 @@ body {
 
 .main-content {
     flex: 1;
+}
+
+/* Ensure footer doesn't overlap with sidebar */
+@media (min-width: 768px) {
+    body {
+        padding-left: 0;
+    }
+    
+    .footer {
+        position: relative;
+        z-index: 1;
+    }
 }
 
 /* Print Styles */

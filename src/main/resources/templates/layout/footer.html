@@ -2,7 +2,8 @@
 <footer class="footer" th:fragment="footer">
     <div class="container">
         <div class="row">
-            <div class="col-lg-6 mb-4 mb-lg-0">
+            <!-- Company Info Section -->
+            <div class="col-lg-6 col-md-12 mb-4 mb-lg-0">
                 <div class="d-flex align-items-center mb-3">
                     <i class="fas fa-mosque me-2 text-primary" style="font-size: 1.5rem;"></i>
                     <h5 class="text-white mb-0">Moktob Management System</h5>
@@ -25,7 +26,9 @@
                     </a>
                 </div>
             </div>
-            <div class="col-lg-6">
+            
+            <!-- Contact Info Section -->
+            <div class="col-lg-6 col-md-12">
                 <h5 class="text-white mb-3">
                     <i class="fas fa-phone me-2 text-primary"></i>Contact Info
                 </h5>
@@ -59,16 +62,21 @@
                 </ul>
             </div>
         </div>
-        <div class="row mt-3">
+        
+        <!-- Footer Bottom Section -->
+        <div class="row mt-4">
             <div class="col-12">
                 <div class="border-top border-secondary pt-3">
                     <div class="row align-items-center">
-                        <div class="col-lg-6 text-center text-lg-start mb-2 mb-lg-0">
+                        <!-- Copyright Section -->
+                        <div class="col-lg-6 col-md-12 text-center text-lg-start mb-2 mb-lg-0">
                             <p class="copyright mb-0">
                                 &copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2025</span> Moktob Management System. All Rights Reserved.
                             </p>
                         </div>
-                        <div class="col-lg-6 text-center text-lg-end">
+                        
+                        <!-- Footer Links Section -->
+                        <div class="col-lg-6 col-md-12 text-center text-lg-end">
                             <div class="footer-links">
                                 <a href="/moktob/terms">Terms</a>
                                 <a href="/moktob/privacy">Privacy</a>
