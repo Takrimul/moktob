@@ -227,13 +227,23 @@ public class WebController {
         return "profile/index";
     }
 
-    // Settings page
+    // Settings page - Admin only
     @GetMapping("/settings")
     public String settingsPage(Model model) {
         String userName = TenantContextHolder.getUsername();
+        var userContext = userContextService.buildUserContext(userName);
+        
+        // Check if user is admin
+        if (userContext == null || !userContext.isAdmin()) {
+            log.warn("Non-admin user {} attempted to access settings page", userName);
+            return "error/403"; // Access denied page
+        }
+        
+        log.info("Admin user {} accessing settings page", userName);
         model.addAttribute("pageTitle", "Settings");
         model.addAttribute("title", "Settings - Moktob Management System");
         model.addAttribute("userName", userName);
+        model.addAttribute("userContext", userContext);
         return "settings/index";
     }
 

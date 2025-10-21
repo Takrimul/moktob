@@ -34,15 +34,16 @@
                 <i class="fas fa-chart-bar me-2"></i>Reports
             </a>
 
-<!--            <hr class="my-3">-->
+            <hr class="my-3">
 
-<!--            <div class="sidebar-heading px-3">Settings</div>-->
-<!--            <a class="nav-link" href="/moktob/profile">-->
-<!--                <i class="fas fa-user-circle me-2"></i>Profile-->
-<!--            </a>-->
-<!--            <a class="nav-link" href="/moktob/settings">-->
-<!--                <i class="fas fa-cog me-2"></i>Settings-->
-<!--            </a>-->
+            <div class="sidebar-heading px-3">Account</div>
+            <a class="nav-link" href="/moktob/profile">
+                <i class="fas fa-user-circle me-2"></i>Profile
+            </a>
+            <a class="nav-link admin-only" href="/moktob/settings" style="display: none;">
+                <i class="fas fa-cog me-2"></i>Settings
+                <small class="text-muted ms-1">(Admin Only)</small>
+            </a>
 <!--            <a class="nav-link text-danger" href="/moktob/logout" onclick="return confirmLogout()">-->
 <!--                <i class="fas fa-sign-out-alt me-2"></i>Logout-->
 <!--            </a>-->
@@ -68,6 +69,9 @@
             }
         }
 
+        // Check user role and show/hide admin-only elements
+        checkUserRole();
+
         // Add active class based on current URL
         const currentPath = window.location.pathname;
         const navLinks = document.querySelectorAll('.nav-link');
@@ -87,4 +91,34 @@
             }
         });
     });
+
+    async function checkUserRole() {
+        try {
+            // Get user context from the page (if available)
+            const userContextElement = document.querySelector('[data-user-context]');
+            if (userContextElement) {
+                const userContext = JSON.parse(userContextElement.textContent);
+                if (userContext && userContext.isAdmin) {
+                    showAdminElements();
+                }
+            } else {
+                // Fallback: try to get role from API
+                const response = await MoktobApp.apiRequest('/moktob/api/profile');
+                if (response && response.roleName && 
+                    (response.roleName.toLowerCase().includes('admin') || 
+                     response.roleName.toLowerCase().includes('super'))) {
+                    showAdminElements();
+                }
+            }
+        } catch (error) {
+            console.log('Could not determine user role, hiding admin elements');
+        }
+    }
+
+    function showAdminElements() {
+        const adminElements = document.querySelectorAll('.admin-only');
+        adminElements.forEach(element => {
+            element.style.display = 'block';
+        });
+    }
 </script>

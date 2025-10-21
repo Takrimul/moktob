@@ -255,6 +255,10 @@
     <script th:src="@{/js/app.js}"></script>
     
     <script>
+        // Load settings data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadGeneralSettings();
+        });
         function showSettings(settingsType) {
             // Hide all settings panels
             document.querySelectorAll('.settings-panel').forEach(panel => {
@@ -271,6 +275,79 @@
             
             // Add active class to clicked menu item
             event.target.classList.add('active');
+            
+            // Load settings data for the selected panel
+            switch(settingsType) {
+                case 'general':
+                    loadGeneralSettings();
+                    break;
+                case 'email':
+                    loadEmailSettings();
+                    break;
+                case 'security':
+                    loadSecuritySettings();
+                    break;
+                case 'backup':
+                    loadBackupSettings();
+                    break;
+            }
+        }
+
+        async function loadGeneralSettings() {
+            try {
+                const settings = await MoktobApp.apiRequest('/moktob/api/settings/general');
+                if (settings) {
+                    document.getElementById('schoolName').value = settings.schoolName || '';
+                    document.getElementById('schoolAddress').value = settings.schoolAddress || '';
+                    document.getElementById('phoneNumber').value = settings.phoneNumber || '';
+                    document.getElementById('email').value = settings.email || '';
+                    document.getElementById('academicYear').value = settings.academicYear || '2025';
+                }
+            } catch (error) {
+                console.error('Error loading general settings:', error);
+            }
+        }
+
+        async function loadEmailSettings() {
+            try {
+                const settings = await MoktobApp.apiRequest('/moktob/api/settings/email');
+                if (settings) {
+                    document.getElementById('smtpHost').value = settings.smtpHost || '';
+                    document.getElementById('smtpPort').value = settings.smtpPort || '';
+                    document.getElementById('smtpUsername').value = settings.smtpUsername || '';
+                    document.getElementById('enableSSL').checked = settings.enableSSL || false;
+                }
+            } catch (error) {
+                console.error('Error loading email settings:', error);
+            }
+        }
+
+        async function loadSecuritySettings() {
+            try {
+                const settings = await MoktobApp.apiRequest('/moktob/api/settings/security');
+                if (settings) {
+                    document.getElementById('sessionTimeout').value = settings.sessionTimeout || 30;
+                    document.getElementById('passwordPolicy').value = settings.passwordPolicy || 'Medium (8+ characters)';
+                    document.getElementById('twoFactor').checked = settings.twoFactor || false;
+                    document.getElementById('loginLogging').checked = settings.loginLogging || false;
+                }
+            } catch (error) {
+                console.error('Error loading security settings:', error);
+            }
+        }
+
+        async function loadBackupSettings() {
+            try {
+                const settings = await MoktobApp.apiRequest('/moktob/api/settings/backup');
+                if (settings) {
+                    document.getElementById('backupFrequency').value = settings.backupFrequency || 'Daily';
+                    document.getElementById('backupLocation').value = settings.backupLocation || '';
+                    document.getElementById('autoBackup').checked = settings.autoBackup || false;
+                    document.getElementById('retentionPeriod').value = settings.retentionPeriod || 30;
+                }
+            } catch (error) {
+                console.error('Error loading backup settings:', error);
+            }
         }
 
         function resetToDefault() {
@@ -389,27 +466,28 @@
                 });
         }
 
-        function testEmail() {
-            alert('Test email functionality coming soon...');
+        async function testEmail() {
+            try {
+                const response = await MoktobApp.apiRequest('/moktob/api/settings/email/test', {
+                    method: 'POST'
+                });
+                alert('Test email sent successfully!');
+            } catch (error) {
+                console.error('Error testing email:', error);
+                alert('Failed to send test email. Please check your email settings.');
+            }
         }
 
-        function createBackup() {
-            const token = MoktobApp.getToken();
-            if (!token) {
-                window.location.href = '/moktob/login';
-                return;
-            }
-
-            MoktobApp.apiRequest('/moktob/api/backup/create', {
-                method: 'POST'
-            })
-                .then(() => {
-                    alert('Backup created successfully!');
-                })
-                .catch(error => {
-                    console.error('Error creating backup:', error);
-                    alert('Failed to create backup. Please try again.');
+        async function createBackup() {
+            try {
+                const response = await MoktobApp.apiRequest('/moktob/api/settings/backup/create', {
+                    method: 'POST'
                 });
+                alert('Backup created successfully!');
+            } catch (error) {
+                console.error('Error creating backup:', error);
+                alert('Failed to create backup. Please try again.');
+            }
         }
     </script>
 </body>
