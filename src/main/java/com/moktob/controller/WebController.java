@@ -1,5 +1,6 @@
 package com.moktob.controller;
 
+import com.moktob.common.TenantContextHolder;
 import com.moktob.dto.ClientRegistrationRequest;
 import com.moktob.dto.AuthenticationRequest;
 import com.moktob.service.DashboardService;
@@ -51,8 +52,11 @@ public class WebController {
     // Dashboard page
     @GetMapping("/dashboard")
     public String dashboardPage(Model model) {
+        Long clientId = TenantContextHolder.getTenantId();
+        log.info("Dashboard page - Client ID: {}", clientId);
         model.addAttribute("pageTitle", "Dashboard");
         model.addAttribute("title", "Dashboard - Moktob Management System");
+        model.addAttribute("clientId", clientId);
         return "dashboard/index";
     }
 

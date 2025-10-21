@@ -273,16 +273,28 @@ function getToken() {
 }
 
 function setToken(token, remember = false) {
+    // Set token in localStorage/sessionStorage for API calls
     if (remember) {
         localStorage.setItem('authToken', token);
     } else {
         sessionStorage.setItem('authToken', token);
     }
+    
+    // Also set token in cookie for web page requests
+    const expires = remember ? 30 : 1; // 30 days or 1 day
+    const date = new Date();
+    date.setTime(date.getTime() + (expires * 24 * 60 * 60 * 1000));
+    const expiresStr = date.toUTCString();
+    
+    document.cookie = `authToken=${token}; expires=${expiresStr}; path=/; SameSite=Strict`;
 }
 
 function removeToken() {
     localStorage.removeItem('authToken');
     sessionStorage.removeItem('authToken');
+    
+    // Also remove token from cookie
+    document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
 }
 
 // Export functions for global use
