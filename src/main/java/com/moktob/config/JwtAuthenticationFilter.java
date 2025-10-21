@@ -1,7 +1,9 @@
 package com.moktob.config;
 
 import com.moktob.common.TenantContextHolder;
+import com.moktob.common.UserContext;
 import com.moktob.service.RedisTokenService;
+import com.moktob.service.UserContextService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,6 +28,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
     private final RedisTokenService redisTokenService;
+    private final UserContextService userContextService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
@@ -66,8 +69,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                     
-                    TenantContextHolder.setTenantId(clientId);
-                    log.debug("Set tenant ID: {} for user: {}", clientId, username);
+                    // Build and set complete user context
+                    try {
+                        UserContext userContext = userContextService.buildUserContext(username);
+                        if (userContext != null) {
+                            TenantContextHolder.setUserContext(userContext);
+                            log.debug("JWT Filter: Set complete user context for {}: userId={}, role={}, tenantId={}", 
+                                     username, userContext.getUserId(), userContext.getRoleName(), userContext.getTenantId());
+                        } else {
+                            // Fallback to legacy tenant ID setting
+                            TenantContextHolder.setTenantId(clientId);
+                            log.debug("JWT Filter: Set tenant ID fallback for {}: clientId={}", username, clientId);
+                        }
+                    } catch (Exception e) {
+                        log.error("Failed to set user context for {}: {}", username, e.getMessage());
+                        // Fallback to legacy tenant ID setting
+                        TenantContextHolder.setTenantId(clientId);
+                    }
                 }
             } catch (Exception e) {
                 log.error("JWT authentication failed for user: {}", username, e);

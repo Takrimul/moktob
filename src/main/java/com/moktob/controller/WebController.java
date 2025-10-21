@@ -53,6 +53,7 @@ public class WebController {
     @GetMapping("/dashboard")
     public String dashboardPage(Model model) {
         Long clientId = TenantContextHolder.getTenantId();
+        String userName = TenantContextHolder.getUsername();
         log.info("Dashboard page - Client ID: {}", clientId);
         model.addAttribute("pageTitle", "Dashboard");
         model.addAttribute("title", "Dashboard - Moktob Management System");

@@ -1,8 +1,10 @@
 package com.moktob.config;
 
 import com.moktob.common.TenantContextHolder;
+import com.moktob.common.UserContext;
 import com.moktob.core.UserAccount;
 import com.moktob.core.UserAccountRepository;
+import com.moktob.service.UserContextService;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -23,102 +25,99 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-@Order(2)
+@Order(2) // Ensure this runs after TenantContextFilter but before JwtAuthenticationFilter
 public class WebAuthenticationContextFilter implements Filter {
 
     private final UserAccountRepository userAccountRepository;
     private final JwtUtil jwtUtil;
+    private final UserContextService userContextService;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        
+
         HttpServletRequest httpRequest = (HttpServletRequest) request;
-        
+
         try {
             // Only process web page requests (not API requests)
             if (isWebPageRequest(httpRequest)) {
-                populateTenantContextFromJwtToken(httpRequest);
+                populateUserContextFromRequest(httpRequest);
             }
-            
+
         } catch (Exception e) {
-            log.error("Error populating tenant context for web request", e);
+            log.error("Error populating user context for web request", e);
         }
-        
+
         try {
             chain.doFilter(request, response);
         } finally {
             // Don't clear here - let TenantContextFilter handle it
         }
     }
-    
+
     private boolean isWebPageRequest(HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         // Process web page requests but not API requests
         return requestURI.startsWith("/moktob/") && !requestURI.startsWith("/moktob/api/");
     }
-    
-    private void populateTenantContextFromJwtToken(HttpServletRequest request) {
-        // First try to get clientId from JWT token in Authorization header
+
+    private void populateUserContextFromRequest(HttpServletRequest request) {
+        // First try to get user context from JWT token in Authorization header
         String requestTokenHeader = request.getHeader("Authorization");
-        
+
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             String jwtToken = requestTokenHeader.substring(7);
             try {
-                Long clientId = jwtUtil.getClientIdFromToken(jwtToken);
-                if (clientId != null) {
-                    TenantContextHolder.setTenantId(clientId);
-                    log.debug("WebAuthenticationContextFilter: Set tenant context from Authorization header to clientId: {}", clientId);
+                String username = jwtUtil.extractUsername(jwtToken);
+                UserContext userContext = userContextService.buildUserContext(username);
+                if (userContext != null) {
+                    TenantContextHolder.setUserContext(userContext);
+                    log.debug("WebAuthenticationContextFilter: Set user context from Authorization header for user: {}", username);
                     return;
                 }
             } catch (Exception e) {
-                log.debug("WebAuthenticationContextFilter: Could not extract clientId from Authorization header JWT token: {}", e.getMessage());
+                log.debug("WebAuthenticationContextFilter: Could not extract user context from Authorization header JWT token: {}", e.getMessage());
             }
         }
-        
+
         // Try to get JWT token from cookie
         String jwtTokenFromCookie = getJwtTokenFromCookie(request);
         if (jwtTokenFromCookie != null) {
             try {
-                Long clientId = jwtUtil.getClientIdFromToken(jwtTokenFromCookie);
-                if (clientId != null) {
-                    TenantContextHolder.setTenantId(clientId);
-                    log.debug("WebAuthenticationContextFilter: Set tenant context from cookie to clientId: {}", clientId);
+                String username = jwtUtil.extractUsername(jwtTokenFromCookie);
+                UserContext userContext = userContextService.buildUserContext(username);
+                if (userContext != null) {
+                    TenantContextHolder.setUserContext(userContext);
+                    log.debug("WebAuthenticationContextFilter: Set user context from cookie for user: {}", username);
                     return;
                 }
             } catch (Exception e) {
-                log.debug("WebAuthenticationContextFilter: Could not extract clientId from cookie JWT token: {}", e.getMessage());
+                log.debug("WebAuthenticationContextFilter: Could not extract user context from cookie JWT token: {}", e.getMessage());
             }
         }
-        
-        // If no JWT token or couldn't extract clientId, try SecurityContext
+
+        // If no JWT token or couldn't extract user context, try SecurityContext
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        
-        if (authentication != null && authentication.isAuthenticated() && 
+
+        if (authentication != null && authentication.isAuthenticated() &&
             authentication.getPrincipal() instanceof UserDetails) {
-            
+
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             String username = userDetails.getUsername();
-            
-            // Get user account with client information
-            Optional<UserAccount> userAccountOpt = userAccountRepository.findByUsernameWithRole(username);
-            
-            if (userAccountOpt.isPresent()) {
-                UserAccount userAccount = userAccountOpt.get();
-                Long clientId = userAccount.getClientId();
-                
-                // Set tenant context
-                TenantContextHolder.setTenantId(clientId);
-                log.debug("WebAuthenticationContextFilter: Set tenant context from SecurityContext to clientId: {} for user: {}", 
-                         clientId, username);
+
+            // Build complete user context
+            UserContext userContext = userContextService.buildUserContext(username);
+            if (userContext != null) {
+                TenantContextHolder.setUserContext(userContext);
+                log.debug("WebAuthenticationContextFilter: Set user context from SecurityContext for user: {}", username);
             } else {
-                log.warn("WebAuthenticationContextFilter: User account not found for username: {}", username);
+                log.warn("WebAuthenticationContextFilter: Could not build user context for username: {}", username);
             }
         } else {
             log.debug("WebAuthenticationContextFilter: No JWT token or authenticated user found");
         }
     }
-    
+
     private String getJwtTokenFromCookie(HttpServletRequest request) {
         String cookieHeader = request.getHeader("Cookie");
         if (cookieHeader != null) {
