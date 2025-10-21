@@ -2,6 +2,7 @@ package com.moktob.service;
 
 import com.moktob.core.UserAccount;
 import com.moktob.dto.CreateUserRequest;
+import com.moktob.dto.EmailTask;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,6 +19,7 @@ public class UserCredentialService {
     private final AuthenticationService authenticationService;
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
+    private final AsyncEmailProcessorService asyncEmailProcessorService;
 
     /**
      * Generate a secure temporary password
@@ -99,14 +101,7 @@ public class UserCredentialService {
             
             // Send specific student email if requested
             if (sendEmail && email != null && !email.trim().isEmpty()) {
-                try {
-                    emailService.sendStudentCredentialsEmail(email, studentName, username, temporaryPassword);
-                    log.info("Student credentials email sent successfully to: {} for user: {}", email, username);
-                } catch (Exception e) {
-                    log.error("Failed to send student credentials email to: {} for user: {}. Error: {}", 
-                             email, username, e.getMessage(), e);
-                    // Don't fail the user creation if email fails
-                }
+                sendStudentCredentialsEmailAsync(email, studentName, username, temporaryPassword);
             }
             
             // Clear password hash from response for security
@@ -145,14 +140,7 @@ public class UserCredentialService {
             
             // Send specific teacher email if requested
             if (sendEmail && email != null && !email.trim().isEmpty()) {
-                try {
-                    emailService.sendTeacherCredentialsEmail(email, teacherName, username, temporaryPassword);
-                    log.info("Teacher credentials email sent successfully to: {} for user: {}", email, username);
-                } catch (Exception e) {
-                    log.error("Failed to send teacher credentials email to: {} for user: {}. Error: {}", 
-                             email, username, e.getMessage(), e);
-                    // Don't fail the user creation if email fails
-                }
+                sendTeacherCredentialsEmailAsync(email, teacherName, username, temporaryPassword);
             }
             
             // Clear password hash from response for security
@@ -165,6 +153,72 @@ public class UserCredentialService {
             log.error("Failed to create teacher user account for: {}. Error: {}", 
                      teacherName, e.getMessage(), e);
             throw new RuntimeException("Failed to create teacher user account: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Send student credentials email asynchronously
+     */
+    private void sendStudentCredentialsEmailAsync(String email, String studentName, String username, String temporaryPassword) {
+        try {
+            EmailTask emailTask = EmailTask.builder()
+                    .emailType(EmailTask.EmailType.STUDENT_CREDENTIALS)
+                    .toEmail(email)
+                    .toName(studentName)
+                    .username(username)
+                    .temporaryPassword(temporaryPassword)
+                    .build();
+            
+            boolean submitted = asyncEmailProcessorService.submitEmailTask(emailTask);
+            if (submitted) {
+                log.info("Student credentials email task submitted for: {} ({})", email, username);
+            } else {
+                log.warn("Failed to submit student credentials email task for: {} ({})", email, username);
+                // Fallback to synchronous sending
+                emailService.sendStudentCredentialsEmail(email, studentName, username, temporaryPassword);
+            }
+        } catch (Exception e) {
+            log.error("Error submitting student credentials email task for: {} ({}). Error: {}", 
+                     email, username, e.getMessage(), e);
+            // Fallback to synchronous sending
+            try {
+                emailService.sendStudentCredentialsEmail(email, studentName, username, temporaryPassword);
+            } catch (Exception fallbackError) {
+                log.error("Fallback synchronous email also failed for: {} ({})", email, username, fallbackError);
+            }
+        }
+    }
+
+    /**
+     * Send teacher credentials email asynchronously
+     */
+    private void sendTeacherCredentialsEmailAsync(String email, String teacherName, String username, String temporaryPassword) {
+        try {
+            EmailTask emailTask = EmailTask.builder()
+                    .emailType(EmailTask.EmailType.TEACHER_CREDENTIALS)
+                    .toEmail(email)
+                    .toName(teacherName)
+                    .username(username)
+                    .temporaryPassword(temporaryPassword)
+                    .build();
+            
+            boolean submitted = asyncEmailProcessorService.submitEmailTask(emailTask);
+            if (submitted) {
+                log.info("Teacher credentials email task submitted for: {} ({})", email, username);
+            } else {
+                log.warn("Failed to submit teacher credentials email task for: {} ({})", email, username);
+                // Fallback to synchronous sending
+                emailService.sendTeacherCredentialsEmail(email, teacherName, username, temporaryPassword);
+            }
+        } catch (Exception e) {
+            log.error("Error submitting teacher credentials email task for: {} ({}). Error: {}", 
+                     email, username, e.getMessage(), e);
+            // Fallback to synchronous sending
+            try {
+                emailService.sendTeacherCredentialsEmail(email, teacherName, username, temporaryPassword);
+            } catch (Exception fallbackError) {
+                log.error("Fallback synchronous email also failed for: {} ({})", email, username, fallbackError);
+            }
         }
     }
 }

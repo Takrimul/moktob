@@ -37,6 +37,7 @@ async function loadTeacherData(id) {
             document.getElementById('qualification').value = teacher.qualification || '';
             document.getElementById('joiningDate').value = teacher.joiningDate || '';
             document.getElementById('isActive').value = teacher.isActive ? 'true' : 'false';
+            document.getElementById('sendCredentials').checked = teacher.sendCredentials || false;
         }
     } catch (error) {
         console.error('Error loading teacher data:', error);
@@ -115,7 +116,8 @@ async function handleFormSubmit(event) {
             phoneNumber: document.getElementById('phoneNumber').value.trim() || null,
             qualification: document.getElementById('qualification').value.trim() || null,
             joiningDate: document.getElementById('joiningDate').value || null,
-            isActive: document.getElementById('isActive').value === 'true'
+            isActive: document.getElementById('isActive').value === 'true',
+            sendCredentials: document.getElementById('sendCredentials').checked
         };
         
         // Remove null values

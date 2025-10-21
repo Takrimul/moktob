@@ -65,6 +65,8 @@ async function loadStudentData(id) {
             document.getElementById('guardianName').value = student.guardianName || '';
             document.getElementById('guardianContact').value = student.guardianContact || '';
             document.getElementById('address').value = student.address || '';
+            document.getElementById('email').value = student.email || '';
+            document.getElementById('sendCredentials').checked = student.sendCredentials || false;
             
             // Set class selection - wait for classes to be loaded if needed
             if (student.classId) {
@@ -108,6 +110,13 @@ function initializeForm() {
             field.addEventListener('input', () => clearFieldError(field));
         }
     });
+
+    // Email validation
+    const emailField = document.getElementById('email');
+    if (emailField) {
+        emailField.addEventListener('blur', () => validateEmail(emailField));
+        emailField.addEventListener('input', () => clearFieldError(emailField));
+    }
 }
 
 function validateField(field) {
@@ -160,6 +169,14 @@ function validateForm() {
         }
     });
     
+    // Validate email if provided
+    const emailField = document.getElementById('email');
+    if (emailField && emailField.value.trim()) {
+        if (!validateEmail(emailField)) {
+            isValid = false;
+        }
+    }
+    
     return isValid;
 }
 
@@ -198,7 +215,9 @@ async function handleFormSubmit(event) {
             dob: document.getElementById('dateOfBirth')?.value || null,
             guardianContact: document.getElementById('guardianContact')?.value?.trim() || null,
             address: document.getElementById('address')?.value?.trim() || null,
-            classId: document.getElementById('currentClassId')?.value || null
+            classId: document.getElementById('currentClassId')?.value || null,
+            email: document.getElementById('email')?.value?.trim() || null,
+            sendCredentials: document.getElementById('sendCredentials')?.checked || false
         };
         
         // Remove null values

@@ -79,6 +79,15 @@
                                         <option value="false">Inactive</option>
                                     </select>
                                 </div>
+                                <div class="col-12">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="sendCredentials" name="sendCredentials" checked>
+                                        <label class="form-check-label" for="sendCredentials">
+                                            Send login credentials via email
+                                        </label>
+                                    </div>
+                                    <div class="form-text">If checked, login credentials will be sent to the teacher's email address</div>
+                                </div>
                                 <div class="col-12 mt-4">
                                     <button type="submit" class="btn btn-primary me-2" id="submitBtn">
                                         <i th:class="${isEdit ? 'fas fa-save me-1' : 'fas fa-save me-1'}"></i>
