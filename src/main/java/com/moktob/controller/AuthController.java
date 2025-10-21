@@ -44,7 +44,7 @@ public class AuthController {
         
         if (userAccount.isEmpty()) {
             log.error("User not found: {}", authenticationRequest.getUsername());
-            return ResponseEntity.status(401).body("Incorrect username or password");
+            return ResponseEntity.status(401).body("User not found");
         }
 
         UserAccount user = userAccount.get();
@@ -55,7 +55,7 @@ public class AuthController {
             log.debug("Password hash of login request data: {} is {}", user.getUsername(), hashPass);
             log.debug("Password in db: {}", user.getPasswordHash());
             log.error("Bad credentials for user: {}", authenticationRequest.getUsername());
-            return ResponseEntity.status(401).body("Incorrect username or password");
+            return ResponseEntity.status(401).body("Incorrect password");
         }
         
         // Check if user is active

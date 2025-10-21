@@ -46,15 +46,20 @@ function handleLogin(event) {
         },
         body: JSON.stringify(loginData)
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            return response.text().then(text => {
+                throw new Error(text || 'Login failed');
+            });
+        }
+        return response.json();
+    })
     .then(data => {
         console.log('Login response:', data);
         if (data.jwt) {
             // Store token
             const rememberMe = document.getElementById('rememberMe').checked;
             MoktobApp.setToken(data.jwt, rememberMe);
-            
-            // Token is already stored in localStorage by MoktobApp.setToken()
             
             // Show success message
             MoktobApp.showAlert('Login successful! Redirecting...', 'success');
@@ -69,11 +74,39 @@ function handleLogin(event) {
     })
     .catch(error => {
         console.error('Login error:', error);
-        MoktobApp.showAlert(error.message || 'Login failed. Please try again.', 'danger');
+        
+        // Determine meaningful error message based on response
+        let errorMessage = 'Login failed. Please try again.';
+        
+        if (error.message) {
+            if (error.message.includes('User not found')) {
+                errorMessage = 'No account found with this username. Please check your username or register for a new account.';
+            } else if (error.message.includes('Incorrect password')) {
+                errorMessage = 'Incorrect password. Please check your password and try again.';
+            } else if (error.message.includes('Account is deactivated')) {
+                errorMessage = 'Your account has been deactivated. Please contact support for assistance.';
+            } else if (error.message.includes('Incorrect username or password')) {
+                errorMessage = 'Invalid username or password. Please check your credentials and try again.';
+            } else {
+                errorMessage = error.message;
+            }
+        }
+        
+        // Show error message
+        MoktobApp.showAlert(errorMessage, 'danger');
+        
+        // Clear password field for security
+        document.getElementById('password').value = '';
         
         // Reset button
         submitBtn.innerHTML = originalText;
         submitBtn.disabled = false;
+        
+        // Focus on username field for better UX
+        document.getElementById('username').focus();
+        
+        // Scroll to top to ensure error message is visible
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 }
 
