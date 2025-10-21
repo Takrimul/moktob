@@ -81,7 +81,8 @@ public class TeacherService {
             try {
                 UserAccount userAccount = userCredentialService.createTeacherUser(
                     teacher.getName(), 
-                    teacher.getEmail(), 
+                    teacher.getEmail(),
+                    teacher.getPhoneNumber(), // Pass phone number
                     true
                 );
                 log.info("User account created for teacher: {} with username: {}", 

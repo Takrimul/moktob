@@ -80,7 +80,8 @@ public class StudentService {
             try {
                 UserAccount userAccount = userCredentialService.createStudentUser(
                     studentRequest.getName(), 
-                    studentRequest.getEmail(), 
+                    studentRequest.getEmail(),
+                    studentRequest.getGuardianContact(), // Use guardian contact as phone
                     true
                 );
                 log.info("User account created for student: {} with username: {}", 

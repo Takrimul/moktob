@@ -79,7 +79,7 @@ public class UserCredentialService {
     /**
      * Create user account for student
      */
-    public UserAccount createStudentUser(String studentName, String email, boolean sendEmail) {
+    public UserAccount createStudentUser(String studentName, String email, String phone, boolean sendEmail) {
         try {
             // Generate username and password
             String username = generateUsername(studentName);
@@ -91,6 +91,7 @@ public class UserCredentialService {
             userRequest.setPassword(temporaryPassword);
             userRequest.setFullName(studentName);
             userRequest.setEmail(email);
+            userRequest.setPhone(phone); // Include phone number
             userRequest.setRoleName("STUDENT");
             
             // Create user account
@@ -124,7 +125,7 @@ public class UserCredentialService {
     /**
      * Create user account for teacher
      */
-    public UserAccount createTeacherUser(String teacherName, String email, boolean sendEmail) {
+    public UserAccount createTeacherUser(String teacherName, String email, String phone, boolean sendEmail) {
         try {
             // Generate username and password
             String username = generateUsername(teacherName);
@@ -136,6 +137,7 @@ public class UserCredentialService {
             userRequest.setPassword(temporaryPassword);
             userRequest.setFullName(teacherName);
             userRequest.setEmail(email);
+            userRequest.setPhone(phone); // Include phone number
             userRequest.setRoleName("TEACHER");
             
             // Create user account
