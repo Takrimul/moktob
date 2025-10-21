@@ -15,6 +15,7 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
     List<Teacher> findByClientIdAndIsActiveTrue(Long clientId);
     Optional<Teacher> findByClientIdAndId(Long clientId, Long id);
     List<Teacher> findByClientIdAndNameContainingIgnoreCase(Long clientId, String name);
+    List<Teacher> findByClientIdAndEmail(Long clientId, String email);
     
     long countByClientId(Long clientId);
     

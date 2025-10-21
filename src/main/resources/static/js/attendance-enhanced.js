@@ -78,6 +78,8 @@ class AttendanceManager {
         const classId = document.getElementById('classSelect').value;
         const date = document.getElementById('attendanceDate').value;
         
+        console.log('Loading attendance for class:', classId, 'date:', date);
+        
         if (!classId || !date) {
             this.hideAttendanceForm();
             return;
@@ -91,7 +93,9 @@ class AttendanceManager {
             this.showLoadingState();
 
             // Try to get existing attendance
+            console.log('Fetching existing attendance...');
             const attendance = await MoktobApp.apiRequest(`/moktob/api/attendance/class/${classId}/date/${date}`);
+            console.log('Received attendance data:', attendance);
             
             if (attendance && attendance.studentDetails && attendance.studentDetails.length > 0) {
                 // Existing attendance found
@@ -109,15 +113,16 @@ class AttendanceManager {
             this.showAttendanceForm();
 
         } catch (error) {
+            console.error('Error loading attendance:', error);
             if (error.status === 404) {
                 // No attendance found, load students for new attendance
+                console.log('No existing attendance found, loading students...');
                 await this.loadStudentsForNewAttendance(classId, date);
                 this.isEditMode = false;
                 document.getElementById('formTitle').textContent = 'Mark Attendance';
                 this.updateClassInfo(classId);
                 this.showAttendanceForm();
             } else {
-                console.error('Error loading attendance:', error);
                 MoktobPopup.error({
                     title: 'Error',
                     message: 'Failed to load attendance. Please try again.'
@@ -129,7 +134,9 @@ class AttendanceManager {
     // Load students for new attendance
     async loadStudentsForNewAttendance(classId, date) {
         try {
+            console.log('Loading students for class:', classId);
             const students = await MoktobApp.apiRequest(`/moktob/api/students/class/${classId}`);
+            console.log('Received students data:', students);
             this.students = students;
             this.displayStudentsForAttendance(students);
         } catch (error) {
@@ -258,16 +265,19 @@ class AttendanceManager {
             const request = {
                 classId: this.currentClassId,
                 attendanceDate: this.currentDate,
-                teacherId: TenantContextHolder.getTeacherId(),
+                teacherId: null, // Will be set by the backend based on logged-in user
                 attendanceRecords: attendanceData,
-                remarks: document.getElementById('generalRemarks').value
+                remarks: document.getElementById('generalRemarks').value || ''
             };
+
+            console.log('Saving attendance:', request);
 
             const response = await MoktobApp.apiRequest('/moktob/api/attendance/bulk-submit', {
                 method: 'POST',
                 body: JSON.stringify(request)
             });
 
+            console.log('Attendance saved successfully:', response);
             this.displayAttendanceSummary(response);
             MoktobPopup.success({
                 title: 'Success',
@@ -288,9 +298,13 @@ class AttendanceManager {
         const attendanceData = [];
         const attendanceInputs = document.querySelectorAll('input[type="radio"]:checked');
         
+        console.log('Found attendance inputs:', attendanceInputs.length);
+        
         attendanceInputs.forEach(input => {
             const studentId = input.name.split('_')[1];
             const remarks = document.getElementById(`remarks_${studentId}`)?.value || '';
+            
+            console.log('Processing attendance for student:', studentId, 'status:', input.value);
             
             attendanceData.push({
                 studentId: parseInt(studentId),
@@ -299,6 +313,7 @@ class AttendanceManager {
             });
         });
 
+        console.log('Collected attendance data:', attendanceData);
         return attendanceData;
     }
 

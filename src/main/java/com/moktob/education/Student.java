@@ -33,6 +33,9 @@ public class Student extends BaseEntity {
     @Column(name = "guardian_contact", length = 20)
     private String guardianContact;
     
+    @Column(name = "email", length = 100)
+    private String email;
+    
     @Column(name = "address", columnDefinition = "TEXT")
     private String address;
     

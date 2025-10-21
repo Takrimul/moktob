@@ -70,13 +70,27 @@ public class UserContextService {
             // Set role-specific information
             String roleName = builder.build().getRoleName();
             if ("STUDENT".equalsIgnoreCase(roleName)) {
-                // For students, we'll set the student name from the user's full name
-                // The actual student ID mapping can be enhanced later if needed
-                builder.studentName(user.getFullName());
+                // Find student by email
+                List<Student> students = studentRepository.findByClientIdAndEmail(user.getClientId(), user.getEmail());
+                if (!students.isEmpty()) {
+                    Student student = students.get(0);
+                    builder.studentId(student.getId())
+                           .studentName(student.getName());
+                } else {
+                    // Fallback to user's full name if student not found
+                    builder.studentName(user.getFullName());
+                }
             } else if ("TEACHER".equalsIgnoreCase(roleName)) {
-                // For teachers, we'll set the teacher name from the user's full name
-                // The actual teacher ID mapping can be enhanced later if needed
-                builder.teacherName(user.getFullName());
+                // Find teacher by email
+                List<Teacher> teachers = teacherRepository.findByClientIdAndEmail(user.getClientId(), user.getEmail());
+                if (!teachers.isEmpty()) {
+                    Teacher teacher = teachers.get(0);
+                    builder.teacherId(teacher.getId())
+                           .teacherName(teacher.getName());
+                } else {
+                    // Fallback to user's full name if teacher not found
+                    builder.teacherName(user.getFullName());
+                }
             }
 
             UserContext context = builder.build();

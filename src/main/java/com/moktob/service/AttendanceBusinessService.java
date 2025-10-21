@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -212,19 +213,38 @@ public class AttendanceBusinessService {
         double attendancePercentage = students.size() > 0 ? 
             ((double)(presentCount + lateCount) / students.size()) * 100 : 0.0;
         
+        // Use teacherId from request, or fall back to logged-in user's teacherId
+        Long teacherId = request.getTeacherId() != null ? request.getTeacherId() : TenantContextHolder.getTeacherId();
+        
+        // If still null, try to get teacher from class
+        if (teacherId == null) {
+            try {
+                if (classEntity != null && classEntity.getTeacherId() != null) {
+                    teacherId = classEntity.getTeacherId();
+                }
+            } catch (Exception e) {
+                log.warn("Could not get teacher from class: {}", e.getMessage());
+            }
+        }
+        
+        // If still null, throw an error
+        if (teacherId == null) {
+            throw new IllegalArgumentException("Teacher ID is required for attendance. Please ensure you are logged in as a teacher or the class has an assigned teacher.");
+        }
+        
         return AttendanceSummaryResponse.builder()
-            .classId(request.getClassId())
-            .className(classEntity != null ? classEntity.getClassName() : "Unknown Class")
-            .attendanceDate(request.getAttendanceDate())
-            .totalStudents((long) students.size())
-            .presentCount(presentCount)
-            .absentCount(absentCount)
-            .lateCount(lateCount)
-            .attendancePercentage(attendancePercentage)
-            .studentDetails(studentDetails)
-            .remarks(request.getRemarks())
-            .teacherId(request.getTeacherId())
-            .build();
+                .classId(request.getClassId())
+                .className(classEntity != null ? classEntity.getClassName() : "Unknown Class")
+                .attendanceDate(request.getAttendanceDate())
+                .totalStudents((long) students.size())
+                .presentCount(presentCount)
+                .absentCount(absentCount)
+                .lateCount(lateCount)
+                .attendancePercentage(attendancePercentage)
+                .studentDetails(studentDetails)
+                .remarks(request.getRemarks())
+                .teacherId(teacherId)
+                .build();
     }
 
     private boolean isWeekend(LocalDate date) {

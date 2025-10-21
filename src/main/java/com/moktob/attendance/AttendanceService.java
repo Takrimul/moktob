@@ -9,6 +9,8 @@ import com.moktob.dto.BulkAttendanceRequest;
 import com.moktob.dto.StudentAttendanceSummary;
 import com.moktob.education.Student;
 import com.moktob.education.StudentService;
+import com.moktob.education.ClassEntityService;
+import com.moktob.education.ClassEntity;
 import com.moktob.service.AttendanceBusinessService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +35,7 @@ public class AttendanceService {
     private final AttendanceRepository attendanceRepository;
     private final AttendanceBusinessService attendanceBusinessService;
     private final StudentService studentService;
+    private final ClassEntityService classEntityService;
     
     public List<Attendance> getAllAttendance() {
         Long clientId = TenantContextHolder.getTenantId();
@@ -137,6 +140,8 @@ public class AttendanceService {
     @Transactional
     public AttendanceSummaryResponse saveBulkAttendance(BulkAttendanceRequest request) {
         Long clientId = TenantContextHolder.getTenantId();
+        log.info("Saving bulk attendance for clientId: {}, classId: {}, date: {}", 
+                clientId, request.getClassId(), request.getAttendanceDate());
         
         // Validate the request
         attendanceBusinessService.validateBulkAttendanceRequest(request);
@@ -153,7 +158,31 @@ public class AttendanceService {
                     
                     attendance.setStudentId(record.getStudentId());
                     attendance.setClassId(request.getClassId());
-                    attendance.setTeacherId(request.getTeacherId());
+                    // Use teacherId from request, or fall back to logged-in user's teacherId
+                    Long teacherId = request.getTeacherId() != null ? request.getTeacherId() : TenantContextHolder.getTeacherId();
+                    log.debug("Initial teacherId: {} (from request: {}, from context: {})", 
+                            teacherId, request.getTeacherId(), TenantContextHolder.getTeacherId());
+                    
+                    // If still null, try to get teacher from class
+                    if (teacherId == null) {
+                        try {
+                            Optional<ClassEntity> classEntity = classEntityService.getClassById(request.getClassId());
+                            if (classEntity.isPresent() && classEntity.get().getTeacherId() != null) {
+                                teacherId = classEntity.get().getTeacherId();
+                                log.debug("Got teacherId from class: {}", teacherId);
+                            }
+                        } catch (Exception e) {
+                            log.warn("Could not get teacher from class: {}", e.getMessage());
+                        }
+                    }
+                    
+                    // If still null, throw an error
+                    if (teacherId == null) {
+                        log.error("Teacher ID is null for attendance. UserContext: {}", TenantContextHolder.getUserContext());
+                        throw new IllegalArgumentException("Teacher ID is required for attendance. Please ensure you are logged in as a teacher or the class has an assigned teacher.");
+                    }
+                    
+                    attendance.setTeacherId(teacherId);
                     attendance.setAttendanceDate(request.getAttendanceDate());
                     attendance.setStatus(record.getStatus());
                     attendance.setRemarks(record.getRemarks());
