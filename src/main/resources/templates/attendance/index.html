@@ -38,6 +38,103 @@
         .status-late {
             background-color: #fff3cd !important;
         }
+        
+        /* Enhanced Attendance Styles */
+        .summary-card {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .summary-card.present {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            border: 1px solid #c3e6cb;
+        }
+        
+        .summary-card.absent {
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+            border: 1px solid #f5c6cb;
+        }
+        
+        .summary-card.late {
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            border: 1px solid #ffeaa7;
+        }
+        
+        .summary-card.percentage {
+            background: linear-gradient(135deg, #d1ecf1, #bee5eb);
+            border: 1px solid #bee5eb;
+        }
+        
+        .summary-count {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #495057;
+            margin-bottom: 0.5rem;
+        }
+        
+        .summary-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+            font-weight: 500;
+        }
+        
+        .summary-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .btn-group .btn {
+            margin-right: 0.25rem;
+        }
+        
+        .btn-group .btn:last-child {
+            margin-right: 0;
+        }
+        
+        .table th {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .table td {
+            vertical-align: middle;
+        }
+        
+        .form-control-sm {
+            font-size: 0.875rem;
+        }
+        
+        .card-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .card-title {
+            color: #495057;
+        }
+        
+        .text-center {
+            text-align: center !important;
+        }
+        
+        .gap-2 {
+            gap: 0.5rem !important;
+        }
+        
+        .d-flex {
+            display: flex !important;
+        }
+        
+        .justify-content-between {
+            justify-content: space-between !important;
+        }
+        
+        .align-items-center {
+            align-items: center !important;
+        }
     </style>
 </head>
 <body>
@@ -65,30 +162,40 @@
 
                 <!-- Page Content -->
                 <div>
-                    <!-- Class Selection -->
+                    <!-- Class and Date Selection -->
                     <div class="row mb-4">
-                        <div class="col-md-6">
+                        <div class="col-md-8">
                             <div class="card">
                                 <div class="card-header">
                                     <h5 class="card-title mb-0">
-                                        <i class="fas fa-filter me-2"></i>Select Class
+                                        <i class="fas fa-filter me-2"></i>Attendance Selection
                                     </h5>
                                 </div>
                                 <div class="card-body">
-                                    <div class="mb-3">
-                                        <label for="classSelect" class="form-label">Choose Class</label>
-                                        <select class="form-select" id="classSelect" onchange="loadClassStudents()">
-                                            <option value="">Select a class...</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="attendanceDate" class="form-label">Attendance Date</label>
-                                        <input type="date" class="form-control" id="attendanceDate" onchange="loadClassStudents()">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label for="classSelect" class="form-label">Choose Class</label>
+                                            <select class="form-select" id="classSelect" onchange="loadAttendance()">
+                                                <option value="">Select a class...</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="attendanceDate" class="form-label">Attendance Date</label>
+                                            <input type="date" class="form-control" id="attendanceDate" onchange="loadAttendance()">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">Quick Actions</label>
+                                            <div class="btn-group w-100" role="group">
+                                                <button type="button" class="btn btn-outline-primary btn-sm" onclick="setToday()">Today</button>
+                                                <button type="button" class="btn btn-outline-primary btn-sm" onclick="setYesterday()">Yesterday</button>
+                                                <button type="button" class="btn btn-outline-success btn-sm" onclick="loadAttendance()">Load</button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="card">
                                 <div class="card-header">
                                     <h5 class="card-title mb-0">
@@ -102,13 +209,58 @@
                         </div>
                     </div>
 
+                    <!-- Attendance Status Panel -->
+                    <div class="row mb-4" id="statusPanel" style="display: none;">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row text-center">
+                                        <div class="col-md-3">
+                                            <div class="summary-card present">
+                                                <div class="summary-count" id="presentCount">0</div>
+                                                <div class="summary-label">Present</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="summary-card absent">
+                                                <div class="summary-count" id="absentCount">0</div>
+                                                <div class="summary-label">Absent</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="summary-card late">
+                                                <div class="summary-count" id="lateCount">0</div>
+                                                <div class="summary-label">Late</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="summary-card percentage">
+                                                <div class="summary-count" id="attendancePercentage">0%</div>
+                                                <div class="summary-label">Attendance</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Attendance Form -->
                     <div class="card" id="attendanceFormCard" style="display: none;">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h5 class="card-title mb-0">
-                                <i class="fas fa-clipboard-list me-2"></i>Mark Attendance
+                                <i class="fas fa-clipboard-list me-2"></i><span id="formTitle">Mark Attendance</span>
                             </h5>
-                            <div>
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-outline-success btn-sm" onclick="selectAllPresent()">
+                                    <i class="fas fa-check me-1"></i>All Present
+                                </button>
+                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="selectAllAbsent()">
+                                    <i class="fas fa-times me-1"></i>All Absent
+                                </button>
+                                <button type="button" class="btn btn-outline-warning btn-sm" onclick="clearAll()">
+                                    <i class="fas fa-eraser me-1"></i>Clear All
+                                </button>
                                 <button type="button" class="btn btn-success btn-sm" onclick="saveAttendance()">
                                     <i class="fas fa-save me-1"></i>Save Attendance
                                 </button>
@@ -120,16 +272,58 @@
                                     <thead class="table-dark">
                                         <tr>
                                             <th width="5%">#</th>
-                                            <th width="25%">Student Name</th>
-                                            <th width="20%">Guardian Name</th>
+                                            <th width="20%">Student Name</th>
+                                            <th width="15%">Guardian Name</th>
                                             <th width="15%">Guardian Contact</th>
-                                            <th width="15%">Present</th>
-                                            <th width="15%">Absent</th>
-                                            <th width="15%">Late</th>
+                                            <th width="12%">Present</th>
+                                            <th width="12%">Absent</th>
+                                            <th width="12%">Late</th>
+                                            <th width="9%">Remarks</th>
                                         </tr>
                                     </thead>
                                     <tbody id="attendanceTableBody">
                                         <!-- Students will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <!-- General Remarks Section -->
+                            <div class="mt-3">
+                                <label for="generalRemarks" class="form-label">General Remarks:</label>
+                                <textarea class="form-control" id="generalRemarks" rows="2" placeholder="Any general remarks for this attendance session..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Attendance History -->
+                    <div class="card" id="attendanceHistoryCard" style="display: none;">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-history me-2"></i>Attendance History
+                            </h5>
+                            <div class="d-flex gap-2">
+                                <input type="date" id="historyStartDate" class="form-control form-control-sm" style="width: auto;">
+                                <input type="date" id="historyEndDate" class="form-control form-control-sm" style="width: auto;">
+                                <button type="button" class="btn btn-outline-primary btn-sm" onclick="loadAttendanceHistory()">
+                                    <i class="fas fa-search me-1"></i>Load History
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="historyTable">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Present</th>
+                                            <th>Absent</th>
+                                            <th>Late</th>
+                                            <th>Percentage</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="historyTableBody">
+                                        <!-- History will be loaded here -->
                                     </tbody>
                                 </table>
                             </div>
@@ -159,185 +353,6 @@
     <!-- Custom JS -->
     <script th:src="@{/js/app.js}"></script>
     <script th:src="@{/js/popup.js}"></script>
-    <script th:src="@{/js/attendance.js}"></script>
-    
-    <script>
-        // Load classes and set today's date when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            loadClasses();
-            document.getElementById('attendanceDate').value = new Date().toISOString().split('T')[0];
-        });
-
-        function loadClasses() {
-            const token = MoktobApp.getToken();
-            if (!token) {
-                window.location.href = '/moktob/login';
-                return;
-            }
-
-            MoktobApp.apiRequest('/moktob/api/classes')
-                .then(classes => {
-                    const select = document.getElementById('classSelect');
-                    select.innerHTML = '<option value="">Select a class...</option>';
-                    
-                    if (classes && classes.length > 0) {
-                        classes.forEach(cls => {
-                            const option = document.createElement('option');
-                            option.value = cls.id;
-                            option.textContent = `${cls.className} - ${cls.teacherName || 'No Teacher'}`;
-                            select.appendChild(option);
-                        });
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading classes:', error);
-                });
-        }
-
-        function loadClassStudents() {
-            const classId = document.getElementById('classSelect').value;
-            const date = document.getElementById('attendanceDate').value;
-            
-            if (!classId || !date) {
-                document.getElementById('attendanceFormCard').style.display = 'none';
-                document.getElementById('noClassCard').style.display = 'block';
-                return;
-            }
-
-            const token = MoktobApp.getToken();
-            if (!token) {
-                window.location.href = '/moktob/login';
-                return;
-            }
-
-            // Show loading state
-            document.getElementById('attendanceFormCard').style.display = 'block';
-            document.getElementById('noClassCard').style.display = 'none';
-            
-            const tbody = document.getElementById('attendanceTableBody');
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="7" class="text-center text-muted">
-                        <i class="fas fa-spinner fa-spin me-2"></i>
-                        Loading students...
-                    </td>
-                </tr>
-            `;
-
-            // Load students for the selected class
-            MoktobApp.apiRequest(`/moktob/api/students/class/${classId}`)
-                .then(students => {
-                    if (students && students.length > 0) {
-                        tbody.innerHTML = students.map((student, index) => `
-                            <tr class="student-row">
-                                <td>${index + 1}</td>
-                                <td>${student.name || 'N/A'}</td>
-                                <td>${student.guardianName || 'N/A'}</td>
-                                <td>${student.guardianContact || 'N/A'}</td>
-                                <td class="text-center">
-                                    <input type="radio" name="attendance_${student.id}" value="present" class="attendance-checkbox">
-                                </td>
-                                <td class="text-center">
-                                    <input type="radio" name="attendance_${student.id}" value="absent" class="attendance-checkbox">
-                                </td>
-                                <td class="text-center">
-                                    <input type="radio" name="attendance_${student.id}" value="late" class="attendance-checkbox">
-                                </td>
-                            </tr>
-                        `).join('');
-                    } else {
-                        tbody.innerHTML = `
-                            <tr>
-                                <td colspan="7" class="text-center text-muted">
-                                    <i class="fas fa-info-circle me-2"></i>
-                                    No students found in this class.
-                                </td>
-                            </tr>
-                        `;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading students:', error);
-                    tbody.innerHTML = `
-                        <tr>
-                            <td colspan="7" class="text-center text-danger">
-                                <i class="fas fa-exclamation-triangle me-2"></i>
-                                Error loading students. Please try again.
-                            </td>
-                        </tr>
-                    `;
-                });
-        }
-
-        function saveAttendance() {
-            const classId = document.getElementById('classSelect').value;
-            const date = document.getElementById('attendanceDate').value;
-            
-            if (!classId || !date) {
-                MoktobPopup.alert({
-                    title: 'Error',
-                    message: 'Please select a class and date',
-                    type: 'error'
-                });
-                return;
-            }
-
-            const attendanceData = [];
-            const attendanceInputs = document.querySelectorAll('input[type="radio"]:checked');
-            
-            attendanceInputs.forEach(input => {
-                const studentId = input.name.split('_')[1];
-                attendanceData.push({
-                    studentId: parseInt(studentId),
-                    status: input.value,
-                    date: date
-                });
-            });
-
-            if (attendanceData.length === 0) {
-                MoktobPopup.alert({
-                    title: 'Error',
-                    message: 'Please mark attendance for at least one student',
-                    type: 'error'
-                });
-                return;
-            }
-
-            const token = MoktobApp.getToken();
-            if (!token) {
-                window.location.href = '/moktob/login';
-                return;
-            }
-
-            MoktobApp.apiRequest('/moktob/api/attendance', {
-                method: 'POST',
-                body: JSON.stringify({
-                    classId: parseInt(classId),
-                    date: date,
-                    attendanceRecords: attendanceData
-                })
-            })
-                .then(() => {
-                    MoktobPopup.alert({
-                        title: 'Success',
-                        message: 'Attendance saved successfully',
-                        type: 'success'
-                    });
-                })
-                .catch(error => {
-                    console.error('Error saving attendance:', error);
-                    MoktobPopup.alert({
-                        title: 'Error',
-                        message: 'Failed to save attendance. Please try again.',
-                        type: 'error'
-                    });
-                });
-        }
-
-        function refreshAttendance() {
-            loadClasses();
-            loadClassStudents();
-        }
-    </script>
+    <script th:src="@{/js/attendance-enhanced.js}"></script>
 </body>
 </html>

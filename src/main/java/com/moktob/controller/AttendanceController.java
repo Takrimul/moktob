@@ -4,7 +4,13 @@ import com.moktob.attendance.Attendance;
 import com.moktob.attendance.AttendanceService;
 import com.moktob.common.AttendanceStatus;
 import com.moktob.dto.AttendanceRequest;
+import com.moktob.dto.AttendanceSummaryResponse;
+import com.moktob.dto.AttendanceStatistics;
+import com.moktob.dto.BulkAttendanceRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +22,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/attendance")
 @RequiredArgsConstructor
+@Slf4j
 public class AttendanceController {
     
     private final AttendanceService attendanceService;
@@ -87,5 +94,132 @@ public class AttendanceController {
     @GetMapping("/today")
     public ResponseEntity<List<Attendance>> getTodayAttendance() {
         return ResponseEntity.ok(attendanceService.getAttendanceByDate(LocalDate.now()));
+    }
+
+    // Enhanced endpoints for robust attendance management
+    
+    /**
+     * Submit bulk attendance for a class on a specific date
+     */
+    @PostMapping("/bulk-submit")
+    public ResponseEntity<AttendanceSummaryResponse> submitBulkAttendance(@RequestBody BulkAttendanceRequest request) {
+        try {
+            log.info("Submitting bulk attendance for class {} on date {}", request.getClassId(), request.getAttendanceDate());
+            AttendanceSummaryResponse response = attendanceService.saveBulkAttendance(request);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Error submitting bulk attendance", e);
+            return ResponseEntity.badRequest().build();
+        }
+    }
+    
+    /**
+     * Get attendance for specific class and date
+     */
+    @GetMapping("/class/{classId}/date/{date}")
+    public ResponseEntity<AttendanceSummaryResponse> getClassAttendanceByDate(
+            @PathVariable Long classId, 
+            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        try {
+            AttendanceSummaryResponse response = attendanceService.getClassAttendanceByDate(classId, date);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Error getting class attendance for class {} on date {}", classId, date, e);
+            return ResponseEntity.badRequest().build();
+        }
+    }
+    
+    /**
+     * Get attendance history for a class
+     */
+    @GetMapping("/class/{classId}/history")
+    public ResponseEntity<Page<AttendanceSummaryResponse>> getClassAttendanceHistory(
+            @PathVariable Long classId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            Pageable pageable) {
+        try {
+            LocalDate start = startDate != null ? startDate : LocalDate.now().minusDays(30);
+            LocalDate end = endDate != null ? endDate : LocalDate.now();
+            
+            Page<AttendanceSummaryResponse> response = attendanceService.getClassAttendanceHistory(classId, start, end, pageable);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Error getting class attendance history for class {}", classId, e);
+            return ResponseEntity.badRequest().build();
+        }
+    }
+    
+    /**
+     * Update attendance for specific class and date
+     */
+    @PutMapping("/class/{classId}/date/{date}")
+    public ResponseEntity<AttendanceSummaryResponse> updateClassAttendance(
+            @PathVariable Long classId,
+            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestBody BulkAttendanceRequest request) {
+        try {
+            log.info("Updating attendance for class {} on date {}", classId, date);
+            AttendanceSummaryResponse response = attendanceService.updateClassAttendance(classId, date, request);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Error updating class attendance for class {} on date {}", classId, date, e);
+            return ResponseEntity.badRequest().build();
+        }
+    }
+    
+    /**
+     * Get student attendance history
+     */
+    @GetMapping("/student/{studentId}/history")
+    public ResponseEntity<List<Attendance>> getStudentAttendanceHistory(
+            @PathVariable Long studentId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        try {
+            LocalDate start = startDate != null ? startDate : LocalDate.now().minusDays(30);
+            LocalDate end = endDate != null ? endDate : LocalDate.now();
+            
+            List<Attendance> response = attendanceService.getStudentAttendanceHistory(studentId, start, end);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Error getting student attendance history for student {}", studentId, e);
+            return ResponseEntity.badRequest().build();
+        }
+    }
+    
+    /**
+     * Get attendance statistics
+     */
+    @GetMapping("/statistics")
+    public ResponseEntity<AttendanceStatistics> getAttendanceStatistics(
+            @RequestParam(required = false) Long classId,
+            @RequestParam(required = false) Long studentId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        try {
+            AttendanceStatistics response = attendanceService.getAttendanceStatistics(classId, studentId, startDate, endDate);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Error getting attendance statistics", e);
+            return ResponseEntity.badRequest().build();
+        }
+    }
+    
+    /**
+     * Calculate attendance percentage for a student
+     */
+    @GetMapping("/student/{studentId}/percentage")
+    public ResponseEntity<Double> getStudentAttendancePercentage(
+            @PathVariable Long studentId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        try {
+            Double percentage = attendanceService.calculateAttendancePercentage(studentId, startDate, endDate);
+            return ResponseEntity.ok(percentage);
+        } catch (Exception e) {
+            log.error("Error calculating attendance percentage for student {}", studentId, e);
+            return ResponseEntity.badRequest().build();
+        }
     }
 }
