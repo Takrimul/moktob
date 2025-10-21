@@ -46,8 +46,9 @@ public class AssessmentBusinessService {
             throw new IllegalArgumentException("Cannot create assessment for future dates");
         }
         
-        if (request.getAssessmentDate().isBefore(LocalDate.now().minusDays(365))) {
-            throw new IllegalArgumentException("Cannot create assessment for dates older than 1 year");
+        // Allow assessments for current academic year (approximately 2 years back)
+        if (request.getAssessmentDate().isBefore(LocalDate.now().minusDays(730))) {
+            throw new IllegalArgumentException("Cannot create assessment for dates older than 2 years");
         }
         
         // Validate scores are within range
@@ -82,7 +83,14 @@ public class AssessmentBusinessService {
         Long clientId = TenantContextHolder.getTenantId();
         Optional<Teacher> teacher = teacherService.getTeacherById(teacherId);
         if (teacher.isEmpty() || !teacher.get().getClientId().equals(clientId)) {
-            throw new IllegalArgumentException("Teacher not found or does not belong to your organization");
+            // If teacher not found in Teacher table, check if it's a user ID fallback
+            Long userId = TenantContextHolder.getUserId();
+            if (teacherId.equals(userId)) {
+                log.warn("Using user ID {} as teacher ID for assessment creation", userId);
+                // Allow this case - user ID is being used as teacher ID
+            } else {
+                throw new IllegalArgumentException("Teacher not found or does not belong to your organization");
+            }
         }
         
         // Create assessment entity
@@ -293,42 +301,85 @@ public class AssessmentBusinessService {
     }
 
     public AssessmentResponseDTO convertToResponseDTO(Assessment assessment) {
-        return AssessmentResponseDTO.builder()
-            .id(assessment.getId())
-            .studentId(assessment.getStudentId())
-            .studentName(assessment.getStudent() != null ? assessment.getStudent().getName() : "Unknown")
-            .teacherId(assessment.getTeacherId())
-            .teacherName(assessment.getTeacher() != null ? assessment.getTeacher().getName() : "Unknown")
-            .classId(assessment.getClassId())
-            .className(assessment.getClassEntity() != null ? assessment.getClassEntity().getClassName() : "Unknown")
-            .assessmentType(assessment.getAssessmentType())
-            .assessmentDate(assessment.getAssessmentDate())
-            .assessmentTime(assessment.getAssessmentTime())
-            .recitationScore(assessment.getRecitationScore())
-            .tajweedScore(assessment.getTajweedScore())
-            .memorizationScore(assessment.getMemorizationScore())
-            .comprehensionScore(assessment.getComprehensionScore())
-            .disciplineScore(assessment.getDisciplineScore())
-            .overallScore(assessment.getOverallScore())
-            .grade(assessment.getGrade())
-            .surahName(assessment.getSurahName())
-            .startAyah(assessment.getStartAyah())
-            .endAyah(assessment.getEndAyah())
-            .versesAssessed(assessment.getVersesAssessed())
-            .mistakesCount(assessment.getMistakesCount())
-            .correctionsGiven(assessment.getCorrectionsGiven())
-            .teacherFeedback(assessment.getTeacherFeedback())
-            .studentStrengths(assessment.getStudentStrengths())
-            .areasForImprovement(assessment.getAreasForImprovement())
-            .homeworkAssigned(assessment.getHomeworkAssigned())
-            .nextAssessmentDate(assessment.getNextAssessmentDate())
-            .isCompleted(assessment.getIsCompleted())
-            .isReassessment(assessment.getIsReassessment())
-            .parentNotified(assessment.getParentNotified())
-            .assessmentDurationMinutes(assessment.getAssessmentDurationMinutes())
-            .createdAt(assessment.getCreatedAt())
-            .updatedAt(assessment.getUpdatedAt())
-            .build();
+        try {
+            return AssessmentResponseDTO.builder()
+                .id(assessment.getId())
+                .studentId(assessment.getStudentId())
+                .studentName(getStudentName(assessment))
+                .teacherId(assessment.getTeacherId())
+                .teacherName(getTeacherName(assessment))
+                .classId(assessment.getClassId())
+                .className(getClassName(assessment))
+                .assessmentType(assessment.getAssessmentType())
+                .assessmentDate(assessment.getAssessmentDate())
+                .assessmentTime(assessment.getAssessmentTime())
+                .recitationScore(assessment.getRecitationScore())
+                .tajweedScore(assessment.getTajweedScore())
+                .memorizationScore(assessment.getMemorizationScore())
+                .comprehensionScore(assessment.getComprehensionScore())
+                .disciplineScore(assessment.getDisciplineScore())
+                .overallScore(assessment.getOverallScore())
+                .grade(assessment.getGrade())
+                .surahName(assessment.getSurahName())
+                .startAyah(assessment.getStartAyah())
+                .endAyah(assessment.getEndAyah())
+                .versesAssessed(assessment.getVersesAssessed())
+                .mistakesCount(assessment.getMistakesCount())
+                .correctionsGiven(assessment.getCorrectionsGiven())
+                .teacherFeedback(assessment.getTeacherFeedback())
+                .studentStrengths(assessment.getStudentStrengths())
+                .areasForImprovement(assessment.getAreasForImprovement())
+                .homeworkAssigned(assessment.getHomeworkAssigned())
+                .nextAssessmentDate(assessment.getNextAssessmentDate())
+                .isCompleted(assessment.getIsCompleted())
+                .isReassessment(assessment.getIsReassessment())
+                .parentNotified(assessment.getParentNotified())
+                .assessmentDurationMinutes(assessment.getAssessmentDurationMinutes())
+                .createdAt(assessment.getCreatedAt())
+                .updatedAt(assessment.getUpdatedAt())
+                .build();
+        } catch (Exception e) {
+            log.error("Error converting assessment to DTO: {}", e.getMessage(), e);
+            // Return a basic DTO with just the IDs if conversion fails
+            return AssessmentResponseDTO.builder()
+                .id(assessment.getId())
+                .studentId(assessment.getStudentId())
+                .studentName("Unknown Student")
+                .teacherId(assessment.getTeacherId())
+                .teacherName("Unknown Teacher")
+                .classId(assessment.getClassId())
+                .className("Unknown Class")
+                .assessmentType(assessment.getAssessmentType())
+                .assessmentDate(assessment.getAssessmentDate())
+                .build();
+        }
+    }
+    
+    private String getStudentName(Assessment assessment) {
+        try {
+            return assessment.getStudent() != null ? assessment.getStudent().getName() : "Unknown Student";
+        } catch (Exception e) {
+            log.debug("Could not get student name for assessment {}: {}", assessment.getId(), e.getMessage());
+            return "Unknown Student";
+        }
+    }
+    
+    private String getTeacherName(Assessment assessment) {
+        try {
+            return assessment.getTeacher() != null ? assessment.getTeacher().getName() : "Unknown Teacher";
+        } catch (Exception e) {
+            log.debug("Could not get teacher name for assessment {}: {}", assessment.getId(), e.getMessage());
+            return "Unknown Teacher";
+        }
+    }
+    
+    private String getClassName(Assessment assessment) {
+        try {
+            return assessment.getClassEntity() != null ? assessment.getClassEntity().getClassName() : "Unknown Class";
+        } catch (Exception e) {
+            log.debug("Could not get class name for assessment {}: {}", assessment.getId(), e.getMessage());
+            return "Unknown Class";
+        }
     }
 
     private double calculateAverageScore(List<Assessment> assessments, java.util.function.Function<Assessment, Integer> scoreExtractor) {

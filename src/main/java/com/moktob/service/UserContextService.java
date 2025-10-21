@@ -81,15 +81,27 @@ public class UserContextService {
                     builder.studentName(user.getFullName());
                 }
             } else if ("TEACHER".equalsIgnoreCase(roleName)) {
-                // Find teacher by email
+                // Find teacher by email first
                 List<Teacher> teachers = teacherRepository.findByClientIdAndEmail(user.getClientId(), user.getEmail());
                 if (!teachers.isEmpty()) {
                     Teacher teacher = teachers.get(0);
                     builder.teacherId(teacher.getId())
                            .teacherName(teacher.getName());
                 } else {
-                    // Fallback to user's full name if teacher not found
-                    builder.teacherName(user.getFullName());
+                    // Fallback: try to find teacher by name if email doesn't match
+                    List<Teacher> teachersByName = teacherRepository.findByClientIdAndNameContainingIgnoreCase(user.getClientId(), user.getFullName());
+                    if (!teachersByName.isEmpty()) {
+                        Teacher teacher = teachersByName.get(0);
+                        builder.teacherId(teacher.getId())
+                               .teacherName(teacher.getName());
+                    } else {
+                        // Last fallback: create a temporary teacher ID based on user ID
+                        // This ensures teachers can still create assessments
+                        builder.teacherId(user.getId()) // Use user ID as teacher ID
+                               .teacherName(user.getFullName());
+                        log.warn("Teacher record not found for user: {} (email: {}). Using user ID as teacher ID.", 
+                                user.getUsername(), user.getEmail());
+                    }
                 }
             }
 

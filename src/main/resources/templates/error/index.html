@@ -160,7 +160,7 @@
             </div>
             
             <!-- Error Details (only shown in development) -->
-            <div th:if="${#httpServletRequest.getAttribute('javax.servlet.error.status_code') != null}" class="error-details">
+            <div th:if="${#httpServletRequest != null and #httpServletRequest.getAttribute('javax.servlet.error.status_code') != null}" class="error-details">
                 <h6><i class="fas fa-bug me-2"></i>Error Details</h6>
                 <div><strong>Status:</strong> <span th:text="${#httpServletRequest.getAttribute('javax.servlet.error.status_code')}"></span></div>
                 <div><strong>Error:</strong> <span th:text="${#httpServletRequest.getAttribute('javax.servlet.error.exception')?.message}"></span></div>

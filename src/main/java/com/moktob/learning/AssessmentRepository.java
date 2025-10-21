@@ -30,6 +30,35 @@ public interface AssessmentRepository extends JpaRepository<Assessment, Long> {
                                                            @Param("startDate") LocalDate startDate, 
                                                            @Param("endDate") LocalDate endDate);
     
+    // JOIN FETCH queries to eagerly load relationships and avoid LazyInitializationException
+    @Query("SELECT a FROM Assessment a " +
+           "LEFT JOIN FETCH a.student s " +
+           "LEFT JOIN FETCH a.teacher t " +
+           "LEFT JOIN FETCH a.classEntity c " +
+           "WHERE a.clientId = :clientId")
+    List<Assessment> findByClientIdWithRelationships(@Param("clientId") Long clientId);
+    
+    @Query("SELECT a FROM Assessment a " +
+           "LEFT JOIN FETCH a.student s " +
+           "LEFT JOIN FETCH a.teacher t " +
+           "LEFT JOIN FETCH a.classEntity c " +
+           "WHERE a.clientId = :clientId AND a.id = :id")
+    Optional<Assessment> findByClientIdAndIdWithRelationships(@Param("clientId") Long clientId, @Param("id") Long id);
+    
+    @Query("SELECT a FROM Assessment a " +
+           "LEFT JOIN FETCH a.student s " +
+           "LEFT JOIN FETCH a.teacher t " +
+           "LEFT JOIN FETCH a.classEntity c " +
+           "WHERE a.clientId = :clientId AND a.studentId = :studentId")
+    List<Assessment> findByClientIdAndStudentIdWithRelationships(@Param("clientId") Long clientId, @Param("studentId") Long studentId);
+    
+    @Query("SELECT a FROM Assessment a " +
+           "LEFT JOIN FETCH a.student s " +
+           "LEFT JOIN FETCH a.teacher t " +
+           "LEFT JOIN FETCH a.classEntity c " +
+           "WHERE a.clientId = :clientId AND a.teacherId = :teacherId")
+    List<Assessment> findByClientIdAndTeacherIdWithRelationships(@Param("clientId") Long clientId, @Param("teacherId") Long teacherId);
+    
     @Query("SELECT a FROM Assessment a WHERE a.clientId = :clientId AND a.studentId = :studentId AND a.assessmentDate BETWEEN :startDate AND :endDate")
     List<Assessment> findByClientIdAndStudentIdAndAssessmentDateBetween(@Param("clientId") Long clientId, 
                                                                        @Param("studentId") Long studentId,

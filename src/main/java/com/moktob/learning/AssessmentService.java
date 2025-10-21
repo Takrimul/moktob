@@ -26,7 +26,7 @@ public class AssessmentService {
     
     public List<AssessmentResponseDTO> getAllAssessments() {
         Long clientId = TenantContextHolder.getTenantId();
-        List<Assessment> assessments = assessmentRepository.findByClientId(clientId);
+        List<Assessment> assessments = assessmentRepository.findByClientIdWithRelationships(clientId);
         return assessments.stream()
             .map(assessmentBusinessService::convertToResponseDTO)
             .collect(Collectors.toList());
@@ -34,7 +34,7 @@ public class AssessmentService {
     
     public Optional<AssessmentResponseDTO> getAssessmentById(Long id) {
         Long clientId = TenantContextHolder.getTenantId();
-        Optional<Assessment> assessment = assessmentRepository.findByClientIdAndId(clientId, id);
+        Optional<Assessment> assessment = assessmentRepository.findByClientIdAndIdWithRelationships(clientId, id);
         return assessment.map(assessmentBusinessService::convertToResponseDTO);
     }
     
@@ -112,7 +112,7 @@ public class AssessmentService {
     
     public List<AssessmentResponseDTO> getAssessmentsByStudent(Long studentId) {
         Long clientId = TenantContextHolder.getTenantId();
-        List<Assessment> assessments = assessmentRepository.findByClientIdAndStudentId(clientId, studentId);
+        List<Assessment> assessments = assessmentRepository.findByClientIdAndStudentIdWithRelationships(clientId, studentId);
         return assessments.stream()
             .map(assessmentBusinessService::convertToResponseDTO)
             .collect(Collectors.toList());
@@ -120,7 +120,7 @@ public class AssessmentService {
     
     public List<AssessmentResponseDTO> getAssessmentsByTeacher(Long teacherId) {
         Long clientId = TenantContextHolder.getTenantId();
-        List<Assessment> assessments = assessmentRepository.findByClientIdAndTeacherId(clientId, teacherId);
+        List<Assessment> assessments = assessmentRepository.findByClientIdAndTeacherIdWithRelationships(clientId, teacherId);
         return assessments.stream()
             .map(assessmentBusinessService::convertToResponseDTO)
             .collect(Collectors.toList());
